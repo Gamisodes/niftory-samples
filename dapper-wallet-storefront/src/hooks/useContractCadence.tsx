@@ -1,6 +1,5 @@
 import { gql } from "graphql-request"
-import { useQuery } from "urql"
-import { ContractDocument, ContractQuery } from "../../generated/graphql"
+import { useContractQuery } from "../../generated/graphql"
 
 gql`
   query contract {
@@ -77,7 +76,8 @@ function prepareCadence(script: string, contractName: string, address: string) {
 }
 
 export function useContractCadence() {
-  const [contractResponse] = useQuery<ContractQuery>({ query: ContractDocument })
+  const [contractResponse] = useContractQuery()
+
   const { data, fetching: isFetching, error } = contractResponse
   const isFetched = !isFetching && !error
 
