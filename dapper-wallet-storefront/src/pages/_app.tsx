@@ -11,14 +11,16 @@ type AppProps<P = {}> = NextAppProps<P> & {
   Component: ComponentWithWallet
 }
 
-const App = ({ Component, pageProps: { ...pageProps } }: AppProps): JSX.Element => (
-  <WalletProvider requireWallet={Component.requireWallet}>
-    <GraphQLClientProvider>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </GraphQLClientProvider>
-  </WalletProvider>
-)
+const App = ({ Component, pageProps: { ...pageProps } }: AppProps): JSX.Element => {
+  return (
+    <WalletProvider requireWallet={Component.requireWallet}>
+      <GraphQLClientProvider>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </GraphQLClientProvider>
+    </WalletProvider>
+  )
+}
 
 export default App

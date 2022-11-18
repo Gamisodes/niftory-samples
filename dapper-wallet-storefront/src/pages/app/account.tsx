@@ -1,10 +1,9 @@
 import { Divider, VStack } from "@chakra-ui/react"
-import React from "react"
 
 import AppLayout from "../../components/AppLayout"
+import { LogOut } from "../../components/LogOut"
 import { WalletSetup } from "../../components/wallet/WalletSetup"
 import { SectionHeader } from "../../ui/SectionHeader"
-import { LogOut } from "../../components/LogOut"
 
 const AccountPage = () => {
   return (

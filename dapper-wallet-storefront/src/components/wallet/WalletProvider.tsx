@@ -51,15 +51,15 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
   }, [])
 
   useEffect(() => {
-    if (!requireWallet || isLoading) {
+    if (!requireWallet || isLoading || !currentUser) {
       return
     }
 
     if (!currentUser?.loggedIn) {
-      router.push("/app/account")
+      router.push("/app/sign-in")
       return
     }
-  }, [requireWallet, currentUser, router, isLoading, signOut])
+  }, [requireWallet, isLoading, currentUser, router])
 
   return (
     <WalletContext.Provider value={{ currentUser, isLoading, signIn, signOut }}>
