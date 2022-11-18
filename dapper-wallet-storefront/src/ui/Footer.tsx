@@ -1,5 +1,6 @@
-import { Box, Center, Flex, Wrap, WrapItem } from '@chakra-ui/react';
-import * as React from 'react';
+import { Box, Center, Flex, Wrap, WrapItem } from "@chakra-ui/react"
+import React from "react"
+import Link from "next/link"
 
 export interface IFooterLink {
   label?: string
@@ -23,9 +24,7 @@ export const Footer: React.FunctionComponent<IFooterProps> = ({ links = [] }) =>
         <Wrap id="bottom" spacing={{ base: "4", md: "8", lg: "12" }} justify="center">
           {links.map((link, idx) => (
             <WrapItem key={idx}>
-              <Box color="footer.text" as="a" href={link.href}>
-                {link.label}
-              </Box>
+              <Link href={link.href}>{link.label}</Link>
             </WrapItem>
           ))}
         </Wrap>
