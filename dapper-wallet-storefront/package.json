@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "fetch-schema": "rover graph fetch Niftory-Staging-1wxews > generated/schema.graphql",
-    "generate": "dotenv -- graphql-codegen"
+    "generate": "dotenv -- graphql-codegen  --config codegen.js"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
@@ -42,6 +41,7 @@
     "@graphql-codegen/typed-document-node": "^2.3.3",
     "@graphql-codegen/typescript": "^2.7.3",
     "@graphql-codegen/typescript-operations": "^2.5.3",
+    "@graphql-codegen/typescript-urql": "^3.7.3",
     "@types/node": "18.0.1",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
