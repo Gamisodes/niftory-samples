@@ -10,7 +10,6 @@ import { SectionHeader } from "../../ui/SectionHeader"
 const SignInPage = () => {
   const router = useRouter()
   const { currentUser } = useWalletContext()
-  console.log(currentUser)
   useEffect(() => {
     if (!currentUser || !currentUser.loggedIn) {
       return
