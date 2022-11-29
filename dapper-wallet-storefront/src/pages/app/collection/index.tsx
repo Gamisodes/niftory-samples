@@ -1,22 +1,17 @@
 import { Box } from "@chakra-ui/react"
-import { useQuery } from "urql"
 
+import { Nft, useNftsByWalletQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
-import { Nft, NftsByWalletDocument, NftsByWalletQuery } from "../../../../generated/graphql"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
+import { useWalletContext } from "../../../hooks/useWalletContext"
 import { Subset } from "../../../lib/types"
 import { SectionHeader } from "../../../ui/SectionHeader"
-import { useWalletContext } from "../../../hooks/useWalletContext"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
-
-  const [nftsByWalletResponse] = useQuery<NftsByWalletQuery>({
-    query: NftsByWalletDocument,
+  const [nftsByWalletResponse] = useNftsByWalletQuery({
     variables: { address: currentUser?.addr },
     pause: !currentUser?.addr,
-
-    // refetch in the background in case the user has purchased something
     requestPolicy: "cache-and-network",
   })
 
