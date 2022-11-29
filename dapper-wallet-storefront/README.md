@@ -31,9 +31,32 @@ See [.env.example](./.env.example) for an example of how to configure these envi
 Once your `.env` file is set up, you can run the app locally with:
 
 ```
-yarn install
-yarn dev
+npm run install
+npm run dev
 ```
+
+For production environment you need `.env.production`
+For staging environment you need `.env.staging`
+
+## Using Docker and Makefile
+
+### Staging environment - for doing testing
+
+```
+make build-staging
+make start-staging
+```
+
+Open http://localhost:3000
+
+### Production environment - for users
+
+```
+make build-production
+make start-production
+```
+
+Open http://localhost:3001
 
 ## Overview
 
