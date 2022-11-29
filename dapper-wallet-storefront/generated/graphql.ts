@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
   EmailAddress: any;
   JSON: any;
   JSONObject: any;
@@ -39,23 +40,6 @@ export type AdminUser = Identifiable & UserData & {
   orgs?: Maybe<Array<Maybe<UserRoleMapping>>>;
 };
 
-/** An airdrop used to send NFTs to users. */
-export type Airdrop = Attributable & Identifiable & Resource & {
-  __typename?: 'Airdrop';
-  /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
-  attributes?: Maybe<Scalars['JSONObject']>;
-  /** A description for this airdrop. */
-  description?: Maybe<Scalars['String']>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** The users who will receive this airdrop, and the packaged items we're sending. */
-  recipients?: Maybe<Array<Maybe<PackagedItemToUserMapping>>>;
-  /** The status of this resource. Can be used to track progress in designing and creating resources. */
-  status?: Maybe<Status>;
-  /** A user-friendly title for this airdrop. */
-  title?: Maybe<Scalars['String']>;
-};
-
 /** An application in the Niftory ecosystem. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
 export type App = Identifiable & {
   __typename?: 'App';
@@ -66,10 +50,12 @@ export type App = Identifiable & {
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
-export type AppUser = Identifiable & UserData & {
+export type AppUser = HasTimes & Identifiable & UserData & {
   __typename?: 'AppUser';
   /** The app this user is scoped to. */
   app?: Maybe<App>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** This user's email. */
   email?: Maybe<Scalars['EmailAddress']>;
   /** A unique identifier for this object in the Niftory API. */
@@ -80,6 +66,8 @@ export type AppUser = Identifiable & UserData & {
   name?: Maybe<Scalars['String']>;
   /** The primary wallet used by this user. */
   primaryWallet?: Maybe<Wallet>;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
   /**
    * The wallet owned by this user.
    * @deprecated Use primaryWallet or wallets instead.
@@ -128,12 +116,16 @@ export type BlockchainResource = {
   attributes?: Maybe<Scalars['JSONObject']>;
   /** The ID of this resource on the blockchain. */
   blockchainId?: Maybe<Scalars['String']>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
   /** The status of this resource. Can be used to track progress in designing and creating resources. */
   status?: Maybe<Status>;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** The response from initiating a checkout with Dapper Wallet. */
@@ -262,6 +254,14 @@ export type FixedPricingInput = {
   price: Scalars['PositiveFloat'];
 };
 
+/** An interface representing objects with a creation and update time */
+export type HasTimes = {
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
 /** An interface representing objects with unique IDs */
 export type Identifiable = {
   /** A unique identifier for this object in the Niftory API. */
@@ -280,8 +280,10 @@ export type InitiateCheckoutResponse = {
 };
 
 /** A purchase invoice for an NFT. The invoice is created when an NFT is reserved using reserve, and updated when a payment is initiated with checkout */
-export type Invoice = Identifiable & {
+export type Invoice = HasTimes & Identifiable & {
   __typename?: 'Invoice';
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** The ID of the Niftory invoice for an NFT purchase */
   id: Scalars['ID'];
   /** The listing associated with this invoice */
@@ -290,6 +292,8 @@ export type Invoice = Identifiable & {
   state?: Maybe<InvoiceState>;
   /** The total spent in USD in this invoice */
   total?: Maybe<Scalars['PositiveFloat']>;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
   /** The user id associated with this invoice */
   userId?: Maybe<Scalars['String']>;
 };
@@ -315,23 +319,6 @@ export enum InvoiceState {
   Pending = 'PENDING'
 }
 
-/** Current Prisma Mapping: PackListing. A listing of NFTs for sale. */
-export type Listing = Attributable & Identifiable & Resource & {
-  __typename?: 'Listing';
-  /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
-  attributes?: Maybe<Scalars['JSONObject']>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** The packages available in this listing */
-  packages?: Maybe<Array<Maybe<Package>>>;
-  /** The pricing for this listing */
-  pricing?: Maybe<FixedPricing>;
-  /** The state of this listing. */
-  state?: Maybe<ListingState>;
-  /** The status of this resource. Can be used to track progress in designing and creating resources. */
-  status?: Maybe<Status>;
-};
-
 /** The state of a listing. */
 export enum ListingState {
   /** The listing is active and available for sale. */
@@ -344,8 +331,6 @@ export enum ListingState {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Sets an inactive [listing]({{Types.Listing}}) to active, meaning that it's available for sale. */
-  activateListing?: Maybe<Listing>;
   /** Initiates checkout for a reserved NFT. */
   checkout?: Maybe<InitiateCheckoutResponse>;
   /** Initiates checkout with Dapper Wallet of specified [NFTModel]({{Types.NFTModel}})s, and returns a signed transaction to complete checkout with. Flow blockchain only. */
@@ -362,8 +347,6 @@ export type Mutation = {
   createNFTSet?: Maybe<NftSet>;
   /** Provisions a custodial Niftory [Wallet]({{Types.Wallet}}) and, if specified, associates it with the given [AppUser]({{Types.AppUser}}). Note: The call fails if the user already has a wallet. */
   createNiftoryWallet?: Maybe<Wallet>;
-  /** Sets an active [listing]({{Types.Listing}}) to inactive, meaning that it's not available for sale. */
-  deactivateListing?: Maybe<Listing>;
   /** Deletes the specified file from cloud storage (but not IPFS). */
   deleteFile?: Maybe<File>;
   /** Deletes an existing [NFTListing]({{Types.NFTListing}}). */
@@ -400,11 +383,6 @@ export type Mutation = {
   uploadNFTContent?: Maybe<NftContent>;
   /** Verifies a [Wallet]({{Types.Wallet}}) to the currently signed-in user. If the signed verification code fails to decode with the wallet's public key or doesn't match the wallet's verification code, the request will fail. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
   verifyWallet?: Maybe<Wallet>;
-};
-
-
-export type MutationActivateListingArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -457,11 +435,6 @@ export type MutationCreateNftSetArgs = {
 export type MutationCreateNiftoryWalletArgs = {
   data?: InputMaybe<CreateNiftoryWalletInput>;
   userId?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type MutationDeactivateListingArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -679,12 +652,14 @@ export type NftList = Pageable & {
 };
 
 /** A listing of NFTs for sale. */
-export type NftListing = Attributable & Identifiable & {
+export type NftListing = Attributable & HasTimes & Identifiable & {
   __typename?: 'NFTListing';
   /** The appId of the app this NFTListing belongs to. */
   appId: Scalars['ID'];
   /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: Maybe<Scalars['JSONObject']>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** The description of the listing. */
   description?: Maybe<Scalars['String']>;
   /** A unique identifier for this object in the Niftory API. */
@@ -697,6 +672,8 @@ export type NftListing = Attributable & Identifiable & {
   state: ListingState;
   /** The title of the listing. */
   title?: Maybe<Scalars['String']>;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type NftListingFilterInput = {
@@ -718,7 +695,7 @@ export type NftListingList = Pageable & {
 };
 
 /** The blueprint for an NFT, containing everything needed to mint one -- file content, blockchain metadata, etc. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts). */
-export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Identifiable & Resource & {
+export type NftModel = Attributable & BlockchainEntity & BlockchainResource & HasTimes & Identifiable & Resource & {
   __typename?: 'NFTModel';
   /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: Maybe<Scalars['JSONObject']>;
@@ -726,6 +703,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Id
   blockchainId?: Maybe<Scalars['String']>;
   /** This NFT model's content. */
   content?: Maybe<NftContent>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** The user-friendly description for this model. */
   description: Scalars['String'];
   /** A unique identifier for this object in the Niftory API. */
@@ -736,6 +715,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Id
   nfts?: Maybe<Array<Maybe<Nft>>>;
   /** The total quantity of NFTs that will be available for this model. */
   quantity?: Maybe<Scalars['PositiveInt']>;
+  /** The total quantity of NFTs that have been minted from this model. */
+  quantityMinted?: Maybe<Scalars['UnsignedInt']>;
   /** The rarity of the NFTs in this model. */
   rarity?: Maybe<SimpleRarityLevel>;
   /** The NFT model set containing this model. */
@@ -746,6 +727,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Id
   status?: Maybe<Status>;
   /** The user-friendly title for this model. */
   title: Scalars['String'];
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** The state of an NFT Model on the blockchain. */
@@ -834,7 +817,7 @@ export type NftModelUpdateInput = {
 };
 
 /** A set of NFTModels, to help you organize your NFTs. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts). */
-export type NftSet = Attributable & BlockchainEntity & BlockchainResource & Identifiable & Resource & {
+export type NftSet = Attributable & BlockchainEntity & BlockchainResource & HasTimes & Identifiable & Resource & {
   __typename?: 'NFTSet';
   /** The app this set belongs to. */
   app?: Maybe<App>;
@@ -842,6 +825,8 @@ export type NftSet = Attributable & BlockchainEntity & BlockchainResource & Iden
   attributes?: Maybe<Scalars['JSONObject']>;
   /** The ID of this resource on the blockchain. */
   blockchainId?: Maybe<Scalars['String']>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
   /** The image to represent this set. */
@@ -856,6 +841,8 @@ export type NftSet = Attributable & BlockchainEntity & BlockchainResource & Iden
   status?: Maybe<Status>;
   /** The display image for this set. */
   title: Scalars['String'];
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** The state of an NFT Set on the blockchain. */
@@ -913,92 +900,6 @@ export type Org = Identifiable & {
   name?: Maybe<Scalars['String']>;
 };
 
-/** Current Prisma Mapping: Pack. One or more NFTs packaged for sale. */
-export type Package = Identifiable & SellableEntity & {
-  __typename?: 'Package';
-  /** The buyer of this packaged item, if it was purchased in a Niftory app. NOTE: we may add a seller field as well when secondary marketplace is enabled. */
-  buyer?: Maybe<AppUser>;
-  /** The NFTs in this packaged item. */
-  contents?: Maybe<Array<Maybe<Nft>>>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** The image that represents this package. */
-  image?: Maybe<Scalars['String']>;
-  /** This state of this object's sale. */
-  saleState?: Maybe<SaleState>;
-};
-
-/** A mapping from a packaged item to a user. */
-export type PackagedItemToUserMapping = {
-  __typename?: 'PackagedItemToUserMapping';
-  /** The package to send. */
-  package?: Maybe<Package>;
-  /** The user to send it to. */
-  user?: Maybe<AppUser>;
-};
-
-/** Current Prisma Mapping: PackListing. A model of how to select and package a group of NFTs. */
-export type PackagingModel = Attributable & Identifiable & Resource & {
-  __typename?: 'PackagingModel';
-  /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
-  attributes?: Maybe<Scalars['JSONObject']>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** The number of NFTs to include in each pack. */
-  nftsPerPack?: Maybe<Scalars['PositiveInt']>;
-  /** The number of packs to create. */
-  numberOfPacks?: Maybe<Scalars['PositiveInt']>;
-  /** The packages created using this model. */
-  packages?: Maybe<Array<Maybe<Package>>>;
-  /** The packaging strategy for this model. Used to specify the distribution of NFTs in each package. */
-  packaging?: Maybe<PackagingModelPackaging>;
-  /** The selection strategy for this model. Used to specify the overall distribution of all NFTs that will be packaged. */
-  selection?: Maybe<PackagingModelSelection>;
-  /** The status of this resource. Can be used to track progress in designing and creating resources. */
-  status?: Maybe<Status>;
-};
-
-/** A condition to match NFTs against. */
-export type PackagingModelCondition = {
-  __typename?: 'PackagingModelCondition';
-  /** The rarity level of the NFT. */
-  rarity: SimpleRarityLevel;
-};
-
-/** Current Prisma Mapping: PackListing.files, PackListing.packShape. Specifies the distribution of NFTs in each package created in a [PackagingModel]({{Types.PackagingModel}}). */
-export type PackagingModelPackaging = {
-  __typename?: 'PackagingModelPackaging';
-  /** The image to represent this packaging model, and the packages created by it. */
-  image?: Maybe<Scalars['URL']>;
-  /** The rules to apply when building each package in this model. For each rule, each package will contain at least the specified number of NFTs that match at least one of the conditions. */
-  rules?: Maybe<Array<Maybe<PackagingModelRule>>>;
-};
-
-/** Current Prisma Mapping: PackListing.packShape. Specifies a group of NFTs that match one or more conditions */
-export type PackagingModelRule = {
-  __typename?: 'PackagingModelRule';
-  /** Conditions to use to match NFTs for this rule. An NFT can be used by this rule if any of the conditions are satisfied. */
-  conditions: Array<Maybe<PackagingModelCondition>>;
-  /** The number of NFTs to select as part of this rule. */
-  number: Scalars['PositiveInt'];
-};
-
-/** Current Prisma Mapping: PackListing.packShape (rules), PackListing.collectibleIds, PackListing.setId (filters). Specifies the distribution of NFTs selected for packaging in a [PackagingModel]({{Types.PackagingModel}}). */
-export type PackagingModelSelection = {
-  __typename?: 'PackagingModelSelection';
-  /** Filters to be applied to all NFTs selected in this [PackagingModel]({{Types.PackagingModel}}). Currently, only a single filter is supported. */
-  filters: Array<Maybe<PackagingModelSelectionFilter>>;
-  /** The rules to apply when selecting NFTs for this [PackagingModel]({{Types.PackagingModel}}). For each rule, the NFTs selected will contain at least the specified number of NFTs that match at least one of the conditions. */
-  rules?: Maybe<Array<Maybe<PackagingModelRule>>>;
-};
-
-/** Current Prisma Mapping: PackListing.collectibleIds, PackListing.setId. Filters to apply to all NFTs selected in a [PackagingModel]({{Types.PackagingModel}}). */
-export type PackagingModelSelectionFilter = {
-  __typename?: 'PackagingModelSelectionFilter';
-  /** The set ID to filter by. An NFT will match this filter if it is in the [NFTSet]({{Types.NFTSet}}) with this ID. */
-  setId: Scalars['ID'];
-};
-
 /** An interface representing lists that can be paginated with a cursor. */
 export type Pageable = {
   /** The cursor to use to fetch the next page of results, if any. */
@@ -1027,8 +928,6 @@ export type Query = {
   invoice?: Maybe<Invoice>;
   /** Gets the list of invoices for your app. */
   invoices?: Maybe<InvoiceList>;
-  /** Gets an [Listing]({{Types.Listing}}) by ID. */
-  listing?: Maybe<Listing>;
   /** Gets an [NFT]({{Types.NFT}}) by database ID. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nft?: Maybe<Nft>;
   /** Gets a [NFTContent]({{Types.NFTContent}}) by ID. */
@@ -1053,8 +952,6 @@ export type Query = {
   orgById?: Maybe<Org>;
   /** Gets an [Org]({{Types.Org}}) by Org Name. */
   orgByName?: Maybe<Org>;
-  /** Gets a [PackagingModel]({{Types.PackagingModel}}) by ID. */
-  packagingModel?: Maybe<PackagingModel>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   set?: Maybe<NftSet>;
   /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
@@ -1108,11 +1005,6 @@ export type QueryInvoicesArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   cursor?: InputMaybe<Scalars['String']>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
-};
-
-
-export type QueryListingArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -1186,11 +1078,6 @@ export type QueryOrgByNameArgs = {
 };
 
 
-export type QueryPackagingModelArgs = {
-  id: Scalars['ID'];
-};
-
-
 export type QuerySetArgs = {
   id: Scalars['ID'];
 };
@@ -1232,10 +1119,14 @@ export type RegisterWalletInput = {
 export type Resource = {
   /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: Maybe<Scalars['JSONObject']>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
   /** The status of this resource. Can be used to track progress in designing and creating resources. */
   status?: Maybe<Status>;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** Roles for users of the Niftory admin portal and APIs. */
@@ -1381,7 +1272,7 @@ export type UserRoleMapping = {
 };
 
 /** Represents a blockchain wallet scoped to a particular [App]({{Types.App}}) and [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets). */
-export type Wallet = Attributable & Identifiable & {
+export type Wallet = Attributable & HasTimes & Identifiable & {
   __typename?: 'Wallet';
   /** This wallet's address on the blockchain. */
   address: Scalars['String'];
@@ -1389,12 +1280,16 @@ export type Wallet = Attributable & Identifiable & {
   appUser?: Maybe<AppUser>;
   /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: Maybe<Scalars['JSONObject']>;
+  /** Creation date of this item */
+  createdAt: Scalars['DateTime'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
   /** The NFTs from the current app that are in this wallet. */
   nfts?: Maybe<Array<Maybe<Nft>>>;
   /** The state of this wallet. */
   state: WalletState;
+  /** Most recent updated date of this item, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
   /** The verification code that can be used to verify this wallet for this user. */
   verificationCode?: Maybe<Scalars['String']>;
 };
