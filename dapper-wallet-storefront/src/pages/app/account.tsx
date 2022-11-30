@@ -1,60 +1,33 @@
 import { Button, Divider, VStack } from "@chakra-ui/react"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { useCallback } from "react"
 import AppLayout from "src/components/AppLayout"
-import { LogOut } from "src/components/LogOut"
 import { WalletSetup } from "src/components/wallet/WalletSetup"
 import { SectionHeader } from "src/ui/SectionHeader"
 
-// export const getStaticProps: GetStaticProps = async () => {
-//   const feed = await prisma.user.findMany({
-//     // where: {  },
-//     // include: {
-//     //   author: {
-//     //     select: { name: true },
-//     //   },
-//     // },
-//   })
-//   console.log(feed)
-//   return {
-//     props: { feed },
-//     revalidate: 10,
-//   }
-// }
-
 const AccountPage = () => {
   const { data: session } = useSession()
+  const router = useRouter()
+
+  const logout = useCallback(async function () {
+    await signOut({ redirect: false, callbackUrl: "/" })
+    router.push("/")
+  }, [])
+
   return (
     <AppLayout>
       <VStack>
-        <SectionHeader text="My Account" />
+        <SectionHeader text={`${session.user.name}'s account`} />
         <WalletSetup />
+        <Button onClick={logout}>Sign Out</Button>
+        {/* <LogOut /> */}
         <Divider w="80%" maxW="xl" py="8" />
-        <Button
-          onClick={() => {
-            console.log("click", session)
-          }}
-        >
-          Get Session
-        </Button>
-        <Button
-          onClick={() => {
-            signIn()
-          }}
-        >
-          Sign In
-        </Button>
-        <Button
-          onClick={() => {
-            signOut()
-          }}
-        >
-          Sign Out
-        </Button>
-        <LogOut />
       </VStack>
     </AppLayout>
   )
 }
-AccountPage.requireWallet = true
+// AccountPage.requireWallet = true
+AccountPage.requireAuth = true
 
 export default AccountPage

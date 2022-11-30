@@ -8,6 +8,7 @@ import "../styles/global.css"
 import theme from "../lib/chakra-theme"
 import { GraphQLClientProvider } from "../lib/GraphQLClientProvider"
 import { Session } from "next-auth"
+import AuthGuard from "src/guard/AuthGuard"
 
 type AppProps<P = { session: Session }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -19,7 +20,13 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX
       <WalletProvider requireWallet={Component.requireWallet}>
         <GraphQLClientProvider>
           <ChakraProvider theme={theme}>
-            <Component {...pageProps} />
+            {Component.requireAuth ? (
+              <AuthGuard>
+                <Component {...pageProps} />
+              </AuthGuard>
+            ) : (
+              <Component {...pageProps} />
+            )}
           </ChakraProvider>
         </GraphQLClientProvider>
       </WalletProvider>

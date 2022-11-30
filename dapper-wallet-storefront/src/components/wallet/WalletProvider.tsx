@@ -56,7 +56,7 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     }
 
     if (!currentUser?.loggedIn) {
-      router.push("/app/sign-in")
+      router.push("/app/account")
       return
     }
   }, [requireWallet, isLoading, currentUser, router])

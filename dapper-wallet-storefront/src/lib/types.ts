@@ -6,4 +6,5 @@ export type Subset<K> = {
 
 export type ComponentWithWallet<P = {}> = NextComponentType<NextPageContext, any, P> & {
   requireWallet?: boolean
+  requireAuth?: boolean
 }
