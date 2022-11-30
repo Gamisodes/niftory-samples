@@ -29,7 +29,7 @@ export const NavbarBase: React.FunctionComponent<Props> = ({
             justify="space-between"
             height="100%"
           >
-            <Link href={homeUrl} passHref>
+            <Link href={homeUrl} passHref legacyBehavior>
               <Box as="a" rel="home" ml={{ base: "none", sm: "10", md: "20" }}>
                 <Stack direction="row">
                   <VisuallyHidden>niftory</VisuallyHidden>
