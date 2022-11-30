@@ -47,7 +47,10 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
-    fcl.currentUser.subscribe((user) => setCurrentUser(user))
+    fcl.currentUser.subscribe((user) => {
+      console.log("subscribe:wallet", user)
+      setCurrentUser(user)
+    })
   }, [])
 
   useEffect(() => {
