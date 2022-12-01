@@ -1,4 +1,4 @@
-import { Button, Divider, VStack } from "@chakra-ui/react"
+import { Avatar, Button, Divider, VStack, Wrap, WrapItem, Text } from "@chakra-ui/react"
 import { signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useCallback } from "react"
@@ -18,7 +18,16 @@ const AccountPage = () => {
   return (
     <AppLayout>
       <VStack>
-        <SectionHeader text={`${session.user.name}'s account`} />
+        <SectionHeader
+          text={
+            <Wrap>
+              <WrapItem>
+                <Avatar name={session.user.name} src={session.user.image} />
+              </WrapItem>
+              <Text>{session.user.name}'s account</Text>
+            </Wrap>
+          }
+        />
         <WalletSetup />
         <Button onClick={logout}>Sign Out</Button>
         {/* <LogOut /> */}
