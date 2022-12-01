@@ -34,7 +34,6 @@ export function WalletSetup() {
   }, [reExecuteQuery])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
-
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {
