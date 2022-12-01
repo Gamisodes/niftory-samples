@@ -51,6 +51,14 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       .put("discovery.wallet.method", "POP/RPC")
     fcl.currentUser.subscribe((walletUser) => {
       console.log("subscribe:wallet", walletUser, user)
+      if (
+        user?.user?.walletAddress &&
+        walletUser?.addr &&
+        user?.user?.walletAddress !== walletUser?.addr
+      ) {
+        signOut()
+        return
+      }
       setCurrentUser(walletUser)
     })
   }, [user?.user?.email])
