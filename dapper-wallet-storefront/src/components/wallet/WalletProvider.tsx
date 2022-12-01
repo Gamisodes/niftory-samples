@@ -1,6 +1,8 @@
 import * as fcl from "@onflow/fcl"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { createContext, useCallback, useEffect, useState } from "react"
+import { useDidMount } from "rooks"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
 type WalletComponentProps = {
@@ -18,11 +20,12 @@ type WalletContextType = {
 export const WalletContext = createContext<WalletContextType>(null)
 
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
+  const { data: user } = useSession()
+
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
-
   const signIn = useCallback(async () => {
     setIsLoading(true)
     fcl.logIn()
@@ -34,7 +37,6 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.unauthenticate()
     setIsLoading(false)
   }, [])
-
   useEffect(() => {
     fcl
       .config({
@@ -47,11 +49,11 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
-    fcl.currentUser.subscribe((user) => {
-      console.log("subscribe:wallet", user)
-      setCurrentUser(user)
+    fcl.currentUser.subscribe((walletUser) => {
+      console.log("subscribe:wallet", walletUser, user)
+      setCurrentUser(walletUser)
     })
-  }, [])
+  }, [user?.user?.email])
 
   useEffect(() => {
     if (!requireWallet || isLoading || !currentUser) {
