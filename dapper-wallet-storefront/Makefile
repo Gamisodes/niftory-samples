@@ -1,6 +1,6 @@
 .PHONY: run-local
 run-local: ## Run local DB
-	docker compose -f docker/staging/docker-compose.yml up -d
+	docker compose -f docker/local/docker-compose.yml up -d
 
 .PHONY: build-staging
 build-staging: ## Build the staging docker image.
