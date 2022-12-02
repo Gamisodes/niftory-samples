@@ -1,14 +1,13 @@
 import { Button, VStack } from "@chakra-ui/react"
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
 import AppLayout from "src/components/AppLayout"
+import { useWalletContext } from "src/hooks/useWalletContext"
 import { SectionHeader } from "src/ui/SectionHeader"
 
-function AuthGuard({ children }: PropsWithChildren) {
-  const { status } = useSession()
-
-  if (status === "loading") {
+function WalletGuard({ children }: PropsWithChildren) {
+  const { currentUser, isLoading } = useWalletContext()
+  if (isLoading) {
     return (
       <AppLayout>
         <VStack>
@@ -18,12 +17,12 @@ function AuthGuard({ children }: PropsWithChildren) {
     )
   }
 
-  if (status === "unauthenticated") {
+  if (currentUser && !currentUser.loggedIn) {
     return (
       <AppLayout>
         <VStack>
-          <SectionHeader text="Access Denied. You need to login to our app" />
-          <Link href={"/app/sign-in"}>
+          <SectionHeader text="Access to Wallet functionality Denied" />
+          <Link href={"/app/account"}>
             <Button>Sign in / Sign up</Button>
           </Link>
         </VStack>
@@ -34,4 +33,4 @@ function AuthGuard({ children }: PropsWithChildren) {
   return <>{children}</>
 }
 
-export default AuthGuard
+export default WalletGuard

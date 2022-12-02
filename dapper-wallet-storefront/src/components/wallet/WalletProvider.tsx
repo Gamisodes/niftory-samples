@@ -1,6 +1,5 @@
 import * as fcl from "@onflow/fcl"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/router"
 import { createContext, useCallback, useEffect, useState } from "react"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
@@ -24,7 +23,6 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const router = useRouter()
   const signIn = useCallback(async () => {
     setIsLoading(true)
     fcl.logIn()
@@ -62,16 +60,17 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     })
   }, [user?.user?.email])
 
-  useEffect(() => {
-    if (!requireWallet || isLoading || !currentUser) {
-      return
-    }
+  // const router = useRouter()
+  // useEffect(() => {
+  //   if (!requireWallet || isLoading || !currentUser) {
+  //     return
+  //   }
 
-    if (currentUser && !currentUser?.loggedIn) {
-      router.push("/app/account")
-      return
-    }
-  }, [requireWallet, isLoading, currentUser, router])
+  //   if (currentUser && !currentUser?.loggedIn) {
+  //     router.push("/app/account")
+  //     return
+  //   }
+  // }, [requireWallet, isLoading, currentUser, router])
 
   return (
     <WalletContext.Provider value={{ currentUser, isLoading, signIn, signOut }}>

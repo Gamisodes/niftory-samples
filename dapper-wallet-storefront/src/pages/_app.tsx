@@ -9,24 +9,43 @@ import theme from "../lib/chakra-theme"
 import { GraphQLClientProvider } from "../lib/GraphQLClientProvider"
 import { Session } from "next-auth"
 import AuthGuard from "src/guard/AuthGuard"
+import WalletGuard from "src/guard/WalletGuard"
 
 type AppProps<P = { session: Session }> = NextAppProps<P> & {
   Component: ComponentWithWallet
 }
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element => {
+  const isWalletAndAuth =
+    (Component.requireAuth && Component.requireWallet && (
+      <AuthGuard>
+        <WalletGuard>
+          <Component {...pageProps} />
+        </WalletGuard>
+      </AuthGuard>
+    )) ||
+    null
+  const isWallet =
+    (Component.requireWallet && (
+      <WalletGuard>
+        <Component {...pageProps} />
+      </WalletGuard>
+    )) ||
+    null
+  const isAuth =
+    (Component.requireAuth && (
+      <AuthGuard>
+        <Component {...pageProps} />
+      </AuthGuard>
+    )) ||
+    null
+
   return (
     <SessionProvider session={session}>
       <WalletProvider requireWallet={Component.requireWallet}>
         <GraphQLClientProvider>
           <ChakraProvider theme={theme}>
-            {Component.requireAuth ? (
-              <AuthGuard>
-                <Component {...pageProps} />
-              </AuthGuard>
-            ) : (
-              <Component {...pageProps} />
-            )}
+            {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
           </ChakraProvider>
         </GraphQLClientProvider>
       </WalletProvider>
