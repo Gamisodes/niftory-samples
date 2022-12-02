@@ -2,7 +2,6 @@ import * as fcl from "@onflow/fcl"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { createContext, useCallback, useEffect, useState } from "react"
-import { useDidMount } from "rooks"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
 type WalletComponentProps = {
