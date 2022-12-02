@@ -11,7 +11,6 @@ import prisma from "src/lib/prisma"
 
 const handler: NextApiHandler = async (req, res) => {
   const backendGQLClient = await getBackendGraphQLClient()
-
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed, this endpoint only supports POST")
     return
@@ -47,6 +46,7 @@ const handler: NextApiHandler = async (req, res) => {
           user: { connect: { email } },
         },
       })
+
     res.status(200).json(response)
   } catch (error) {
     res.status(500).json(error)

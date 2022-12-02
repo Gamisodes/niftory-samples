@@ -42,13 +42,13 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX
 
   return (
     <SessionProvider session={session}>
-      <WalletProvider requireWallet={Component.requireWallet}>
-        <GraphQLClientProvider>
-          <ChakraProvider theme={theme}>
+      <ChakraProvider theme={theme}>
+        <WalletProvider requireWallet={Component.requireWallet}>
+          <GraphQLClientProvider>
             {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-          </ChakraProvider>
-        </GraphQLClientProvider>
-      </WalletProvider>
+          </GraphQLClientProvider>
+        </WalletProvider>
+      </ChakraProvider>
     </SessionProvider>
   )
 }

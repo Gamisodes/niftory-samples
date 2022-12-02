@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
 import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
@@ -19,6 +20,7 @@ export const WalletContext = createContext<WalletContextType>(null)
 
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
   const { data: user } = useSession()
+  const toast = useToast()
 
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,10 +51,19 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.currentUser.subscribe((walletUser) => {
       console.log("subscribe:wallet", walletUser, user)
       if (
-        user?.user?.walletAddress &&
-        walletUser?.addr &&
-        user?.user?.walletAddress !== walletUser?.addr
+        (user?.user?.walletAddress &&
+          walletUser?.addr &&
+          user?.user?.walletAddress !== walletUser?.addr) ||
+        (user?.user?.walletAddress === null && walletUser?.addr)
       ) {
+        toast({
+          title: "Wallet Sign-In Error",
+          description:
+            "Probably, this wallet already connected to another account. Please use another account or create new wallet",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        })
         signOut()
         return
       }
