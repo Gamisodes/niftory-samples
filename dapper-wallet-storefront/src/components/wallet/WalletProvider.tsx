@@ -49,12 +49,11 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
     fcl.currentUser.subscribe((walletUser) => {
-      console.log("subscribe:wallet", walletUser, user)
+      const walletFromUser = user?.user?.walletAddress
+      const walletFromBlockchain = walletUser?.addr
       if (
-        (user?.user?.walletAddress &&
-          walletUser?.addr &&
-          user?.user?.walletAddress !== walletUser?.addr) ||
-        (user?.user?.walletAddress === null && walletUser?.addr)
+        (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) ||
+        (walletFromUser === null && walletFromBlockchain)
       ) {
         toast({
           title: "Wallet Sign-In Error",
