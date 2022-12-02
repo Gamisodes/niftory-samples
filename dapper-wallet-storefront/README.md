@@ -33,6 +33,7 @@ Once your `.env` file is set up, you can run the app locally with:
 ```
 npm run install
 npm run dev
+make run-local
 ```
 
 For production environment you need `.env.production`

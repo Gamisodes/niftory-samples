@@ -23,19 +23,17 @@ export type WalletSetupProps = WalletSetupStepProps & {
 export function WalletSetup() {
   const router = useRouter()
   const { currentUser } = useWalletContext()
-  const [walletByAddressResponse, reExecuteQuery] = useWalletByAddressQuery({
-    variables: { address: currentUser?.addr },
-    pause: !currentUser?.addr,
-  })
+  const [{ data: walletData, error, fetching: walletFetching }, reExecuteQuery] =
+    useWalletByAddressQuery({
+      variables: { address: currentUser?.addr },
+      pause: !currentUser?.addr,
+    })
 
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [reExecuteQuery])
 
-  const { data: walletData, error, fetching: walletFetching } = walletByAddressResponse
-
   const wallet = currentUser?.addr && walletData?.walletByAddress
-
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {

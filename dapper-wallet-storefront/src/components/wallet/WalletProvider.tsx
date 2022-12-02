@@ -1,5 +1,6 @@
+import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
-import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
@@ -18,10 +19,11 @@ type WalletContextType = {
 export const WalletContext = createContext<WalletContextType>(null)
 
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
+  const { data: user } = useSession()
+  const toast = useToast()
+
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
-
-  const router = useRouter()
 
   const signIn = useCallback(async () => {
     setIsLoading(true)
@@ -34,7 +36,6 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.unauthenticate()
     setIsLoading(false)
   }, [])
-
   useEffect(() => {
     fcl
       .config({
@@ -47,19 +48,39 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
-    fcl.currentUser.subscribe((user) => setCurrentUser(user))
-  }, [])
+    fcl.currentUser.subscribe((walletUser) => {
+      const walletFromUser = user?.user?.walletAddress
+      const walletFromBlockchain = walletUser?.addr
+      if (
+        (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) ||
+        (walletFromUser === null && walletFromBlockchain)
+      ) {
+        toast({
+          title: "Wallet Sign-In Error",
+          description:
+            "Probably, this wallet already connected to another account. Please use another account or create new wallet",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        })
+        signOut()
+        return
+      }
+      setCurrentUser(walletUser)
+    })
+  }, [user?.user?.email])
 
-  useEffect(() => {
-    if (!requireWallet || isLoading || !currentUser) {
-      return
-    }
+  // const router = useRouter()
+  // useEffect(() => {
+  //   if (!requireWallet || isLoading || !currentUser) {
+  //     return
+  //   }
 
-    if (!currentUser?.loggedIn) {
-      router.push("/app/sign-in")
-      return
-    }
-  }, [requireWallet, isLoading, currentUser, router])
+  //   if (currentUser && !currentUser?.loggedIn) {
+  //     router.push("/app/account")
+  //     return
+  //   }
+  // }, [requireWallet, isLoading, currentUser, router])
 
   return (
     <WalletContext.Provider value={{ currentUser, isLoading, signIn, signOut }}>

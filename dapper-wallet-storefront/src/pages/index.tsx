@@ -7,7 +7,6 @@ import { Hero } from "../ui/Hero"
 
 const HomePage = () => {
   const router = useRouter()
-
   return (
     <AppLayout>
       <Hero

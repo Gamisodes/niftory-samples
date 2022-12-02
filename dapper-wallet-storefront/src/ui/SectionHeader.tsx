@@ -1,8 +1,8 @@
-import { Center, Heading, HeadingProps } from '@chakra-ui/react';
-import React from 'react';
+import { Center, Heading, HeadingProps } from "@chakra-ui/react"
+import React from "react"
 
 export interface SectionHeaderProps extends HeadingProps {
-  text: string
+  text: JSX.Element | string
 }
 
 export const SectionHeader = (props: SectionHeaderProps) => {
