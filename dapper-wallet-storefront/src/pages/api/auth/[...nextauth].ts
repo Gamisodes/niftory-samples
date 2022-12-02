@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           name: session?.user?.name,
           image: session?.user?.image,
           email: session?.user?.email,
-          walletAddress: userFromDB.wallet.address,
+          walletAddress: userFromDB?.wallet?.address ?? null,
         },
         expires: session?.expires,
       }
