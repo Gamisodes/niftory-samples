@@ -8,11 +8,6 @@ export default function Document() {
         <Main />
         <NextScript />
       </body>
-      {/* <script
-        async
-        type="text/javascript"
-        src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=WbaT6T"
-      ></script> */}
     </Html>
   )
 }
