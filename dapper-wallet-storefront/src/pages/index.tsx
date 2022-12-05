@@ -1,7 +1,6 @@
 import { Button } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import React from "react"
-import EmailSubscription from "src/components/email_subscribtion"
 
 import AppLayout from "../components/AppLayout"
 import { Hero } from "../ui/Hero"
@@ -19,7 +18,6 @@ const HomePage = () => {
           </Button>
         }
       />
-      <EmailSubscription />
     </AppLayout>
   )
 }
