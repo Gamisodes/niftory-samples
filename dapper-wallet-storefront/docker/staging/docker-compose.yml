@@ -6,5 +6,6 @@ services:
       context: ../../
       dockerfile: docker/staging/Dockerfile
     image: with-docker-multi-env-staging
+    restart: on-failure
     ports:
       - "3000:3000"

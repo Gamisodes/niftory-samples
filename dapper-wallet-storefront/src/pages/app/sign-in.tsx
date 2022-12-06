@@ -3,6 +3,7 @@ import { BuiltInProviderType } from "next-auth/providers"
 import { ClientSafeProvider, getProviders, LiteralUnion, signIn } from "next-auth/react"
 
 import GoogleIcon from "src/icon/GoogleOAuth.svg"
+import prisma from "src/lib/prisma"
 import AppLayout from "../../components/AppLayout"
 import { SectionHeader } from "../../ui/SectionHeader"
 
@@ -36,6 +37,10 @@ const SignInPage = ({ providers }: ISignInPageProps) => {
 }
 export async function getServerSideProps() {
   const providers = await getProviders()
+  console.log("providers: ", providers)
+
+  console.log("count: ", await prisma.user.count())
+
   return {
     props: {
       providers,

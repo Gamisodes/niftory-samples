@@ -23,6 +23,7 @@ COPY . .
 # This will do the trick, use the corresponding env file for each environment.
 COPY .env.staging .env
 RUN npx prisma db push
+RUN npx prisma generate
 RUN npm run build
 
 # 3. Production image, copy all the files and run next
@@ -35,6 +36,7 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

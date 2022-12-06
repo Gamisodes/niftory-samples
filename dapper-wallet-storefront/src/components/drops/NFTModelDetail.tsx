@@ -1,4 +1,4 @@
-import { Button, Heading, Stack, Text } from "@chakra-ui/react"
+import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react"
 import * as React from "react"
 import * as fcl from "@onflow/fcl"
 import { useCallback, useState } from "react"
@@ -7,6 +7,7 @@ import { useWalletContext } from "../../hooks/useWalletContext"
 import { Gallery } from "../../ui/Content/Gallery/Gallery"
 import axios from "axios"
 import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 
 type NFTModelDetailProps = {
   id: string
@@ -37,6 +38,7 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
   const [checkoutStatusIndex, setCheckoutStatusIndex] = useState(0)
 
   const { currentUser } = useWalletContext()
+  const { data: authedUser } = useSession()
 
   const signTransaction = useCallback(async (transaction: string) => {
     const response = await axios.post("/api/signTransaction", { transaction })
@@ -120,7 +122,7 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
         p="8"
         borderRadius="4"
         minW={{ lg: "sm" }}
-        maxW={{ lg: "sm" }}
+        maxW={{ lg: "lg" }}
         justify="center"
         backgroundColor="gray.800"
       >
@@ -134,15 +136,29 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
           <Text color="page.text">{metadata.description}</Text>
           <Text color="page.text">{metadata.amount} Total Available </Text>
         </Stack>
-        <Button
-          isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
-          loadingText={checkoutStatusMessages[checkoutStatusIndex]}
-          onClick={handleCheckout}
-          my="auto"
-          p="8"
-        >
-          <Text>Checkout</Text>
-        </Button>
+        {authedUser?.user && currentUser?.addr ? (
+          <Button
+            isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
+            loadingText={checkoutStatusMessages[checkoutStatusIndex]}
+            onClick={handleCheckout}
+            my="auto"
+            p="8"
+          >
+            <Text>Checkout</Text>
+          </Button>
+        ) : authedUser?.user && !currentUser?.addr ? (
+          <Link href={"/app/account"}>
+            <Button my="auto" p="8">
+              To proceed checkout you need to sign into wallet
+            </Button>
+          </Link>
+        ) : (
+          <Link href={"/app/sign-in"}>
+            <Button my="auto" p="8">
+              To proceed checkout you need to sign into account
+            </Button>
+          </Link>
+        )}
       </Stack>
       <Gallery rootProps={{ overflow: "hidden", flex: "1" }} content={metadata.content} />
     </Stack>

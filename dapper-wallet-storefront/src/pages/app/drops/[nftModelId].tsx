@@ -37,5 +37,4 @@ const NFTModelDetailPage = () => {
   )
 }
 
-NFTModelDetailPage.requireWallet = true
 export default NFTModelDetailPage
