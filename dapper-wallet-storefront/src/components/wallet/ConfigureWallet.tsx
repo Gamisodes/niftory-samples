@@ -1,8 +1,7 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 
-import { useFlowAccountConfiguration as useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
+import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
 import { WalletSetupBox } from "./WalletSetupBox"
 
 export type ConfigureWalletProps = {

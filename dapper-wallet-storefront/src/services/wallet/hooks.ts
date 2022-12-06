@@ -1,3 +1,4 @@
+import { CompositeSignature } from "@onflow/fcl"
 import { useMutation } from "@tanstack/react-query"
 import { WalletRequest } from "./request"
 
@@ -30,4 +31,22 @@ export function useSendRegisterWalletQuery() {
   return useMutation<ISuccessResponseFromRegisterWallet, IErrorsResponseFromRegisterWallet, void>(
     () => WalletRequest.postRegisterWallet()
   )
+}
+interface ISuccessResponseFromVerifyWallet {
+  data: unknown
+  success: boolean
+}
+interface IErrorsResponseFromVerifyWallet {
+  errors: string[]
+  success: boolean
+}
+interface IVerifyWalletData {
+  signature: CompositeSignature[]
+}
+export function useSendVerifyWalletQuery() {
+  return useMutation<
+    ISuccessResponseFromVerifyWallet,
+    IErrorsResponseFromVerifyWallet,
+    IVerifyWalletData
+  >((props) => WalletRequest.postVerifyWallet(props))
 }
