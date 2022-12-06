@@ -1,29 +1,27 @@
-import { useEffect, useState } from "react"
-import axios from "axios"
+import { useEffect } from "react"
 
-import { WalletSetupBox } from "./WalletSetupBox"
+import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
 import { useWalletContext } from "../../hooks/useWalletContext"
+import { WalletSetupBox } from "./WalletSetupBox"
 
 type RegisterWalletProps = {
   mutateCache: () => void
 }
 
 export function RegisterWallet({ mutateCache }: RegisterWalletProps) {
-  const [registering, setRegistering] = useState<boolean>(false)
   const { currentUser, signIn, isLoading: walletContextLoading } = useWalletContext()
-
+  const { mutate, isSuccess, error, isLoading } = useSendRegisterWalletQuery()
   // When the user logs in, register their wallet
   useEffect(() => {
     if (walletContextLoading || !currentUser?.addr) {
       return
     }
+    mutate()
+  }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
 
-    setRegistering(true)
-    axios
-      .post("/api/registerWallet")
-      .then(mutateCache)
-      .finally(() => setRegistering(false))
-  }, [currentUser?.addr, currentUser?.loggedIn, registering, walletContextLoading, mutateCache])
+  useEffect(() => {
+    if (isSuccess) mutateCache()
+  }, [isSuccess])
 
   return (
     <WalletSetupBox
@@ -32,7 +30,8 @@ export function RegisterWallet({ mutateCache }: RegisterWalletProps) {
       }
       buttonText="Link or create your wallet"
       onClick={signIn}
-      isLoading={registering}
+      isLoading={isLoading}
+      error={(error?.errors![0] as unknown as Error) ?? null}
     />
   )
 }

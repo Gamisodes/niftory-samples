@@ -12,21 +12,30 @@ import prisma from "src/lib/prisma"
 const handler: NextApiHandler = async (req, res) => {
   const backendGQLClient = await getBackendGraphQLClient()
   if (req.method !== "POST") {
-    res.status(405).send("Method not allowed, this endpoint only supports POST")
+    res.status(405).json({
+      errors: ["Method not allowed, this endpoint only supports POST"],
+      success: false,
+    })
     return
   }
 
   const session = await getSession({ req })
 
   if (!session || !session.user.email) {
-    res.status(401).send("Must be signed in to application register a wallet.")
+    res.status(401).json({
+      errors: ["Must be signed in to application register a wallet."],
+      success: false,
+    })
     return
   }
   const email = session.user.email
 
   const address: string = getAddressFromCookie(req, res)
   if (!address) {
-    res.status(401).send("Must consist a wallet to register it.")
+    res.status(401).json({
+      errors: ["Must consist a wallet to register it."],
+      success: false,
+    })
     return
   }
 
@@ -47,9 +56,15 @@ const handler: NextApiHandler = async (req, res) => {
         },
       })
 
-    res.status(200).json(response)
+    res.status(200).json({
+      data: response,
+      success: true,
+    })
   } catch (error) {
-    res.status(500).json(error)
+    res.status(500).json({
+      error: [error],
+      success: false,
+    })
   }
 }
 

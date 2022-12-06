@@ -18,3 +18,16 @@ export function useSendReadyWalletQuery() {
     WalletRequest.postReadyWallet()
   )
 }
+interface ISuccessResponseFromRegisterWallet {
+  data: unknown
+  success: boolean
+}
+interface IErrorsResponseFromRegisterWallet {
+  errors: string[]
+  success: boolean
+}
+export function useSendRegisterWalletQuery() {
+  return useMutation<ISuccessResponseFromRegisterWallet, IErrorsResponseFromRegisterWallet, void>(
+    () => WalletRequest.postRegisterWallet()
+  )
+}
