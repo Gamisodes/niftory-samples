@@ -1,7 +1,7 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 
-import { useFlowAccountConfiguration as useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
+import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
 import { WalletSetupBox } from "./WalletSetupBox"
 
 export type ConfigureWalletProps = {
@@ -10,9 +10,7 @@ export type ConfigureWalletProps = {
 }
 
 export function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
-  const [readying, setReadying] = useState(false)
-  const [error, setError] = useState<unknown>(null)
-
+  const { mutate, isLoading: readying, isSuccess, error } = useSendReadyWalletQuery()
   const {
     configured,
     configure,
@@ -24,15 +22,12 @@ export function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
     if (!configured) {
       return
     }
+    mutate()
+  }, [configured])
 
-    setReadying(true)
-    axios
-      .post("/api/readyWallet")
-      .then(mutateCache)
-      .catch((err) => setError(err))
-      .finally(() => setReadying(false))
-  }, [mutateCache, configured])
-
+  useEffect(() => {
+    if (isSuccess) mutateCache()
+  }, [isSuccess])
   const isLoading = isFlowAccountConfigurationLoading || readying
 
   return (
@@ -43,7 +38,7 @@ export function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
       buttonText="Configure wallet"
       onClick={configure}
       isLoading={isLoading}
-      error={error as Error}
+      error={(error?.errors![0] as unknown as Error) ?? null}
     />
   )
 }

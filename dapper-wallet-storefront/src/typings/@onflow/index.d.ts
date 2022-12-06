@@ -161,7 +161,7 @@ declare module "@onflow/fcl" {
   type ArgumentFunction = (arg: function, t: FType) => Array<Arg>
 
   /** https://github.com/onflow/fcl-js/blob/master/packages/fcl/src/wallet-provider-spec/draft-v2.md#compositesignature */
-  type CompositeSignature = {
+  export type CompositeSignature = {
     addr: string
     keyId: number
     signature: string
