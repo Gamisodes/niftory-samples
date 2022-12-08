@@ -24,16 +24,15 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
-
   const signIn = useCallback(async () => {
     setIsLoading(true)
-    fcl.logIn()
+    await fcl.logIn()
     setIsLoading(false)
   }, [])
 
   const signOut = useCallback(async () => {
     setIsLoading(true)
-    fcl.unauthenticate()
+    await fcl.unauthenticate()
     setIsLoading(false)
   }, [])
   useEffect(() => {
@@ -51,11 +50,8 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.currentUser.subscribe((walletUser) => {
       const walletFromUser = user?.user?.walletAddress
       const walletFromBlockchain = walletUser?.addr
-      console.info({ walletFromBlockchain, walletFromUser })
-      if (
-        (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) ||
-        (walletFromUser === null && walletFromBlockchain)
-      ) {
+      console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
+      if (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) {
         toast({
           title: "Wallet Sign-In Error",
           description:
@@ -67,7 +63,8 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
         signOut()
         return
       }
-      setCurrentUser(walletUser)
+      //Till we receive from our backend information about current user - we skip setting user instance
+      if (typeof walletFromUser !== "undefined") setCurrentUser(walletUser)
     })
   }, [user?.user?.email])
 
