@@ -37,10 +37,6 @@ const SignInPage = ({ providers }: ISignInPageProps) => {
 }
 export async function getServerSideProps() {
   const providers = await getProviders()
-  console.log("providers: ", providers)
-
-  console.log("count: ", await prisma.user.count())
-
   return {
     props: {
       providers,
