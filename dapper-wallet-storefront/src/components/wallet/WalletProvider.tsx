@@ -51,6 +51,7 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.currentUser.subscribe((walletUser) => {
       const walletFromUser = user?.user?.walletAddress
       const walletFromBlockchain = walletUser?.addr
+      console.info({ walletFromBlockchain, walletFromUser })
       if (
         (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) ||
         (walletFromUser === null && walletFromBlockchain)
