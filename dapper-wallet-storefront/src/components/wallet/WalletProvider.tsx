@@ -2,6 +2,7 @@ import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
 import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
+import { useCheckWalletOwnerQuery } from "src/services/wallet/hooks"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
 type WalletComponentProps = {
@@ -21,6 +22,7 @@ export const WalletContext = createContext<WalletContextType>(null)
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
   const { data: user } = useSession()
   const toast = useToast()
+  const { mutate, data, isSuccess } = useCheckWalletOwnerQuery()
 
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +37,19 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     await fcl.unauthenticate()
     setIsLoading(false)
   }, [])
+
+  const leaveSignOutWithMessage = useCallback(() => {
+    toast({
+      title: "Wallet Sign-In Error",
+      description:
+        "Probably, this wallet already connected to another account. Please use another account or create new wallet",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    })
+    signOut()
+  }, [])
+
   useEffect(() => {
     fcl
       .config({
@@ -44,7 +59,6 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       .put("accessNode.api", process.env.NEXT_PUBLIC_FLOW_ACCESS_API) // connect to Flow
       .put("discovery.wallet", process.env.NEXT_PUBLIC_WALLET_API)
       .put("fcl.storage", fclCookieStorage)
-
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
     fcl.currentUser.subscribe((walletUser) => {
@@ -52,21 +66,24 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       const walletFromBlockchain = walletUser?.addr
       console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
       if (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) {
-        toast({
-          title: "Wallet Sign-In Error",
-          description:
-            "Probably, this wallet already connected to another account. Please use another account or create new wallet",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        })
-        signOut()
+        leaveSignOutWithMessage()
         return
       }
       //Till we receive from our backend information about current user - we skip setting user instance
-      if (typeof walletFromUser !== "undefined") setCurrentUser(walletUser)
+      if (typeof walletFromUser !== "undefined") {
+        setCurrentUser(walletUser)
+        if (user?.user?.email && walletFromBlockchain)
+          mutate({ ourEmail: user?.user?.email, loggedWithAddress: walletFromBlockchain })
+      }
     })
   }, [user?.user?.email])
+
+  //protector. If backend says that our wallet connected to another user - drop session
+  useEffect(() => {
+    if (isSuccess && !data.mine) {
+      leaveSignOutWithMessage()
+    }
+  }, [isSuccess])
 
   // const router = useRouter()
   // useEffect(() => {

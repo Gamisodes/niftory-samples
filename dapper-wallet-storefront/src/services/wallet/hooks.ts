@@ -50,3 +50,27 @@ export function useSendVerifyWalletQuery() {
     IVerifyWalletData
   >((props) => WalletRequest.postVerifyWallet(props))
 }
+
+interface ISuccessResponseCheckWalletOwner {
+  mine: boolean
+  success: boolean
+}
+interface IErrorsResponseCheckWalletOwner {
+  errors: string[]
+  success: boolean
+}
+interface ICheckWalletOwnerData {
+  ourEmail: string
+  loggedWithAddress: string
+}
+/**
+ * To check if this account registered before. Return ``true`` - if this wallet registered by user. Return ``false`` - if this wallet registered by another person
+ * @returns
+ */
+export function useCheckWalletOwnerQuery() {
+  return useMutation<
+    ISuccessResponseCheckWalletOwner,
+    IErrorsResponseCheckWalletOwner,
+    ICheckWalletOwnerData
+  >((props) => WalletRequest.postCheckWalletOwner(props))
+}

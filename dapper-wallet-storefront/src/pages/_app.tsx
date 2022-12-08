@@ -50,15 +50,15 @@ const App = ({
   return (
     <SessionProvider session={session}>
       <ChakraProvider theme={theme}>
-        <WalletProvider requireWallet={Component.requireWallet}>
-          <GraphQLClientProvider>
-            <QueryClientProvider client={queryClient}>
-              <Hydrate state={dehydratedState}>
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={dehydratedState}>
+            <WalletProvider requireWallet={Component.requireWallet}>
+              <GraphQLClientProvider>
                 {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-              </Hydrate>
-            </QueryClientProvider>
-          </GraphQLClientProvider>
-        </WalletProvider>
+              </GraphQLClientProvider>
+            </WalletProvider>
+          </Hydrate>
+        </QueryClientProvider>
       </ChakraProvider>
     </SessionProvider>
   )
