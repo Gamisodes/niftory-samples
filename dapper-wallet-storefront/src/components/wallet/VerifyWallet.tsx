@@ -1,5 +1,5 @@
 import * as fcl from "@onflow/fcl"
-import { useCallback, useEffect } from "react"
+import { memo, useCallback, useEffect } from "react"
 import { useSendVerifyWalletQuery } from "src/services/wallet/hooks"
 import { WalletSetupBox } from "./WalletSetupBox"
 
@@ -8,7 +8,7 @@ export type VerifyWalletProps = {
   mutateCache: () => void
 }
 
-export function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
+function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
   const { mutate, error, isSuccess, isLoading } = useSendVerifyWalletQuery()
 
   // On click, prompt the user to sign the verification message
@@ -38,3 +38,5 @@ export function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProp
     />
   )
 }
+
+export default memo(VerifyWallet)

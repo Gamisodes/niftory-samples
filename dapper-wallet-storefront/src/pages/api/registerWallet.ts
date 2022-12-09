@@ -48,13 +48,21 @@ const handler: NextApiHandler = async (req, res) => {
       where: { email },
       include: { wallet: true },
     })
-    if (userInstance && !userInstance?.wallet)
+    if (userInstance && !userInstance?.wallet) {
+      const wallet = await prisma.wallet.findUnique({ where: { address } })
+      if (wallet) {
+        res.status(500).json({
+          error: ["This wallet exist"],
+          success: false,
+        })
+      }
       await prisma.wallet.create({
         data: {
           address,
           user: { connect: { email } },
         },
       })
+    }
 
     res.status(200).json({
       data: response,

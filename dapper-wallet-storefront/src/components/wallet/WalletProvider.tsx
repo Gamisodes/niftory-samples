@@ -22,7 +22,7 @@ export const WalletContext = createContext<WalletContextType>(null)
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
   const { data: user } = useSession()
   const toast = useToast()
-  const { mutate, mutateAsync, data, isSuccess } = useCheckWalletOwnerQuery()
+  const { mutate, data, isSuccess } = useCheckWalletOwnerQuery()
 
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)

@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { memo, useEffect, useRef } from "react"
 
 import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
 import { useWalletContext } from "../../hooks/useWalletContext"
@@ -8,14 +8,18 @@ type RegisterWalletProps = {
   mutateCache: () => void
 }
 
-export function RegisterWallet({ mutateCache }: RegisterWalletProps) {
+function RegisterWallet({ mutateCache }: RegisterWalletProps) {
   const { currentUser, signIn, isLoading: walletContextLoading } = useWalletContext()
   const { mutate, isSuccess, error, isLoading } = useSendRegisterWalletQuery()
+  const ref = useRef(null)
+
   // When the user logs in, register their wallet
   useEffect(() => {
     if (walletContextLoading || !currentUser?.addr) {
       return
     }
+    if (ref.current === true) return
+    ref.current = currentUser.loggedIn
     mutate()
   }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
 
@@ -35,3 +39,4 @@ export function RegisterWallet({ mutateCache }: RegisterWalletProps) {
     />
   )
 }
+export default memo(RegisterWallet)

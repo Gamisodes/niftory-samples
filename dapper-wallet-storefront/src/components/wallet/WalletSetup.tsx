@@ -4,9 +4,9 @@ import { useCallback } from "react"
 
 import { useWalletByAddressQuery, Wallet, WalletState } from "../../../generated/graphql"
 import { useWalletContext } from "../../hooks/useWalletContext"
-import { ConfigureWallet } from "./ConfigureWallet"
-import { RegisterWallet } from "./RegisterWallet"
-import { VerifyWallet } from "./VerifyWallet"
+import ConfigureWallet from "./ConfigureWallet"
+import RegisterWallet from "./RegisterWallet"
+import VerifyWallet from "./VerifyWallet"
 import { WalletSetupBox } from "./WalletSetupBox"
 
 export type WalletSetupStepProps = {
@@ -31,7 +31,7 @@ export function WalletSetup() {
 
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
-  }, [reExecuteQuery])
+  }, [])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
   if (!error && !walletFetching) {

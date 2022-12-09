@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { memo, useEffect } from "react"
 import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 
 import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
@@ -9,7 +9,7 @@ export type ConfigureWalletProps = {
   mutateCache: () => void
 }
 
-export function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
+function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
   const { mutate, isLoading: readying, isSuccess, error } = useSendReadyWalletQuery()
   const {
     configured,
@@ -42,3 +42,5 @@ export function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
     />
   )
 }
+
+export default memo(ConfigureWallet)
