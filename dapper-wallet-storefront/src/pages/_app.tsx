@@ -12,6 +12,7 @@ import { Session } from "next-auth"
 import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
 import { useState } from "react"
+import { GoogleAnalytics } from "nextjs-google-analytics"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -48,19 +49,22 @@ const App = ({
     null
 
   return (
-    <SessionProvider session={session}>
-      <ChakraProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <Hydrate state={dehydratedState}>
-            <WalletProvider requireWallet={Component.requireWallet}>
-              <GraphQLClientProvider>
-                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-              </GraphQLClientProvider>
-            </WalletProvider>
-          </Hydrate>
-        </QueryClientProvider>
-      </ChakraProvider>
-    </SessionProvider>
+    <>
+      <SessionProvider session={session}>
+        <ChakraProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={dehydratedState}>
+              <WalletProvider requireWallet={Component.requireWallet}>
+                <GraphQLClientProvider>
+                  {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+                </GraphQLClientProvider>
+              </WalletProvider>
+            </Hydrate>
+          </QueryClientProvider>
+        </ChakraProvider>
+      </SessionProvider>
+      <GoogleAnalytics trackPageViews />
+    </>
   )
 }
 
