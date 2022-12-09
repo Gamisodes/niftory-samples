@@ -22,7 +22,7 @@ export const WalletContext = createContext<WalletContextType>(null)
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
   const { data: user } = useSession()
   const toast = useToast()
-  const { mutate, data, isSuccess } = useCheckWalletOwnerQuery()
+  const { mutate, mutateAsync, data, isSuccess } = useCheckWalletOwnerQuery()
 
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -80,10 +80,9 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
   //protector. If backend says that our wallet connected to another user - drop session
   useEffect(() => {
-    if (isSuccess && !data.mine) {
-      leaveSignOutWithMessage()
-    }
-  }, [isSuccess])
+    console.info("Protector Data: ", data)
+    if (isSuccess && data?.shouldLogout) leaveSignOutWithMessage()
+  }, [isSuccess, data])
 
   // const router = useRouter()
   // useEffect(() => {

@@ -52,7 +52,7 @@ export function useSendVerifyWalletQuery() {
 }
 
 interface ISuccessResponseCheckWalletOwner {
-  mine: boolean
+  shouldLogout: boolean
   success: boolean
 }
 interface IErrorsResponseCheckWalletOwner {
