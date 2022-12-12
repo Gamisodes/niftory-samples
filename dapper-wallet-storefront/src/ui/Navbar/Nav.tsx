@@ -1,4 +1,3 @@
-import { Center, Heading, Tag } from "@chakra-ui/react"
 import * as React from "react"
 
 import NavbarBase from "./NavbarBase"
@@ -23,41 +22,15 @@ export const Navbar = () => {
       [
         {
           title: "Privacy Policy",
-          href: "/app/drops",
+          href: "/app/privacy",
         },
         {
           title: "Terms",
-          href: "/app/collection",
+          href: "/app/terms",
         },
       ],
     ]
   }, [])
-  const additionalItems = React.useMemo(() => {
-    return [
-      {
-        title: "Privacy Policy",
-        href: "/app/drops",
-      },
-      {
-        title: "Terms",
-        href: "/app/collection",
-      },
-    ]
-  }, [])
-  return (
-    <NavbarBase
-      // leftComponent={
-      //   <>
-      //     <Heading color="white">NFT Storefront Demo</Heading>
-      //     <Center pt="1px">
-      //       <Tag size="sm" variant="outline">
-      //         BETA
-      //       </Tag>
-      //     </Center>
-      //   </>
-      // }
-      menu={menuItems}
-      // additionalLinks={additionalItems}
-    />
-  )
+
+  return <NavbarBase menu={menuItems} />
 }

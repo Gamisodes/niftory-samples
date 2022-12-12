@@ -1,64 +1,20 @@
-import { BackgroundProps, Box, Flex, Stack, VisuallyHidden } from "@chakra-ui/react"
-import Link from "next/link"
-import React, { memo } from "react"
-import Logo from "src/icon/Logo.svg"
 import classnames from "classnames"
-import { IMenuItem, NavContent } from "./NavContent"
-import { useState } from "react"
-import { useCallback } from "react"
+import Link from "next/link"
+import React, { memo, useCallback, useState } from "react"
+import Logo from "src/icon/Logo.svg"
+import ActiveLink from "./ActiveLink"
+import { IMenuItem } from "./NavContent"
 
 interface Props extends React.PropsWithChildren {
-  useApi?: boolean
-  background?: BackgroundProps["bg"]
-  leftComponent?: React.ReactNode
   menu?: IMenuItem[][]
   homeUrl?: string
-  // additionalLinks?: IMenuItem[]
 }
 
-// export const NavbarBase: React.FunctionComponent<Props> = ({
-//   background = "navbar.background",
-//   leftComponent,
-//   menu,
-//   homeUrl = "/",
-// }) => {
-//   return (
-//     <Box left="0" top="0" minHeight="1em" width="100%" position="fixed" zIndex="999">
-//       <Box as="header" height="16" bg={background} position="relative">
-//         <Box height="100%" mx="auto" pe={{ base: "5", md: "0" }}>
-//           <Flex
-//             as="nav"
-//             aria-label="Site navigation"
-//             align="center"
-//             justify="space-between"
-//             height="100%"
-//           >
-//             <Link href={homeUrl} passHref legacyBehavior>
-//               <Box as="a" rel="home" ml={{ base: "none", sm: "10", md: "20" }}>
-//                 <Stack direction="row">
-//                   <VisuallyHidden>niftory</VisuallyHidden>
-//                   {leftComponent}
-//                 </Stack>
-//               </Box>
-//             </Link>
-//             {/* <NavContent.Desktop display={{ base: "none", lg: "flex" }} mr="20" menu={menu} />
-//             <NavContent.Mobile
-//               display={{ base: "flex", lg: "none" }}
-//               mr={{ base: "0", sm: "5", md: "10" }}
-//               menu={menu}
-//             /> */}
-//           </Flex>
-//         </Box>
-//       </Box>
-//     </Box>
-//   )
-// }
-
-const Burger = () => {
-  const [isOpen, setOpen] = useState(false)
-  const onClick = useCallback(() => {
-    setOpen((prev) => !prev)
-  }, [])
+interface IBurgerProps {
+  onClick: () => void
+  isOpen: boolean
+}
+const Burger = ({ onClick, isOpen }: IBurgerProps) => {
   return (
     <div className="flex lg:hidden h-[22px]" onClick={onClick}>
       <div className="relative w-[22px]">
@@ -95,30 +51,47 @@ const Burger = () => {
 }
 
 function NavbarBase({
-  background = "navbar.background",
-  leftComponent,
   menu,
   homeUrl = "/",
   children,
 }: // additionalLinks,
 Props) {
+  const [isOpen, setOpen] = useState(false)
+
+  const onClick = useCallback(() => {
+    setOpen((prev) => !prev)
+  }, [])
+
   return (
-    <header className="flex top-0 left-0 fixed w-full z-50 p-2 pl-4 bg-main text-base">
-      <section className="relative w-full gap-2 items-center grid grid-cols-[minmax(50px,122px)_1fr]">
-        <section className="flex items-center w-[50px]">
+    <header className="flex top-0 left-0 fixed w-full z-50  bg-main text-base">
+      <section className="relative w-full gap-2 items-center p-2 pl-4 grid grid-cols-[minmax(50px,122px)_1fr]">
+        <section className="flex items-center w-[50px] transform-gpu transition-transform lg:hover:scale-105">
           <Link href={homeUrl}>
             <Logo />
           </Link>
           {children}
         </section>
-        <section className="hidden lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)]">
+        <section
+          className={classnames(
+            "flex flex-col bg-main absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform ease-out",
+            {
+              "translate-y-0 lg:translate-y-0": isOpen,
+              "-translate-y-full lg:translate-y-0": !isOpen,
+            }
+          )}
+        >
           {menu.map((element) => {
             return (
-              <ul className="flex text-white uppercase space-x-12 justify-self-center">
+              <ul className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center  last:border-t-2 lg:last:border-t-0">
                 {element.map((item) => {
                   return (
-                    <li key={item.href}>
-                      <Link href={item.href}>{item.title}</Link>{" "}
+                    <li
+                      key={item.href}
+                      className="p-2 lg:p-0 lg:space-y-0 transform-gpu transition-transform lg:hover:scale-105"
+                    >
+                      <ActiveLink activeClassName="font-semibold" href={item.href}>
+                        {item.title}
+                      </ActiveLink>
                     </li>
                   )
                 })}
@@ -126,7 +99,9 @@ Props) {
             )
           })}
         </section>
-        {/* <Burger /> */}
+        <section className="flex lg:hidden ml-auto">
+          <Burger onClick={onClick} isOpen={isOpen} />
+        </section>
       </section>
     </header>
   )
