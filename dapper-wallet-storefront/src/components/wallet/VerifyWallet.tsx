@@ -25,7 +25,7 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
   useEffect(() => {
     if (isSuccess) mutateCache()
   }, [isSuccess])
-
+  console.log("error: ", error)
   return (
     <WalletSetupBox
       text={
@@ -34,7 +34,7 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
       buttonText="Verify wallet"
       onClick={onClick}
       isLoading={isLoading}
-      error={(error?.errors![0] as unknown as Error) ?? null}
+      error={(error as unknown as Error) ?? (error?.errors![0] as unknown as Error) ?? null}
     />
   )
 }

@@ -38,7 +38,7 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
       buttonText="Configure wallet"
       onClick={configure}
       isLoading={isLoading}
-      error={(error?.errors![0] as unknown as Error) ?? null}
+      error={(error as unknown as Error) ?? (error?.errors![0] as unknown as Error) ?? null}
     />
   )
 }
