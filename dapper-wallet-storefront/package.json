@@ -25,6 +25,7 @@
     "@urql/core": "^3.0.5",
     "@urql/exchange-retry": "^1.0.0",
     "axios": "^1.2.0",
+    "classnames": "^2.3.2",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
     "formik": "^2.2.9",
