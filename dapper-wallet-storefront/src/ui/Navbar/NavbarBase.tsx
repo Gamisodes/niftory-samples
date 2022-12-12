@@ -65,7 +65,7 @@ Props) {
   return (
     <header className="flex top-0 left-0 fixed w-full z-50  bg-main text-base">
       <section className="relative w-full gap-2 items-center p-2 pl-4 grid grid-cols-[minmax(50px,122px)_1fr]">
-        <section className="flex items-center w-[50px] transform-gpu transition-transform lg:hover:scale-105">
+        <section className="flex items-center w-[50px] transform-gpu transition-transform lg:transition-none lg:hover:scale-105">
           <Link href={homeUrl}>
             <Logo />
           </Link>
@@ -73,7 +73,7 @@ Props) {
         </section>
         <section
           className={classnames(
-            "flex flex-col bg-main absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform ease-out",
+            "flex flex-col bg-main absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
             {
               "translate-y-0 lg:translate-y-0": isOpen,
               "-translate-y-full lg:translate-y-0": !isOpen,
@@ -82,12 +82,12 @@ Props) {
         >
           {menu.map((element) => {
             return (
-              <ul className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center  last:border-t-2 lg:last:border-t-0">
+              <ul className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center last:border-t-2 lg:last:border-t-0">
                 {element.map((item) => {
                   return (
                     <li
                       key={item.href}
-                      className="p-2 lg:p-0 lg:space-y-0 transform-gpu transition-transform lg:hover:scale-105"
+                      className="p-2 lg:p-0 lg:space-y-0 transform-gpu transition-transform lg:transition-none lg:hover:scale-105"
                     >
                       <ActiveLink activeClassName="font-semibold" href={item.href}>
                         {item.title}
