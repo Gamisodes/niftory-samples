@@ -1,12 +1,12 @@
-import '@fontsource/roboto';
+import "@fontsource/roboto"
 
-import { extendTheme } from '@chakra-ui/react';
+import { extendTheme } from "@chakra-ui/react"
 
 const theme = extendTheme({
   fonts: {
-    title: "Roboto",
-    heading: "Roboto",
-    body: "Roboto",
+    title: "Dosis",
+    heading: "Dosis",
+    body: "Dosis",
   },
   colors: {
     brand: {
