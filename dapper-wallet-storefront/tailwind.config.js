@@ -8,6 +8,8 @@ module.exports = {
       },
       colors: {
         main: "#15318E",
+        purple: "#8B11B2",
+        "purple.hover": "#670d84",
       },
     },
   },

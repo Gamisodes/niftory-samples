@@ -64,7 +64,7 @@ Props) {
 
   return (
     <header className="flex top-0 left-0 fixed w-full z-50  bg-main text-base">
-      <section className="relative w-full gap-2 items-center p-2 pl-4 grid grid-cols-[minmax(50px,122px)_1fr] container mx-auto">
+      <section className="relative w-full gap-2 items-center p-2 px-4 grid grid-cols-[minmax(50px,122px)_1fr] container mx-auto">
         <section className="flex items-center w-[50px] transform-gpu transition-transform lg:transition-none lg:hover:scale-105">
           <Link href={homeUrl}>
             <Logo />
