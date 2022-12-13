@@ -1,5 +1,5 @@
 import * as fcl from "@onflow/fcl"
-import { memo, useCallback, useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { useSendVerifyWalletQuery } from "src/services/wallet/hooks"
 import { WalletSetupBox } from "./WalletSetupBox"
 
@@ -39,4 +39,4 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
   )
 }
 
-export default memo(VerifyWallet)
+export default VerifyWallet

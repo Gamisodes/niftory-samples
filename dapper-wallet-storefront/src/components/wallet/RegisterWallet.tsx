@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 
 import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
 import { useWalletContext } from "../../hooks/useWalletContext"
@@ -39,4 +39,4 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
     />
   )
 }
-export default memo(RegisterWallet)
+export default RegisterWallet

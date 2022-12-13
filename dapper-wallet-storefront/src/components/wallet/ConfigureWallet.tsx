@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react"
+import { useEffect } from "react"
 import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 
 import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
@@ -43,4 +43,4 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
   )
 }
 
-export default memo(ConfigureWallet)
+export default ConfigureWallet
