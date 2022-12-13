@@ -25,6 +25,7 @@
     "@urql/core": "^3.0.5",
     "@urql/exchange-retry": "^1.0.0",
     "axios": "^1.2.0",
+    "classnames": "^2.3.2",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.29.3",
     "formik": "^2.2.9",
@@ -40,7 +41,8 @@
     "react-icons": "^4.7.1",
     "rooks": "^7.4.2",
     "urql": "^3.0.3",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "zustand": "^4.1.5"
   },
   "devDependencies": {
     "@apollo/rover": "^0.10.0",

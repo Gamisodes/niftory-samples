@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/layout"
 
-import { Footer } from "../ui/Footer"
+import Footer from "../ui/Footer"
 import { Navbar } from "../ui/Navbar/Nav"
 import EmailSubscription from "src/components/email_subscribtion"
 
@@ -17,27 +17,7 @@ export default function AppLayout({ children }: Props) {
           {children}
         </Box>
       </Box>
-      <EmailSubscription />
-      <Footer
-        links={[
-          {
-            label: "Start Building @ niftory.com",
-            href: "https://niftory.com",
-          },
-          {
-            label: "Built on Flow",
-            href: "https://flow.com/",
-          },
-          {
-            label: "Terms of Service",
-            href: "https://admin.niftory.com/tos",
-          },
-          {
-            label: "Privacy Policy",
-            href: "https://admin.niftory.com/privacy",
-          },
-        ]}
-      />
+      <Footer />
     </Flex>
   )
 }
