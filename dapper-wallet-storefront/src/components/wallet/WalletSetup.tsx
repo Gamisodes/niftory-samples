@@ -28,17 +28,20 @@ export function WalletSetup() {
       variables: { address: currentUser?.addr },
       pause: !currentUser?.addr,
     })
-
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
+  console.log("wallet: ", wallet, " addr: ", currentUser?.addr, walletFetching, error)
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {
+      console.log("Register Wallet")
       return <RegisterWallet mutateCache={mutateCache} />
     }
+
+    console.log("Wallet Configure: ", wallet.state)
 
     switch (wallet.state) {
       case WalletState.Unverified:
