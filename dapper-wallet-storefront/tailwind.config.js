@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fontFamily: {
         dosis: ['"Dosis"', "sans-serif"],
+        bangers: ['"Bangers"', "cursive"],
       },
       colors: {
         main: "#15318E",
