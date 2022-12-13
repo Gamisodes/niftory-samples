@@ -17,7 +17,6 @@ export default function AppLayout({ children }: Props) {
           {children}
         </Box>
       </Box>
-      <EmailSubscription />
       <Footer />
     </Flex>
   )

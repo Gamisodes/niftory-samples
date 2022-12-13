@@ -1,10 +1,11 @@
-import { Box, Center, Flex, Wrap, WrapItem } from "@chakra-ui/react"
-import React, { memo } from "react"
 import Link from "next/link"
+import { memo } from "react"
 import Discord from "src/icon/Discord.svg"
 import Facebook from "src/icon/Facebook.svg"
-import Twitter from "src/icon/Twitter.svg"
 import Instagram from "src/icon/Instagram.svg"
+import Twitter from "src/icon/Twitter.svg"
+import EmailSubscription from "src/components/email_subscribtion"
+
 export interface IFooterLink {
   label?: string
   href?: string
@@ -55,9 +56,9 @@ const SOCIAL_MEDIA = [
 
 function Footer({}: IFooterProps) {
   return (
-    <footer className="flex text-white font-dosis">
-      <section className="flex container mx-auto">
-        <div>
+    <footer className="flex text-white font-dosis py-8">
+      <section className="flex container mx-auto justify-between">
+        <div className="social-media">
           <h6 className="text-xl font-normal mb-1">Join our community: </h6>
           <ul className="flex space-x-5">
             {SOCIAL_MEDIA.map(({ icon: Icon, href }, index) => (
@@ -68,6 +69,9 @@ function Footer({}: IFooterProps) {
               </li>
             ))}
           </ul>
+        </div>
+        <div className="text-black">
+          <EmailSubscription />
         </div>
       </section>
     </footer>
