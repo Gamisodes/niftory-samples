@@ -80,9 +80,12 @@ Props) {
             }
           )}
         >
-          {menu.map((element) => {
+          {menu.map((element, index) => {
             return (
-              <ul className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center last:border-t-2 lg:last:border-t-0">
+              <ul
+                key={index}
+                className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center last:border-t-2 lg:last:border-t-0"
+              >
                 {element.map((item) => {
                   return (
                     <li
