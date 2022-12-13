@@ -13,51 +13,29 @@ export interface IFooterLink {
 
 export interface IFooterProps {}
 
-// export const Footer: React.FunctionComponent<IFooterProps> = ({ links = [] }) => (
-//   <Box as="footer" bg="footer.background" color="footer.text" py="6" width="100%">
-//     <Center width="100%">
-//       <Flex
-//         direction={{ base: "column-reverse", lg: "row" }}
-//         justify="space-between"
-//         fontSize="sm"
-//         fontWeight="300"
-//         mx="15px"
-//       >
-//         <Wrap id="bottom" spacing={{ base: "4", md: "8", lg: "12" }} justify="center">
-//           {links.map((link, idx) => (
-//             <WrapItem key={idx}>
-//               <Link href={link.href}>{link.label}</Link>
-//             </WrapItem>
-//           ))}
-//         </Wrap>
-//       </Flex>
-//     </Center>
-//   </Box>
-// )
-
 const SOCIAL_MEDIA = [
   {
     href: "https://discord.com",
-    icon: Discord,
+    icon: () => <Discord />,
   },
   {
     href: "https://twitter.com",
-    icon: Twitter,
+    icon: () => <Twitter />,
   },
   {
     href: "https://www.facebook.com",
-    icon: Facebook,
+    icon: () => <Facebook />,
   },
   {
     href: "https://www.instagram.com",
-    icon: Instagram,
+    icon: () => <Instagram />,
   },
 ]
 
 function Footer({}: IFooterProps) {
   return (
-    <footer className="flex text-white font-dosis py-8">
-      <section className="flex container mx-auto justify-between">
+    <footer className="flex text-white font-dosis py-8 pb-3 p-2">
+      <section className="flex container mx-auto justify-center md:justify-between flex-wrap gap-5">
         <div className="social-media">
           <h6 className="text-xl font-normal mb-1">Join our community: </h6>
           <ul className="flex space-x-5">
@@ -70,7 +48,7 @@ function Footer({}: IFooterProps) {
             ))}
           </ul>
         </div>
-        <div className="text-black">
+        <div className="contact-form">
           <EmailSubscription />
         </div>
       </section>
