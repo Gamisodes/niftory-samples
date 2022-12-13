@@ -83,14 +83,14 @@ function EmailSubscription() {
                     <div className="flex flex-col">
                       <div className="flex border-2 border-gray-500 shadow-[3px_3px_0px_3px_#000000]">
                         <input
-                          className="shadow-xl max-w-sm w-full md:w-80 px-4 py-3 text-xl text-gray-500 border-2 border-gray-500"
+                          className="shadow-xl max-w-sm w-full md:w-80 py-1 px-2 sm:px-4 sm:py-3 text-base sm:text-xl text-gray-500 border-2 border-gray-500"
                           {...field}
                           type="email"
                           placeholder="Enter email"
                         />
                         <button
                           type="button"
-                          className="flex items-center justify-center py-2 px-5 uppercase text-2xl bg-purple hover:bg-purple.hover border-2 border-gray-500 shadow-xl"
+                          className="flex items-center justify-center py-1 px-2  sm:py-2 sm:px-5 uppercase text-base sm:text-2xl bg-purple hover:bg-purple.hover border-2 border-gray-500 shadow-xl"
                           onClick={() => {
                             if (props.errors.email || props.values.email.length === 0) return
                             openModal()
