@@ -2,19 +2,19 @@ import { authApi } from "../api/baseApi"
 
 interface IPostKlaviyoEmail {
   email: string
-  day: string
+  year: string
   month: string
 }
 
 export const KlaviyoRequest = {
-  async postKlaviyoEmail({ email, day, month }: IPostKlaviyoEmail) {
+  async postKlaviyoEmail({ email, year, month }: IPostKlaviyoEmail) {
     const body = {
       g: "Wugani",
-      $fields: "$first_name, $parent, Birthday Day, Birthday Month ,$source",
+      $fields: "$first_name, $parent, Birthday Year, Birthday Month ,$source",
       email: email ?? "",
       $first_name: "",
       $parrent: "",
-      "Birthday Day": day ?? "1",
+      "Birthday Year": year ?? "1",
       "Birthday Month": month ?? "January",
       $source: "Sign up form",
     }

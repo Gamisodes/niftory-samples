@@ -18,6 +18,6 @@ export function useSendEmailToKlaviyo() {
   return useMutation<
     ISuccessResponseFromKvyilo,
     IErrorsResponseFromKvyilo,
-    { email: string; day: string; month: string }
+    { email: string; year: string; month: string }
   >((props) => KlaviyoRequest.postKlaviyoEmail(props))
 }

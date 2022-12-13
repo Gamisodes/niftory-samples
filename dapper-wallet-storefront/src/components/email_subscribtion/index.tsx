@@ -4,19 +4,25 @@ import { memo, useCallback, useMemo, useState } from "react"
 import { useSendEmailToKlaviyo } from "src/services/klaviyo/hooks"
 import * as yup from "yup"
 import Modal from "./Modal"
+import Select from "./Select"
 const EmailSchema = yup.object({
   email: yup.string().email().required(),
-  day: yup.string().matches(new RegExp("^(0?[1-9]|[12][0-9]|3[01])$")).required(),
+  year: yup.string().required(),
   month: yup.string().required(),
 })
 
 interface IFormState {
   email: string
-  day: string
+  year: string
   month: string
 }
 
-const dateArray = Array(31).fill(1)
+const currentYear = new Date().getFullYear()
+const yearArray = Array(120)
+  .fill(1)
+  .map((_, index) => {
+    return String(currentYear - index)
+  })
 const monthList = [
   "January",
   "February",
@@ -51,6 +57,10 @@ function EmailSubscription() {
   const { mutateAsync } = useSendEmailToKlaviyo()
 
   const onSubmit = useCallback(async (values: IFormState, actions: FormikHelpers<IFormState>) => {
+    if (+values.year > currentYear - 18) {
+      actions.setFieldError("year", "You must be upper than 18")
+      return
+    }
     await mutateAsync(values)
     actions.setSubmitting(false)
     closeModal()
@@ -61,7 +71,7 @@ function EmailSubscription() {
       <section>
         <p className="text-xl font-normal mb-1">Stay up to date on the latest with Gamisodes</p>
         <Formik<IFormState>
-          initialValues={{ email: "", day: "", month: "" }}
+          initialValues={{ email: "", year: String(yearArray[0]), month: monthList[0] }}
           validationSchema={EmailSchema}
           onSubmit={onSubmit}
         >
@@ -79,6 +89,7 @@ function EmailSubscription() {
                           placeholder="Enter email"
                         />
                         <button
+                          type="button"
                           className="flex items-center justify-center py-2 px-5 uppercase text-2xl bg-purple hover:bg-purple.hover border-2 border-gray-500 shadow-xl"
                           onClick={() => {
                             if (props.errors.email || props.values.email.length === 0) return
@@ -103,45 +114,34 @@ function EmailSubscription() {
                   )}
                 </Field>
                 <Modal title="When’s your birthday?" closeModal={closeModal} isOpen={isOpen}>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Your payment has been successfully submitted. We’ve sent you an email with all
-                      of the details of your order.
-                    </p>
-                    <Field name="day">
-                      {({ field, form }) => (
+                  <div className="mt-2 space-y-2">
+                    <Field name="month">
+                      {({ form }) => (
                         <div>
-                          <label htmlFor="day">Day</label>
-                          <div>
-                            {/* <Select {...field} placeholder="Select day">
-                              {dateArray.map((val, index) => {
-                                const content = val * (index + 1)
-                                return (
-                                  <option key={content} value={String(content)}>
-                                    {content}
-                                  </option>
-                                )
-                              })}
-                            </Select> */}
-                          </div>
+                          <label htmlFor="month">Month</label>
+                          <Select name="month" list={monthList} />
+                          <section
+                            className={classNames("text-red-500 pt-2 h-4", {
+                              invisible: !(form.errors.month && form.touched.month),
+                            })}
+                          >
+                            {!form.errors.month && form.touched.month && <p>{form.errors.month}</p>}
+                          </section>
                         </div>
                       )}
                     </Field>
-                    <Field name="month">
-                      {({ field }) => (
+                    <Field name="year">
+                      {({ form }) => (
                         <div>
-                          <label htmlFor="month">Month</label>
-                          <div>
-                            {/* <Select placeholder="Select month" {...field}>
-                              {monthList.map((val) => {
-                                return (
-                                  <option key={val} value={val}>
-                                    {val}
-                                  </option>
-                                )
-                              })}
-                            </Select> */}
-                          </div>
+                          <label htmlFor="year">Year</label>
+                          <Select name="year" list={yearArray} />
+                          <section
+                            className={classNames("text-red-500 pt-2 h-4", {
+                              invisible: !(form.errors.year && form.touched.year),
+                            })}
+                          >
+                            {form.errors.year && form.touched.year && <p>{form.errors.year}</p>}
+                          </section>
                         </div>
                       )}
                     </Field>
