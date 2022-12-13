@@ -52,9 +52,9 @@ function ComponentSelect<T>({ name, list }: IComponentSelectProps<T>) {
           <Listbox.Button
             type="button"
             ref={setReferenceElement}
-            className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+            className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-pink-300 sm:text-sm"
           >
-            <span className="block truncate">{field.value}</span>
+            <span className="block truncate text-gray-900">{field.value}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <UpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
             </span>
@@ -75,8 +75,8 @@ function ComponentSelect<T>({ name, list }: IComponentSelectProps<T>) {
                 <Listbox.Option
                   key={Idx}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-amber-100 text-amber-900" : "text-gray-900"
+                    `relative cursor-default select-none py-2 pl-10 pr-4  ${
+                      active ? "bg-fuchsia-100 text-fuchsia-800" : "text-gray-900"
                     }`
                   }
                   value={element}
@@ -89,7 +89,7 @@ function ComponentSelect<T>({ name, list }: IComponentSelectProps<T>) {
                         {String(element)}
                       </span>
                       {selected ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-600">
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}

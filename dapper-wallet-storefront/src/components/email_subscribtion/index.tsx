@@ -114,15 +114,15 @@ function EmailSubscription() {
                   )}
                 </Field>
                 <Modal title="When’s your birthday?" closeModal={closeModal} isOpen={isOpen}>
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2">
                     <Field name="month">
                       {({ form }) => (
                         <div>
                           <label htmlFor="month">Month</label>
                           <Select name="month" list={monthList} />
                           <section
-                            className={classNames("text-red-500 pt-2 h-4", {
-                              invisible: !(form.errors.month && form.touched.month),
+                            className={classNames("text-white pt-2 h-8", {
+                              hidden: !(form.errors.month && form.touched.month),
                             })}
                           >
                             {!form.errors.month && form.touched.month && <p>{form.errors.month}</p>}
@@ -136,8 +136,8 @@ function EmailSubscription() {
                           <label htmlFor="year">Year</label>
                           <Select name="year" list={yearArray} />
                           <section
-                            className={classNames("text-red-500 pt-2 h-4", {
-                              invisible: !(form.errors.year && form.touched.year),
+                            className={classNames("text-white pt-2 h-8", {
+                              hidden: !(form.errors.year && form.touched.year),
                             })}
                           >
                             {form.errors.year && form.touched.year && <p>{form.errors.year}</p>}
