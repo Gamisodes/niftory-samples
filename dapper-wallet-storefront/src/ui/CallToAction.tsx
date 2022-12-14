@@ -20,7 +20,7 @@ export const CallToAction: React.FunctionComponent<IBannerCTAProps> = ({
 }) => {
   const router = useRouter()
   return (
-    <VStack as="section" bg="page.background" width="100%">
+    <VStack as="section" width="100%">
       <Center width="100%" pt="12">
         <Heading textAlign="center" as="h3" color="page.text">
           {contentBefore}

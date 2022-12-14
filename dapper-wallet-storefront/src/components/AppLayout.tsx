@@ -1,5 +1,3 @@
-import { Box, Flex } from "@chakra-ui/layout"
-
 import Footer from "../ui/Footer"
 import { Navbar } from "../ui/Navbar/Nav"
 
@@ -9,14 +7,12 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <Flex direction="column" minH="100vh" minW="320">
+    <main>
       <Navbar />
-      <Box bg="page.background" flexGrow={1}>
-        <Box w="100%" py="12">
-          {children}
-        </Box>
-      </Box>
+      <section className="pt-20 min-h-[calc(100vh-theme(space.20)-theme(space.16))] flex">
+        <div className="mx-auto container flex">{children}</div>
+      </section>
       <Footer />
-    </Flex>
+    </main>
   )
 }
