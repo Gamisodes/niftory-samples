@@ -19,8 +19,8 @@ export function useSendReadyWalletQuery() {
     WalletRequest.postReadyWallet()
   )
 }
-interface ISuccessResponseFromRegisterWallet {
-  data: unknown
+interface ISuccessResponseFromRegisterWallet<T = unknown> {
+  data: T
   success: boolean
 }
 interface IErrorsResponseFromRegisterWallet {
@@ -28,9 +28,11 @@ interface IErrorsResponseFromRegisterWallet {
   success: boolean
 }
 export function useSendRegisterWalletQuery() {
-  return useMutation<ISuccessResponseFromRegisterWallet, IErrorsResponseFromRegisterWallet, void>(
-    () => WalletRequest.postRegisterWallet()
-  )
+  return useMutation<
+    ISuccessResponseFromRegisterWallet<string>,
+    IErrorsResponseFromRegisterWallet,
+    void
+  >(() => WalletRequest.postRegisterWallet())
 }
 interface ISuccessResponseFromVerifyWallet {
   data: unknown

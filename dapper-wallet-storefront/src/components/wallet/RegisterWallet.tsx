@@ -1,4 +1,6 @@
+import { useSession } from "next-auth/react"
 import { useEffect, useRef } from "react"
+import gaAPI from "src/services/ga_events"
 
 import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
 import { useWalletContext } from "../../hooks/useWalletContext"
@@ -9,8 +11,9 @@ type RegisterWalletProps = {
 }
 
 function RegisterWallet({ mutateCache }: RegisterWalletProps) {
+  const { data: User } = useSession()
   const { currentUser, signIn, isLoading: walletContextLoading } = useWalletContext()
-  const { mutate, isSuccess, error, isLoading } = useSendRegisterWalletQuery()
+  const { mutate, isSuccess, error, isLoading, data } = useSendRegisterWalletQuery()
   const ref = useRef(null)
 
   // When the user logs in, register their wallet
@@ -24,7 +27,13 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
   }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
 
   useEffect(() => {
-    if (isSuccess) mutateCache()
+    if (isSuccess) {
+      mutateCache()
+      gaAPI.connect_dapper_wallet({
+        email: User?.user?.email ?? "",
+        wallet: data?.data ?? currentUser?.addr ?? "",
+      })
+    }
   }, [isSuccess])
 
   return (

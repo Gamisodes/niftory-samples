@@ -2,6 +2,8 @@ import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
 import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
+import { useDidUpdate } from "rooks"
+import gaAPI from "src/services/ga_events"
 import { useCheckWalletOwnerQuery } from "src/services/wallet/hooks"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
@@ -49,6 +51,10 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     })
     signOut()
   }, [])
+
+  useDidUpdate(() => {
+    if (user?.user?.email) gaAPI.connect_google_account({ email: user.user.email })
+  }, [user?.user?.email])
 
   useEffect(() => {
     fcl
