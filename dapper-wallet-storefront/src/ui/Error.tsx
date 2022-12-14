@@ -1,19 +1,12 @@
-import { Box, Button, Center, Stack, VStack } from '@chakra-ui/react';
-import { ErrorProps } from 'next/error';
-import Link from 'next/link';
+import { Box, Button, Center, Stack, VStack } from "@chakra-ui/react"
+import { ErrorProps } from "next/error"
+import Link from "next/link"
 
-import { SectionHeader } from './SectionHeader';
+import { SectionHeader } from "./SectionHeader"
 
 function Error({ statusCode }: ErrorProps) {
   return (
-    <Box
-      as="section"
-      bg="page.background"
-      bgSize="cover"
-      paddingTop="10%"
-      position="relative"
-      w="100%"
-    >
+    <Box as="section" bgSize="cover" paddingTop="10%" position="relative" w="100%">
       <VStack>
         <Center>
           <SectionHeader
