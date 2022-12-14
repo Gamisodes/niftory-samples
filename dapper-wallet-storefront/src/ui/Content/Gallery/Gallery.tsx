@@ -1,8 +1,14 @@
+import {
+  AspectRatio,
+  HStack,
+  Image,
+  Skeleton,
+  Stack,
+  StackProps,
+  useBreakpointValue,
+} from "@chakra-ui/react"
 import * as React from "react"
 
-import Image from "next/image"
-
-import classNames from "classnames"
 import { Carousel, CarouselSlide, useCarousel } from "./Carousel"
 
 interface GalleryProps {
@@ -13,27 +19,28 @@ interface GalleryProps {
     alt: string
   }[]
   aspectRatio?: number
+  rootProps?: StackProps
 }
 
-export const Gallery = ({ content }: GalleryProps) => {
+export const Gallery = (props: GalleryProps) => {
+  const { content, aspectRatio = 4 / 3, rootProps } = props
   const [index, setIndex] = React.useState(0)
   const [currentSlide, setCurrentSlide] = React.useState(0)
+  const slidesPerView = useBreakpointValue({ base: 3, md: 5 })
 
   const [ref] = useCarousel({
     slides: {
-      perView: 5,
-      spacing: 16,
+      perView: slidesPerView,
+      spacing: useBreakpointValue({ base: 16, md: 24 }),
     },
     slideChanged: (slider) => setCurrentSlide(slider.track.details.rel),
   })
-  console.log(content)
 
   return (
-    <div className="flex w-full flex-col gap-3 overflow-hidden">
-      <div className="flex relative">
-        {content[index].contentType?.includes("video") ? (
+    <Stack spacing="4" {...rootProps}>
+      {content[index].contentType?.includes("video") ? (
+        <AspectRatio ratio={aspectRatio} flex="1">
           <video
-            className="aspect-[4_/_3] object-cover w-full"
             style={{
               objectFit: "scale-down",
             }}
@@ -44,40 +51,39 @@ export const Gallery = ({ content }: GalleryProps) => {
             playsInline={true}
             autoPlay={true}
           />
-        ) : (
+        </AspectRatio>
+      ) : (
+        <AspectRatio ratio={aspectRatio} flex="1">
           <Image
-            className="aspect-square w-full object-cover"
             src={content[index].contentUrl}
-            width={300}
-            height={300}
-            placeholder="blur"
-            blurDataURL="/braintrain.png"
-            priority
+            objectFit="cover"
             alt={content[index].alt}
+            fallback={<Skeleton />}
           />
-        )}
-      </div>
-      <div className="flex">
-        <Carousel ref={ref} direction="row" width="lg">
+        </AspectRatio>
+      )}
+
+      <HStack spacing="4">
+        <Carousel ref={ref} direction="row" width="full">
           {content.map((media, i) => (
             <CarouselSlide key={i} onClick={() => setIndex(i)} cursor="pointer">
-              <div
-                className={classNames("hover:opacity-100 aspect-square transition-opacity", {
-                  "opacity-40": index !== i,
-                  "opacity-100": index === i,
-                })}
+              <AspectRatio
+                ratio={aspectRatio}
+                transition="all 200ms"
+                opacity={index === i ? 1 : 0.4}
+                _hover={{ opacity: 1 }}
               >
                 <Image
-                  className="aspect-square h-full object-cover"
                   src={media.thumbnailUrl}
-                  fill
+                  objectFit="cover"
                   alt={media.alt}
+                  fallback={<Skeleton />}
                 />
-              </div>
+              </AspectRatio>
             </CarouselSlide>
           ))}
         </Carousel>
-      </div>
-    </div>
+      </HStack>
+    </Stack>
   )
 }

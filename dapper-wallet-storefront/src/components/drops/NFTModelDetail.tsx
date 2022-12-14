@@ -117,8 +117,15 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
   }, [currentUser?.addr, id, router, signTransaction])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2">
-      <Stack p="8" borderRadius="4" minW={{ lg: "sm" }} maxW={{ lg: "lg" }} justify="center">
+    <Stack direction={{ base: "column-reverse", lg: "row" }}>
+      <Stack
+        p="8"
+        borderRadius="4"
+        minW={{ lg: "sm" }}
+        maxW={{ lg: "lg" }}
+        justify="center"
+        backgroundColor="gray.800"
+      >
         <Stack>
           <Stack>
             <Heading size="lg" fontWeight="medium" color="page.accent">
@@ -153,7 +160,7 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
           </Link>
         )}
       </Stack>
-      <Gallery content={metadata.content} />
-    </div>
+      <Gallery rootProps={{ overflow: "hidden", flex: "1" }} content={metadata.content} />
+    </Stack>
   )
 }
