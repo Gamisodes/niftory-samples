@@ -25,7 +25,7 @@ const AccountPage = () => {
 
   return (
     <AppLayout>
-      <VStack>
+      <VStack className="mx-auto">
         <SectionHeader
           text={
             <Wrap>

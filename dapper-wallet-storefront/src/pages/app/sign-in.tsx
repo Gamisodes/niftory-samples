@@ -14,7 +14,7 @@ interface ISignInPageProps {
 const SignInPage = ({ providers }: ISignInPageProps) => {
   return (
     <AppLayout>
-      <VStack>
+      <VStack className="mx-auto">
         <SectionHeader text="Sign-in to our app" />
         {Object.values(providers).map((provider) => (
           <Box key={provider.name}>
