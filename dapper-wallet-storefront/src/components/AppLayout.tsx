@@ -9,14 +9,19 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <Flex direction="column" minH="100vh" minW="320">
+    <main>
+      {/* <Flex direction="column" minH="100vh" minW="320"> */}
       <Navbar />
-      <Box bg="page.background" flexGrow={1}>
+      <section className="pt-20 min-h-[calc(100vh-theme(space.20))] flex">
+        <div className="mx-auto">{children}</div>
+      </section>
+      {/* <Box bg="page.background" flexGrow={1}>
         <Box w="100%" py="12">
           {children}
         </Box>
-      </Box>
+      </Box> */}
       <Footer />
-    </Flex>
+      {/* </Flex> */}
+    </main>
   )
 }
