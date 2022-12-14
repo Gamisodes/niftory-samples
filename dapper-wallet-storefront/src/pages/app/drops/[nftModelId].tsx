@@ -28,11 +28,11 @@ const NFTModelDetailPage = () => {
 
   return (
     <AppLayout>
-      {/* <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}> */}
-      <Box className="flex" maxW="7xl" mx="auto">
-        <NFTModelDetail id={nftModelId} metadata={metadata} />
-      </Box>
-      {/* </Skeleton> */}
+      <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
+        <Box className="flex" maxW="7xl" mx="auto">
+          <NFTModelDetail id={nftModelId} metadata={metadata} />
+        </Box>
+      </Skeleton>
     </AppLayout>
   )
 }
