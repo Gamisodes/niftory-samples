@@ -1,9 +1,9 @@
-import { Box, Heading, HStack, Spacer, Stack, Tag, Text } from '@chakra-ui/react';
-import * as React from 'react';
+import { Box, Heading, HStack, Spacer, Stack, Tag, Text } from "@chakra-ui/react"
+import * as React from "react"
 
-import { Nft } from '../../../generated/graphql';
-import { Subset } from '../../lib/types';
-import { Gallery } from '../../ui/Content/Gallery/Gallery';
+import { Nft } from "../../../generated/graphql"
+import { Subset } from "../../lib/types"
+import { Gallery } from "../../ui/Content/Gallery/Gallery"
 
 interface Props {
   nft: Subset<Nft>
@@ -58,9 +58,7 @@ export const NFTDetail = (props: Props) => {
             </HStack>
           </Stack>
         </Stack>
-        {product.content?.length > 0 && (
-          <Gallery rootProps={{ overflow: "hidden", flex: "1" }} content={product.content} />
-        )}
+        {product.content?.length > 0 && <Gallery content={product.content} />}
       </Stack>
     </Box>
   )
