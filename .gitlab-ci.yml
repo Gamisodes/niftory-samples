@@ -1,0 +1,36 @@
+stages:
+  - build-staging
+  - build-prod
+
+deploy-develop:
+  stage: build-staging
+  tags:
+    - staging.gamisodes.com
+  only:
+    - dev
+  script:
+    - cd /home/ubuntu/gamisodesnft
+    - pwd
+    - git checkout --force dev
+    - git reset --hard HEAD
+    - git pull origin dev
+    - docker image prune -f
+    - docker system prune -f
+    - docker-compose -f /home/ubuntu/gamisodesnft/dapper-wallet-storefront/docker/staging/docker-compose.yml up -d --build --force-recreate
+
+
+deploy-preprod:
+  stage: build-prod
+  tags:
+    - prod.gamisodes.com
+  script:
+    - cd /home/ubuntu/gamisodesnft
+    - pwd
+    - git checkout --force main
+    - git reset --hard HEAD
+    - git pull origin main
+    - docker image prune -f
+    - docker system prune -f
+
+  only:
+    - main
