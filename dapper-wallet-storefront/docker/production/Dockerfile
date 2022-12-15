@@ -2,6 +2,7 @@
 FROM node:18-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
+RUN apk add --update --no-cache openssl1.1-compat
 
 WORKDIR /app
 
@@ -22,7 +23,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # This will do the trick, use the corresponding env file for each environment.
 COPY .env.production .env
+RUN apk add --update --no-cache openssl1.1-compat
+
 RUN npx prisma db push
+RUN npx prisma generate
 RUN npm run build
 
 # 3. Production image, copy all the files and run next
@@ -35,6 +39,7 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
