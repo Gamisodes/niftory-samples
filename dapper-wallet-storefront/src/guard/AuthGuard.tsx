@@ -11,7 +11,7 @@ function AuthGuard({ children }: PropsWithChildren) {
   if (status === "loading") {
     return (
       <AppLayout>
-        <VStack>
+        <VStack className="mx-auto">
           <SectionHeader text="Loading..." />
         </VStack>
       </AppLayout>
@@ -21,7 +21,7 @@ function AuthGuard({ children }: PropsWithChildren) {
   if (status === "unauthenticated") {
     return (
       <AppLayout>
-        <VStack>
+        <VStack className="mx-auto">
           <SectionHeader text="Access Denied. You need to login to our app" />
           <Link href={"/app/sign-in"}>
             <Button>Sign in / Sign up</Button>
