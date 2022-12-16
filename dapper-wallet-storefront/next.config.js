@@ -7,7 +7,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "niftory-assets-prod.s3.amazonaws.com",
-        port: "",
         pathname: "/**",
       },
     ],
