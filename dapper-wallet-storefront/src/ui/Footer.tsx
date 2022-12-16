@@ -15,19 +15,19 @@ export interface IFooterProps {}
 
 const SOCIAL_MEDIA = [
   {
-    href: "https://discord.com",
+    href: "https://discord.com/invite/ZB4Mubkwrf",
     icon: () => <Discord />,
   },
   {
-    href: "https://twitter.com",
+    href: "https://twitter.com/PlayGamisodes",
     icon: () => <Twitter />,
   },
   {
-    href: "https://www.facebook.com",
+    href: "https://www.facebook.com/profile.php?id=100073143924225",
     icon: () => <Facebook />,
   },
   {
-    href: "https://www.instagram.com",
+    href: "https://www.instagram.com/gamisodes",
     icon: () => <Instagram />,
   },
 ]
@@ -41,7 +41,7 @@ function Footer({}: IFooterProps) {
           <ul className="flex space-x-5">
             {SOCIAL_MEDIA.map(({ icon: Icon, href }, index) => (
               <li key={href + index}>
-                <Link href={href}>
+                <Link href={href} target="_blank">
                   <Icon />
                 </Link>
               </li>
