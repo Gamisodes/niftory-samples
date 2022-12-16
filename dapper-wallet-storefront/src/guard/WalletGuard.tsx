@@ -10,7 +10,7 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (isLoading) {
     return (
       <AppLayout>
-        <VStack>
+        <VStack className="mx-auto">
           <SectionHeader text="Loading..." />
         </VStack>
       </AppLayout>
@@ -20,7 +20,7 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (currentUser && !currentUser.loggedIn) {
     return (
       <AppLayout>
-        <VStack>
+        <VStack className="mx-auto">
           <SectionHeader text="Access to Wallet functionality Denied" />
           <Link href={"/app/account"}>
             <Button>Sign in / Sign up</Button>
