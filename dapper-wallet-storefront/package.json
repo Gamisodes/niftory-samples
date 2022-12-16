@@ -42,6 +42,7 @@
     "react-icons": "^4.7.1",
     "react-popper": "^2.3.0",
     "rooks": "^7.4.2",
+    "sharp": "^0.31.2",
     "urql": "^3.0.3",
     "yup": "^0.32.11",
     "zustand": "^4.1.5"
