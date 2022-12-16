@@ -4,7 +4,7 @@ import * as React from "react"
 
 const DesktopNavLinkNormal = ({ href = "", ...props }: HTMLChakraProps<"a">) => {
   return (
-    <Link href={href} passHref>
+    <Link href={href} passHref legacyBehavior>
       <chakra.a
         fontWeight="700"
         display="flex"
@@ -25,7 +25,7 @@ const DesktopNavLinkNormal = ({ href = "", ...props }: HTMLChakraProps<"a">) => 
 
 const MobileNavLinkNormal = ({ href = "", ...props }: HTMLChakraProps<"a">) => {
   return (
-    <Link href={href} passHref>
+    <Link href={href} passHref legacyBehavior>
       <chakra.a
         display="block"
         textAlign="center"

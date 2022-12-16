@@ -1,6 +1,10 @@
+import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
-import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
+import { useDidUpdate } from "rooks"
+import gaAPI from "src/services/ga_events"
+import { useCheckWalletOwnerQuery } from "src/services/wallet/hooks"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
 type WalletComponentProps = {
@@ -18,22 +22,39 @@ type WalletContextType = {
 export const WalletContext = createContext<WalletContextType>(null)
 
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
+  const { data: user } = useSession()
+  const toast = useToast()
+  const { mutate, data, isSuccess } = useCheckWalletOwnerQuery()
+
   const [currentUser, setCurrentUser] = useState<fcl.CurrentUserObject>(null)
   const [isLoading, setIsLoading] = useState(false)
-
-  const router = useRouter()
-
   const signIn = useCallback(async () => {
     setIsLoading(true)
-    fcl.logIn()
+    await fcl.logIn()
     setIsLoading(false)
   }, [])
 
   const signOut = useCallback(async () => {
     setIsLoading(true)
-    fcl.unauthenticate()
+    await fcl.unauthenticate()
     setIsLoading(false)
   }, [])
+
+  const leaveSignOutWithMessage = useCallback(() => {
+    toast({
+      title: "Wallet Sign-In Error",
+      description:
+        "Probably, this wallet already connected to another account. Please use another account or create new wallet",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    })
+    signOut()
+  }, [])
+
+  useDidUpdate(() => {
+    if (user?.user?.email) gaAPI.connect_google_account({ email: user.user.email })
+  }, [user?.user?.email])
 
   useEffect(() => {
     fcl
@@ -44,22 +65,42 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       .put("accessNode.api", process.env.NEXT_PUBLIC_FLOW_ACCESS_API) // connect to Flow
       .put("discovery.wallet", process.env.NEXT_PUBLIC_WALLET_API)
       .put("fcl.storage", fclCookieStorage)
-
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
-    fcl.currentUser.subscribe((user) => setCurrentUser(user))
-  }, [])
+    fcl.currentUser.subscribe((walletUser) => {
+      const walletFromUser = user?.user?.walletAddress
+      const walletFromBlockchain = walletUser?.addr
+      console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
+      if (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) {
+        leaveSignOutWithMessage()
+        return
+      }
+      //Till we receive from our backend information about current user - we skip setting user instance
+      if (typeof walletFromUser !== "undefined") {
+        setCurrentUser(walletUser)
+        if (user?.user?.email && walletFromBlockchain)
+          mutate({ ourEmail: user?.user?.email, loggedWithAddress: walletFromBlockchain })
+      }
+    })
+  }, [user?.user?.email])
 
+  //protector. If backend says that our wallet connected to another user - drop session
   useEffect(() => {
-    if (!requireWallet || isLoading) {
-      return
-    }
+    console.info("Protector Data: ", data)
+    if (isSuccess && data?.shouldLogout) leaveSignOutWithMessage()
+  }, [isSuccess, data])
 
-    if (!currentUser?.loggedIn) {
-      router.push("/app/account")
-      return
-    }
-  }, [requireWallet, currentUser, router, isLoading, signOut])
+  // const router = useRouter()
+  // useEffect(() => {
+  //   if (!requireWallet || isLoading || !currentUser) {
+  //     return
+  //   }
+
+  //   if (currentUser && !currentUser?.loggedIn) {
+  //     router.push("/app/account")
+  //     return
+  //   }
+  // }, [requireWallet, isLoading, currentUser, router])
 
   return (
     <WalletContext.Provider value={{ currentUser, isLoading, signIn, signOut }}>

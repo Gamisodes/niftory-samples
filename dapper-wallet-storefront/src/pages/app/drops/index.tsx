@@ -1,19 +1,19 @@
 import { Box } from "@chakra-ui/react"
-import React from "react"
-import { useQuery } from "urql"
+import { useMemo } from "react"
 
-import { NftModelsDocument, NftModelsQuery } from "../../../../generated/graphql"
+import { useNftModelsQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { NFTModelsGrid } from "../../../components/drops/NFTModelsGrid"
 import { SectionHeader } from "../../../ui/SectionHeader"
 
 export const NFTModelsPage = () => {
-  const [result] = useQuery<NftModelsQuery>({
-    query: NftModelsDocument,
+  const [result] = useNftModelsQuery({
     variables: { appId: process.env.NEXT_PUBLIC_CLIENT_ID },
   })
 
-  const nftModels = result?.data?.nftModels?.items
+  const nftModels = useMemo(() => {
+    return result?.data?.nftModels?.items?.filter((val) => val) ?? []
+  }, [result?.data?.nftModels?.items, result.fetching])
 
   return (
     <AppLayout>

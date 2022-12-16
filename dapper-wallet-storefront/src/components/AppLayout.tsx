@@ -1,7 +1,5 @@
-import { Box, Flex } from '@chakra-ui/layout';
-
-import { Footer } from '../ui/Footer';
-import { Navbar } from '../ui/Navbar/Nav';
+import Footer from "../ui/Footer"
+import { Navbar } from "../ui/Navbar/Nav"
 
 type Props = {
   children: React.ReactNode
@@ -9,33 +7,12 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <Flex direction="column" minH="100vh" minW="320">
+    <main>
       <Navbar />
-      <Box bg="page.background" flexGrow={1}>
-        <Box w="100%" py="12">
-          {children}
-        </Box>
-      </Box>
-      <Footer
-        links={[
-          {
-            label: "Start Building @ niftory.com",
-            href: "https://niftory.com",
-          },
-          {
-            label: "Built on Flow",
-            href: "https://flow.com/",
-          },
-          {
-            label: "Terms of Service",
-            href: "https://admin.niftory.com/tos",
-          },
-          {
-            label: "Privacy Policy",
-            href: "https://admin.niftory.com/privacy",
-          },
-        ]}
-      />
-    </Flex>
+      <section className="pt-20 min-h-[calc(100vh-theme(space.20)-theme(space.16))] flex">
+        <div className="mx-auto container flex">{children}</div>
+      </section>
+      <Footer />
+    </main>
   )
 }

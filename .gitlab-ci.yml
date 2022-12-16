@@ -18,7 +18,6 @@ deploy-develop:
     - docker system prune -f
     - docker-compose -f /home/ubuntu/gamisodesnft/dapper-wallet-storefront/docker/staging/docker-compose.yml up -d --build --force-recreate
 
-
 deploy-preprod:
   stage: build-prod
   tags:
@@ -31,7 +30,7 @@ deploy-preprod:
     - git pull origin main
     - docker image prune -f
     - docker system prune -f
+    - docker-compose -f /home/ubuntu/gamisodesnft/dapper-wallet-storefront/docker/production/docker-compose.yml up -d --build --force-recreate
 
   only:
     - main
-

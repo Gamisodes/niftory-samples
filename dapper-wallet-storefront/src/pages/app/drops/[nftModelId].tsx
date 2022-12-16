@@ -1,9 +1,7 @@
 import { Box, Skeleton } from "@chakra-ui/react"
 import { useRouter } from "next/router"
-import React from "react"
-import { useQuery } from "urql"
 
-import { NftModelDocument, NftModelQuery } from "../../../../generated/graphql"
+import { useNftModelQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { NFTModelDetail } from "../../../components/drops/NFTModelDetail"
 
@@ -11,10 +9,7 @@ const NFTModelDetailPage = () => {
   const router = useRouter()
   const nftModelId = router.query["nftModelId"]?.toString()
 
-  const [nftModelResponse] = useQuery<NftModelQuery>({
-    query: NftModelDocument,
-    variables: { id: nftModelId },
-  })
+  const [nftModelResponse] = useNftModelQuery({ variables: { id: nftModelId } })
 
   const nftModel = nftModelResponse?.data?.nftModel
   const metadata = {
@@ -33,8 +28,8 @@ const NFTModelDetailPage = () => {
 
   return (
     <AppLayout>
-      <Skeleton isLoaded={!nftModelResponse.fetching}>
-        <Box maxW="7xl" mx="auto" mt="12">
+      <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
+        <Box className="flex" maxW="7xl" mx="auto">
           <NFTModelDetail id={nftModelId} metadata={metadata} />
         </Box>
       </Skeleton>
@@ -42,5 +37,4 @@ const NFTModelDetailPage = () => {
   )
 }
 
-NFTModelDetailPage.requireWallet = true
 export default NFTModelDetailPage

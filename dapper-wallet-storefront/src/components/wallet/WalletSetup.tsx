@@ -1,18 +1,12 @@
 import * as fcl from "@onflow/fcl"
 import { useRouter } from "next/router"
-import { useCallback, useEffect } from "react"
-import { useQuery } from "urql"
+import { useCallback } from "react"
 
-import {
-  WalletByAddressQuery,
-  WalletByAddressDocument,
-  Wallet,
-  WalletState,
-} from "../../../generated/graphql"
+import { useWalletByAddressQuery, Wallet, WalletState } from "../../../generated/graphql"
 import { useWalletContext } from "../../hooks/useWalletContext"
-import { ConfigureWallet } from "./ConfigureWallet"
-import { RegisterWallet } from "./RegisterWallet"
-import { VerifyWallet } from "./VerifyWallet"
+import ConfigureWallet from "./ConfigureWallet"
+import RegisterWallet from "./RegisterWallet"
+import VerifyWallet from "./VerifyWallet"
 import { WalletSetupBox } from "./WalletSetupBox"
 
 export type WalletSetupStepProps = {
@@ -29,21 +23,17 @@ export type WalletSetupProps = WalletSetupStepProps & {
 export function WalletSetup() {
   const router = useRouter()
   const { currentUser } = useWalletContext()
-
-  const [walletByAddressResponse, reExecuteQuery] = useQuery<WalletByAddressQuery>({
-    query: WalletByAddressDocument,
-    variables: { address: currentUser?.addr },
-    pause: !currentUser?.addr,
-  })
+  const [{ data: walletData, error, fetching: walletFetching }, reExecuteQuery] =
+    useWalletByAddressQuery({
+      variables: { address: currentUser?.addr },
+      pause: !currentUser?.addr,
+    })
 
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
-  }, [reExecuteQuery])
-
-  const { data: walletData, error, fetching: walletFetching } = walletByAddressResponse
+  }, [])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
-
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {
