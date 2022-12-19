@@ -13,6 +13,7 @@ import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
 import { useState } from "react"
 import { GoogleAnalytics } from "nextjs-google-analytics"
+import RouterHistory from "src/components/RouterHistory"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -49,7 +50,7 @@ const App = ({
     null
 
   return (
-    <>
+    <RouterHistory>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
           <QueryClientProvider client={queryClient}>
@@ -64,7 +65,7 @@ const App = ({
         </ChakraProvider>
       </SessionProvider>
       <GoogleAnalytics trackPageViews />
-    </>
+    </RouterHistory>
   )
 }
 

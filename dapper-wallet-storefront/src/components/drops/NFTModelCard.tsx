@@ -1,6 +1,5 @@
-import { AspectRatio, Box, Center, HStack, Image, Link, Skeleton, Stack } from "@chakra-ui/react"
-import router from "next/router"
-
+import { AspectRatio, Box, Center, HStack, Image, Skeleton, Stack } from "@chakra-ui/react"
+import Link from "next/link"
 import { NftModel } from "../../../generated/graphql"
 
 export const NFTModelCard = (props: { nftModel: NftModel; clickUrl: string }) => {
@@ -8,9 +7,8 @@ export const NFTModelCard = (props: { nftModel: NftModel; clickUrl: string }) =>
 
   const imageUrl = nftModel?.content?.poster?.url
   const title = nftModel?.title
-
   return (
-    <Link onClick={() => router.push(clickUrl)}>
+    <Link href={clickUrl}>
       <Stack
         spacing="3"
         padding="4"
