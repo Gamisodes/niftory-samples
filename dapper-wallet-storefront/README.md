@@ -23,6 +23,7 @@ See [.env.example](./.env.example) for an example of how to configure these envi
 - `NEXT_PUBLIC_API_KEY`
 - `NEXT_PUBLIC_CLIENT_ID`
 - `CLIENT_SECRET`
+- `DATABASE_URL`
 
 **Follow [this guide](https://docs.niftory.com/home/v/api/getting-started/api-quickstart#get-your-api-keys) to get your Niftory API keys.** Note that your project and contract will also need to be approved by Dapper in order to successfully execute transactions with Dapper Wallet
 

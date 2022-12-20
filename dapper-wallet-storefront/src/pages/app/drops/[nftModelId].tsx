@@ -16,6 +16,7 @@ const NFTModelDetailPage = () => {
     title: nftModel?.title,
     description: nftModel?.description,
     amount: nftModel?.quantity,
+    quantityMinted: +nftModel?.quantityMinted,
     content: [
       {
         contentType: nftModel?.content?.files[0]?.contentType,

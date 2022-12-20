@@ -1,9 +1,9 @@
-import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react"
+import { Button, Heading, Stack, Text } from "@chakra-ui/react"
 import * as React from "react"
 import * as fcl from "@onflow/fcl"
 import { useCallback, useState } from "react"
 import { useWalletContext } from "../../hooks/useWalletContext"
-
+import Link from "next/link"
 import { Gallery } from "../../ui/Content/Gallery/Gallery"
 import axios from "axios"
 import { useRouter } from "next/router"
@@ -15,6 +15,7 @@ type NFTModelDetailProps = {
     title: string
     description: string
     amount: number
+    quantityMinted: number
     content: {
       contentType: string
       contentUrl: string
@@ -44,7 +45,6 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
     const response = await axios.post("/api/signTransaction", { transaction })
     return response.data.signTransactionForDapperWallet
   }, [])
-  console.log(checkoutStatusIndex)
 
   const handleCheckout = useCallback(async () => {
     try {
@@ -116,6 +116,11 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
     }
   }, [currentUser?.addr, id, router, signTransaction])
 
+  const NFT_READY_TO_BUY =
+    metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
+  const TOTAL_AVAILABLE =
+    `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY}/` : ""}` +
+    `${metadata.amount} Total Available`
   return (
     <div className="grid grid-cols-1 md:grid-cols-2">
       <Stack p="8" borderRadius="4" minW={{ lg: "sm" }} maxW={{ lg: "lg" }} justify="center">
@@ -127,18 +132,30 @@ export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
           </Stack>
 
           <Text color="page.text">{metadata.description}</Text>
-          <Text color="page.text">{metadata.amount} Total Available </Text>
+          <Text color="page.text">{TOTAL_AVAILABLE}</Text>
         </Stack>
         {authedUser?.user && currentUser?.addr ? (
-          <Button
-            isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
-            loadingText={checkoutStatusMessages[checkoutStatusIndex]}
-            onClick={handleCheckout}
-            my="auto"
-            p="8"
-          >
-            <Text>Checkout</Text>
-          </Button>
+          NFT_READY_TO_BUY > 0 ? (
+            <Button
+              isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
+              loadingText={checkoutStatusMessages[checkoutStatusIndex]}
+              onClick={handleCheckout}
+              my="auto"
+              p="8"
+            >
+              <Text>Checkout</Text>
+            </Button>
+          ) : (
+            <Button
+              isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
+              loadingText={checkoutStatusMessages[checkoutStatusIndex]}
+              my="auto"
+              p="8"
+              disabled
+            >
+              <Text>Not Available</Text>
+            </Button>
+          )
         ) : authedUser?.user && !currentUser?.addr ? (
           <Link href={"/app/account"}>
             <Button my="auto" p="8">

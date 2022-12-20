@@ -1,9 +1,9 @@
 import { Box, Button, Divider, VStack } from "@chakra-ui/react"
 import { BuiltInProviderType } from "next-auth/providers"
 import { ClientSafeProvider, getProviders, LiteralUnion, signIn } from "next-auth/react"
+import { useRouterHistory } from "src/components/RouterHistory"
 
 import GoogleIcon from "src/icon/GoogleOAuth.svg"
-import prisma from "src/lib/prisma"
 import AppLayout from "../../components/AppLayout"
 import { SectionHeader } from "../../ui/SectionHeader"
 
@@ -12,6 +12,7 @@ interface ISignInPageProps {
 }
 
 const SignInPage = ({ providers }: ISignInPageProps) => {
+  const previousRoute = useRouterHistory()
   return (
     <AppLayout>
       <VStack className="mx-auto">
@@ -19,7 +20,13 @@ const SignInPage = ({ providers }: ISignInPageProps) => {
         {Object.values(providers).map((provider) => (
           <Box key={provider.name}>
             <Button
-              onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+              onClick={() => {
+                const options = {
+                  callbackUrl: `${window.location.origin + previousRoute}`,
+                }
+                console.info("Sign-in options: ", options)
+                signIn(provider.id, options)
+              }}
               minWidth="200"
               height="14"
               px="8"

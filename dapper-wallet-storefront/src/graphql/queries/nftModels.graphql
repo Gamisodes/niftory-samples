@@ -6,8 +6,10 @@ query nftModels($appId: ID) {
       title
       description
       quantity
+      quantityMinted
       status
       rarity
+      attributes
       content {
         files {
           url
