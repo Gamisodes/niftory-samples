@@ -7,7 +7,7 @@ export const Navbar = () => {
     return [
       [
         {
-          title: "Drops",
+          title: "Buy Ticket",
           href: "/app/drops",
         },
         {
@@ -17,16 +17,6 @@ export const Navbar = () => {
         {
           title: "My Account",
           href: "/app/account",
-        },
-      ],
-      [
-        {
-          title: "Privacy Policy",
-          href: "/app/privacy",
-        },
-        {
-          title: "Terms",
-          href: "/app/terms",
         },
       ],
     ]

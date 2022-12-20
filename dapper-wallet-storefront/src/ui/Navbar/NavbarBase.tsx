@@ -4,7 +4,8 @@ import React, { memo, useCallback, useState } from "react"
 import Logo from "src/icon/Logo.svg"
 import ActiveLink from "./ActiveLink"
 import { IMenuItem } from "./NavContent"
-
+import Image from "next/image"
+import classNames from "classnames"
 interface Props extends React.PropsWithChildren {
   menu?: IMenuItem[][]
   homeUrl?: string
@@ -63,28 +64,34 @@ Props) {
   }, [])
 
   return (
-    <header className="flex top-0 left-0 fixed w-full z-50  bg-main text-base">
-      <section className="relative w-full gap-2 items-center p-2 px-4 grid grid-cols-[minmax(50px,122px)_1fr] container mx-auto">
-        <section className="flex items-center w-[50px] transform-gpu transition-transform lg:transition-none lg:hover:scale-105">
+    <header className="flex top-0 left-0 fixed w-full z-50  bg-header.opacity text-base font-dosis">
+      <section className="relative w-full gap-2 items-center p-2 px-4 grid grid-cols-[minmax(126px,122px)_1fr] container mx-auto">
+        <section className="flex items-center w-[126px] transform-gpu transition-transform lg:transition-none lg:hover:scale-105">
           <Link href={homeUrl}>
-            <Logo />
+            {/* <Logo /> */}
+            <Image src="/Gamisodes.png" alt="BrainTrain Logo" width={126} height={40} />
           </Link>
           {children}
         </section>
         <section
           className={classnames(
-            "flex flex-col bg-main absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
+            "flex bg-header lg:bg-transparent flex-col absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
             {
               "translate-y-0 lg:translate-y-0": isOpen,
               "-translate-y-full lg:translate-y-0": !isOpen,
             }
           )}
         >
-          {menu.map((element, index) => {
+          {menu.map((element, index, array) => {
             return (
               <ul
                 key={index}
-                className="flex flex-col lg:flex-row text-white uppercase lg:space-x-12 space-y-2 lg:space-y-0 justify-self-center last:border-t-2 lg:last:border-t-0"
+                className={classNames(
+                  "flex flex-col lg:flex-row text-white font-bold lg:space-x-8 space-y-2 lg:space-y-0 justify-self-end",
+                  {
+                    "last:border-t-2 lg:last:border-t-0": array.length > 1,
+                  }
+                )}
               >
                 {element.map((item) => {
                   return (
