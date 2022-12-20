@@ -8,7 +8,7 @@ export const Navbar = () => {
       [
         {
           title: "Buy Ticket",
-          href: "/app/drops",
+          href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
         },
         {
           title: "My Collection",
