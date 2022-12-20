@@ -55,7 +55,7 @@ const handler: NextApiHandler = async (req, res) => {
   const checkoutResponse = await backendGQLClient.request(CheckoutWithDapperWallet, {
     nftModelId,
     address,
-    price: 10,
+    price: 25,
     expiry: Number.MAX_SAFE_INTEGER,
   })
 

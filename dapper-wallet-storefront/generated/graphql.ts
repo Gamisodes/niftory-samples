@@ -1398,14 +1398,14 @@ export type NftModelQueryVariables = Exact<{
 }>;
 
 
-export type NftModelQuery = { __typename?: 'Query', nftModel?: { __typename?: 'NFTModel', id: string, attributes?: any | null, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null, set: { __typename?: 'NFTSet', id: string } } | null };
+export type NftModelQuery = { __typename?: 'Query', nftModel?: { __typename?: 'NFTModel', id: string, attributes?: any | null, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, quantityMinted?: any | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null, set: { __typename?: 'NFTSet', id: string } } | null };
 
 export type NftModelsQueryVariables = Exact<{
   appId?: InputMaybe<Scalars['ID']>;
 }>;
 
 
-export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 'NFTModelList', cursor?: string | null, items?: Array<{ __typename?: 'NFTModel', id: string, blockchainId?: string | null, title: string, description: string, quantity?: any | null, status?: Status | null, rarity?: SimpleRarityLevel | null, attributes?: any | null, content?: { __typename?: 'NFTContent', files?: Array<{ __typename?: 'NFTFile', url: any, contentType?: string | null } | null> | null, poster?: { __typename?: 'SimpleFile', url: any } | null } | null } | null> | null } | null };
+export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 'NFTModelList', cursor?: string | null, items?: Array<{ __typename?: 'NFTModel', id: string, blockchainId?: string | null, title: string, description: string, quantity?: any | null, quantityMinted?: any | null, status?: Status | null, rarity?: SimpleRarityLevel | null, attributes?: any | null, content?: { __typename?: 'NFTContent', files?: Array<{ __typename?: 'NFTFile', url: any, contentType?: string | null } | null> | null, poster?: { __typename?: 'SimpleFile', url: any } | null } | null } | null> | null } | null };
 
 export type NftsByWalletQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
@@ -1563,6 +1563,7 @@ export const NftModelDocument = gql`
     description
     rarity
     quantity
+    quantityMinted
     content {
       id
       poster {
@@ -1597,6 +1598,7 @@ export const NftModelsDocument = gql`
       title
       description
       quantity
+      quantityMinted
       status
       rarity
       attributes

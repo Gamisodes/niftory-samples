@@ -14,7 +14,6 @@ export const NFTModelsPage = () => {
   const nftModels = useMemo(() => {
     return result?.data?.nftModels?.items?.filter((val) => val) ?? []
   }, [result?.data?.nftModels?.items, result.fetching])
-
   return (
     <AppLayout>
       <Box maxW="7xl" mx="auto">

@@ -44,7 +44,7 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     toast({
       title: "Wallet Sign-In Error",
       description:
-        "Probably, this wallet already connected to another account. Please use another account or create new wallet",
+        "This wallet is already connected to another account. Please use another wallet or create a new wallet. If you believe you received this error by mistake, please contact support@gamisodes.com.",
       status: "error",
       duration: 4000,
       isClosable: true,
