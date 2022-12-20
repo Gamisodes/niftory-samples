@@ -4,11 +4,13 @@ query nftsByWallet($address: String) {
       id
       blockchainId
       serialNumber
+      blockchainState
       model {
         id
         title
         description
         rarity
+        attributes
         content {
           id
           poster {

@@ -36,6 +36,8 @@ export type AdminUser = Identifiable & UserData & {
   image?: Maybe<Scalars['String']>;
   /** The user's full name. */
   name?: Maybe<Scalars['String']>;
+  /** The organizations this user belongs to. */
+  organizations?: Maybe<Array<Maybe<Organization>>>;
   /** This user's orgs and its roles there. */
   orgs?: Maybe<Array<Maybe<UserRoleMapping>>>;
 };
@@ -126,6 +128,17 @@ export type BlockchainResource = {
   status?: Maybe<Status>;
   /** Most recent updated date of this item, if any */
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+/** Transaction performed on a blockchain. */
+export type BlockchainTransaction = {
+  __typename?: 'BlockchainTransaction';
+  /** The blockchain where the transaction was perfomed. */
+  blockchain: Blockchain;
+  /** The hash of the blockchain transaction. */
+  hash: Scalars['String'];
+  /** Name of the transaction performed */
+  name: Scalars['String'];
 };
 
 /** The response from initiating a checkout with Dapper Wallet. */
@@ -566,6 +579,8 @@ export type Nft = BlockchainEntity & Identifiable & SellableEntity & {
    * @deprecated Use blockchainState or saleState instead.
    */
   status?: Maybe<TransferState>;
+  /** Blockchain transcations for this NFT */
+  transactions?: Maybe<Array<Maybe<BlockchainTransaction>>>;
   /** The wallet containing this NFT, if it is owned by a user. */
   wallet?: Maybe<Wallet>;
 };
@@ -636,7 +651,7 @@ export type NftFilterInput = {
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** The IDs of the [NFTModel]({{Types.NFTModel}}) that the [NFT]({{Types.NFT}}) should belong to. */
   nftModelIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** Sale states of the [NFT]({{Types.NFT}})s to find. Defaults to all. */
+  /** Sale states of the [NFT]({{Types.NFT}})s to find. When querying within a user context, defaults to [PAID, FULFILLED]. Otherwise, defaults to all. */
   saleStates?: InputMaybe<Array<InputMaybe<SaleState>>>;
   /** Transfer states of the [NFT]({{Types.NFT}})s to find. Defaults to all. */
   transferStates?: InputMaybe<Array<InputMaybe<TransferState>>>;
@@ -900,6 +915,18 @@ export type Org = Identifiable & {
   name?: Maybe<Scalars['String']>;
 };
 
+/** An organization within the Niftory ecosystem. Organization manages [App]({{Types.App}})s. Read more [here](https://docs.niftory.com/home/v/admin/explore/org-and-apps). */
+export type Organization = Identifiable & {
+  __typename?: 'Organization';
+  /** The apps belonging to this Organization. */
+  apps?: Maybe<Array<Maybe<App>>>;
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** This organization's members. */
+  members?: Maybe<Array<Maybe<AdminUser>>>;
+  name?: Maybe<Scalars['String']>;
+};
+
 /** An interface representing lists that can be paginated with a cursor. */
 export type Pageable = {
   /** The cursor to use to fetch the next page of results, if any. */
@@ -952,6 +979,8 @@ export type Query = {
   orgById?: Maybe<Org>;
   /** Gets an [Org]({{Types.Org}}) by Org Name. */
   orgByName?: Maybe<Org>;
+  /** Gets a [Organization]({{Types.Organization}}) by ID. */
+  organization?: Maybe<Organization>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   set?: Maybe<NftSet>;
   /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
@@ -1075,6 +1104,11 @@ export type QueryOrgByIdArgs = {
 
 export type QueryOrgByNameArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryOrganizationArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1371,14 +1405,14 @@ export type NftModelsQueryVariables = Exact<{
 }>;
 
 
-export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 'NFTModelList', cursor?: string | null, items?: Array<{ __typename?: 'NFTModel', id: string, blockchainId?: string | null, title: string, description: string, quantity?: any | null, status?: Status | null, rarity?: SimpleRarityLevel | null, content?: { __typename?: 'NFTContent', files?: Array<{ __typename?: 'NFTFile', url: any, contentType?: string | null } | null> | null, poster?: { __typename?: 'SimpleFile', url: any } | null } | null } | null> | null } | null };
+export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 'NFTModelList', cursor?: string | null, items?: Array<{ __typename?: 'NFTModel', id: string, blockchainId?: string | null, title: string, description: string, quantity?: any | null, status?: Status | null, rarity?: SimpleRarityLevel | null, attributes?: any | null, content?: { __typename?: 'NFTContent', files?: Array<{ __typename?: 'NFTFile', url: any, contentType?: string | null } | null> | null, poster?: { __typename?: 'SimpleFile', url: any } | null } | null } | null> | null } | null };
 
 export type NftsByWalletQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type NftsByWalletQuery = { __typename?: 'Query', nftsByWallet?: { __typename?: 'NFTList', cursor?: string | null, items?: Array<{ __typename?: 'NFT', id: string, blockchainId?: string | null, serialNumber?: number | null, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, title: string, description: string, rarity?: SimpleRarityLevel | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null } | null } | null } | null> | null } | null };
+export type NftsByWalletQuery = { __typename?: 'Query', nftsByWallet?: { __typename?: 'NFTList', cursor?: string | null, items?: Array<{ __typename?: 'NFT', id: string, blockchainId?: string | null, serialNumber?: number | null, blockchainState: NftBlockchainState, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, title: string, description: string, rarity?: SimpleRarityLevel | null, attributes?: any | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null } | null } | null } | null> | null } | null };
 
 export type WalletByAddressQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1565,6 +1599,7 @@ export const NftModelsDocument = gql`
       quantity
       status
       rarity
+      attributes
       content {
         files {
           url
@@ -1590,11 +1625,13 @@ export const NftsByWalletDocument = gql`
       id
       blockchainId
       serialNumber
+      blockchainState
       model {
         id
         title
         description
         rarity
+        attributes
         content {
           id
           poster {

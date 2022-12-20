@@ -1,6 +1,5 @@
 const settings = {
   overwrite: true,
-  watch: true,
   schema: {
     [process.env.NEXT_PUBLIC_API_PATH]: {
       headers: {
