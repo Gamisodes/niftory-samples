@@ -186,7 +186,7 @@ function useCheckout(id: string) {
   const [checkoutStatusIndex, setCheckoutStatusIndex] = useState(0)
   const signTransaction = useCallback(async (transaction: string) => {
     const response = await axios.post("/api/signTransaction", { transaction })
-    return response.data.signTransactionForDapperWallet
+    return response.data.data
   }, [])
   const handleCheckout = useCallback(async () => {
     try {
