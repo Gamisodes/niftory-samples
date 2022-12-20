@@ -48,17 +48,26 @@ const handler: NextApiHandler = async (req, res) => {
       )
   }
 
-  const backendGQLClient = await getBackendGraphQLClient()
+  try {
+    const backendGQLClient = await getBackendGraphQLClient()
 
-  const completeCheckoutResponse = await backendGQLClient.request<
-    CompleteCheckoutWithDapperWalletMutation,
-    CompleteCheckoutWithDapperWalletMutationVariables
-  >(CompleteCheckoutWithDapperWalletDocument, {
-    transactionId: input.transactionId,
-    nftDatabaseId: input.nftDatabaseId,
-  })
+    const completeCheckoutResponse = await backendGQLClient.request<
+      CompleteCheckoutWithDapperWalletMutation,
+      CompleteCheckoutWithDapperWalletMutationVariables
+    >(CompleteCheckoutWithDapperWalletDocument, {
+      transactionId: input.transactionId,
+      nftDatabaseId: input.nftDatabaseId,
+    })
 
-  res.status(200).json(completeCheckoutResponse.completeCheckoutWithDapperWallet)
+    res
+      .status(200)
+      .json({ data: completeCheckoutResponse.completeCheckoutWithDapperWallet, success: true })
+  } catch (error) {
+    res.status(500).json({
+      error: [error],
+      success: false,
+    })
+  }
 }
 
 export default handler

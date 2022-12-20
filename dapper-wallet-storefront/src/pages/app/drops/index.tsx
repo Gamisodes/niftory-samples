@@ -17,8 +17,8 @@ export const NFTModelsPage = () => {
   return (
     <AppLayout>
       <Box maxW="7xl" mx="auto">
-        <SectionHeader text="Get A Drop" />
-        {nftModels && <NFTModelsGrid nftModels={nftModels} />}
+        <SectionHeader text="Get A Drop: TBD" />
+        {/* {nftModels && <NFTModelsGrid nftModels={nftModels} />} */}
       </Box>
     </AppLayout>
   )

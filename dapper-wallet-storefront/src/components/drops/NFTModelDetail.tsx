@@ -205,7 +205,7 @@ function useCheckout(id: string) {
         expiry,
         signerKeyId,
         signerAddress,
-      } = initiateCheckoutResponse.data
+      } = initiateCheckoutResponse.data.data
       setCheckoutStatusIndex(2)
       const tx = await fcl.mutate({
         cadence,
@@ -249,7 +249,7 @@ function useCheckout(id: string) {
       })
 
       setCheckoutStatusIndex(5)
-      const nft = completeCheckoutResponse.data
+      const nft = completeCheckoutResponse.data.data
 
       await router.push(`/app/collection/${nft.id}`)
     } finally {
