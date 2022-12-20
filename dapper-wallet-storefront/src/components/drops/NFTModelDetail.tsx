@@ -206,7 +206,6 @@ function useCheckout(id: string) {
         signerKeyId,
         signerAddress,
       } = initiateCheckoutResponse.data
-
       setCheckoutStatusIndex(2)
       const tx = await fcl.mutate({
         cadence,

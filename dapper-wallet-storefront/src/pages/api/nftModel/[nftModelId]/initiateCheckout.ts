@@ -2,6 +2,14 @@ import { NextApiHandler } from "next"
 import { gql } from "graphql-request"
 import { getBackendGraphQLClient } from "../../../../lib/BackendGraphQLClient"
 import { getAddressFromCookie } from "../../../../lib/cookieUtils"
+import {
+  CheckoutWithDapperWalletMutation,
+  CheckoutWithDapperWalletMutationVariables,
+  NftModelDocument,
+  NftModelQuery,
+  NftModelQueryVariables,
+  NftModelsDocument,
+} from "generated/graphql"
 
 const CheckoutWithDapperWallet = gql`
   mutation CheckoutWithDapperWallet(
@@ -50,16 +58,33 @@ const handler: NextApiHandler = async (req, res) => {
     return
   }
 
-  const backendGQLClient = await getBackendGraphQLClient()
+  try {
+    const backendGQLClient = await getBackendGraphQLClient()
 
-  const checkoutResponse = await backendGQLClient.request(CheckoutWithDapperWallet, {
-    nftModelId,
-    address,
-    price: 25,
-    expiry: Number.MAX_SAFE_INTEGER,
-  })
+    const nftModelResponse = await backendGQLClient.request<NftModelQuery, NftModelQueryVariables>(
+      NftModelDocument,
+      {
+        id: nftModelId as string,
+      }
+    )
+    const price = +nftModelResponse?.nftModel?.attributes?.price
 
-  res.status(200).json(checkoutResponse.checkoutWithDapperWallet)
+    const checkoutResponse = await backendGQLClient.request<
+      CheckoutWithDapperWalletMutation,
+      CheckoutWithDapperWalletMutationVariables
+    >(CheckoutWithDapperWallet, {
+      nftModelId: nftModelId as string,
+      address,
+      price: Number.isInteger(price) ? price : 25,
+      expiry: Number.MAX_SAFE_INTEGER,
+    })
+    res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+  } catch (error) {
+    res.status(500).json({
+      error: [error],
+      success: false,
+    })
+  }
 }
 
 export default handler
