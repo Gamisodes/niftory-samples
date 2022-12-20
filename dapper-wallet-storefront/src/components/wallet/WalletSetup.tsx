@@ -57,7 +57,7 @@ export function WalletSetup() {
       buttonText="Go to Drops"
       error={error as Error}
       isLoading={walletFetching}
-      onClick={() => router.push("/app/drops")}
+      onClick={() => router.push(`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`)}
     />
   )
 }
