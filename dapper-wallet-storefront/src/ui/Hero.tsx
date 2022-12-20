@@ -6,7 +6,7 @@ import Link from "next/link"
 
 function Hero() {
   return (
-    <section className="flex flex-col justify-between w-screen h-screen p-7 pb-6 bg-header.opacity bg-[url('/BG.jpg')] bg-cover relative -top-16 py-16">
+    <section className="flex flex-col justify-between w-screen h-screen p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.jpg')] bg-cover relative -top-16 py-16">
       <div className="flex justify-center items-center h-full">
         <div className="z-10">
           <Image src="/product.png" alt="BrainTrain Product" width={526} height={498} />
