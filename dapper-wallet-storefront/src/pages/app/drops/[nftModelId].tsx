@@ -28,7 +28,6 @@ const NFTModelDetailPage = () => {
       },
     ],
   }
-  console.log(metadata)
   return (
     <AppLayout>
       <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
