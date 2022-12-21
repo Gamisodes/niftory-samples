@@ -1,6 +1,6 @@
 import * as fcl from "@onflow/fcl"
 import { useRouter } from "next/router"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 
 import { useWalletByAddressQuery, Wallet, WalletState } from "../../../generated/graphql"
 import { useWalletContext } from "../../hooks/useWalletContext"
@@ -32,8 +32,13 @@ export function WalletSetup() {
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
+  console.log("wallet setup: ", walletData)
 
-  const wallet = currentUser?.addr && walletData?.walletByAddress
+  const wallet = useMemo(
+    () => currentUser?.addr && walletData?.walletByAddress,
+    [currentUser?.addr, walletFetching, walletData?.walletByAddress.state]
+  )
+
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {

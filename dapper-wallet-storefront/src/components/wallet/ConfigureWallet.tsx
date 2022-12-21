@@ -16,19 +16,20 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
     configure,
     isLoading: isFlowAccountConfigurationLoading,
   } = useFlowAccountConfiguration()
+  const isLoading = isFlowAccountConfigurationLoading || readying
 
   // Once the wallet is configured, call the ready mutation to tell Niftory it's ready to receive NFTs
   useEffect(() => {
-    if (!configured) {
+    if (!configured || readying) {
       return
     }
     mutate()
   }, [configured])
 
+  console.log("Configure Wallet: ", isSuccess)
   useEffect(() => {
     if (isSuccess) mutateCache()
-  }, [isSuccess])
-  const isLoading = isFlowAccountConfigurationLoading || readying
+  }, [isSuccess, isLoading])
 
   return (
     <WalletSetupBox

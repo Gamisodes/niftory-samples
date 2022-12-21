@@ -16,16 +16,16 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
     // Use FCL to sign the verification message
     const signedVerificationCode = await fcl.currentUser.signUserMessage(verificationCode)
 
-    if (!signedVerificationCode) {
+    if (!signedVerificationCode || isLoading) {
       return
     }
     mutate({ signature: signedVerificationCode })
   }, [mutateCache, verificationCode])
-
+  console.log("Verify wallet: ", isSuccess)
   useEffect(() => {
     if (isSuccess) mutateCache()
   }, [isSuccess])
-  console.log("error: ", error)
+
   return (
     <WalletSetupBox
       text={

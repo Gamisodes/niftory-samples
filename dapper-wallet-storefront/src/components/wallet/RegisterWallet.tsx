@@ -18,7 +18,7 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
 
   // When the user logs in, register their wallet
   useEffect(() => {
-    if (walletContextLoading || !currentUser?.addr) {
+    if (walletContextLoading || !currentUser?.addr || isLoading) {
       return
     }
     if (ref.current === true) return
