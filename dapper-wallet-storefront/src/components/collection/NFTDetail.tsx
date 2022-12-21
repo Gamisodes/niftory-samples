@@ -1,5 +1,4 @@
-import { Box, Heading, HStack, Spacer, Stack, Tag, Text } from "@chakra-ui/react"
-import * as React from "react"
+import { Box, Heading, Spacer, Stack, Text } from "@chakra-ui/react"
 
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
@@ -52,10 +51,6 @@ export const NFTDetail = (props: Props) => {
               <Spacer />
               Blockchain Id: {nft && nft.blockchainId}
             </Text>
-
-            <HStack>
-              <Tag size="lg">{nftModel.rarity}</Tag>
-            </HStack>
           </Stack>
         </Stack>
         {product.content?.length > 0 && <Gallery content={product.content} />}
