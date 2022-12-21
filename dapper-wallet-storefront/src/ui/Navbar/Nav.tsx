@@ -7,8 +7,8 @@ export const Navbar = () => {
     return [
       [
         {
-          title: "Drops",
-          href: "/app/drops",
+          title: "Buy Ticket",
+          href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
         },
         {
           title: "My Collection",
@@ -17,16 +17,6 @@ export const Navbar = () => {
         {
           title: "My Account",
           href: "/app/account",
-        },
-      ],
-      [
-        {
-          title: "Privacy Policy",
-          href: "/app/privacy",
-        },
-        {
-          title: "Terms",
-          href: "/app/terms",
         },
       ],
     ]

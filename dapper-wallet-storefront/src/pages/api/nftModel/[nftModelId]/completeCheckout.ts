@@ -2,6 +2,11 @@ import { NextApiHandler } from "next"
 import { gql } from "graphql-request"
 import { getBackendGraphQLClient } from "../../../../lib/BackendGraphQLClient"
 import { getAddressFromCookie } from "../../../../lib/cookieUtils"
+import {
+  CompleteCheckoutWithDapperWalletDocument,
+  CompleteCheckoutWithDapperWalletMutation,
+  CompleteCheckoutWithDapperWalletMutationVariables,
+} from "generated/graphql"
 
 const CompleteCheckoutWithDapperWallet = gql`
   mutation CompleteCheckoutWithDapperWallet($transactionId: String!, $nftDatabaseId: String) {
@@ -43,17 +48,26 @@ const handler: NextApiHandler = async (req, res) => {
       )
   }
 
-  const backendGQLClient = await getBackendGraphQLClient()
+  try {
+    const backendGQLClient = await getBackendGraphQLClient()
 
-  const completeCheckoutResponse = await backendGQLClient.request(
-    CompleteCheckoutWithDapperWallet,
-    {
+    const completeCheckoutResponse = await backendGQLClient.request<
+      CompleteCheckoutWithDapperWalletMutation,
+      CompleteCheckoutWithDapperWalletMutationVariables
+    >(CompleteCheckoutWithDapperWalletDocument, {
       transactionId: input.transactionId,
       nftDatabaseId: input.nftDatabaseId,
-    }
-  )
+    })
 
-  res.status(200).json(completeCheckoutResponse.completeCheckoutWithDapperWallet)
+    res
+      .status(200)
+      .json({ data: completeCheckoutResponse.completeCheckoutWithDapperWallet, success: true })
+  } catch (error) {
+    res.status(500).json({
+      error: [error],
+      success: false,
+    })
+  }
 }
 
 export default handler

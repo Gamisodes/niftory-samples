@@ -21,7 +21,11 @@ function WalletGuard({ children }: PropsWithChildren) {
     return (
       <AppLayout>
         <VStack className="mx-auto">
-          <SectionHeader text="Access to Wallet functionality Denied" />
+          <SectionHeader text="Access denied" />
+          <p className="text-dosis text-white text-xl font-bold pb-6">
+            You need to login to your Dapper Wallet
+          </p>
+          {/* <SectionHeader text="Access to Wallet functionality Denied" /> */}
           <Link href={"/app/account"}>
             <Button>Sign in / Sign up</Button>
           </Link>

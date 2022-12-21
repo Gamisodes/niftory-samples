@@ -2,7 +2,7 @@ import { Box, Button, Spinner } from "@chakra-ui/react"
 import { useMemo } from "react"
 
 type WalletSetupBoxProps = {
-  text: string
+  text: string | JSX.Element
   buttonText: string
   isLoading: boolean
   error?: Error
@@ -22,12 +22,20 @@ export const WalletSetupBox = ({
   }
 
   if (error) {
-    return <Box>Something went wrong. Please try again later!</Box>
+    return (
+      <Box className="text-white font-dosis">Something went wrong. Please try again later!</Box>
+    )
   }
 
   return (
     <>
-      <Box fontSize="xl" maxW="xl" textColor="page.text" py="8">
+      <Box
+        className="text-white font-dosis text-center"
+        fontSize="xl"
+        maxW="xl"
+        textColor="page.text"
+        py="8"
+      >
         {text}
       </Box>
       <Button p="8" onClick={onClick}>

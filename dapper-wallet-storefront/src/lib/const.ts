@@ -1,0 +1,1 @@
+export const DEFAULT_NFT_PRICE = +process.env.NEXT_PUBLIC_DEFAULT_PRICE_FOR_NFT ?? 25
