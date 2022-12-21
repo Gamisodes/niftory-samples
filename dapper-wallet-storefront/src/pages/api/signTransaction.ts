@@ -2,6 +2,11 @@ import { NextApiHandler } from "next"
 import { gql } from "graphql-request"
 import { getBackendGraphQLClient } from "../../lib/BackendGraphQLClient"
 import { getAddressFromCookie } from "../../lib/cookieUtils"
+import {
+  SignTransactionForDapperWalletDocument,
+  SignTransactionForDapperWalletMutation,
+  SignTransactionForDapperWalletMutationVariables,
+} from "generated/graphql"
 
 const SignTransactionForDapperWallet = gql`
   mutation SignTransactionForDapperWallet($transaction: String) {
@@ -28,13 +33,23 @@ const handler: NextApiHandler = async (req, res) => {
     return
   }
 
-  const backendGQLClient = await getBackendGraphQLClient()
+  try {
+    const backendGQLClient = await getBackendGraphQLClient()
 
-  const checkoutResponse = await backendGQLClient.request(SignTransactionForDapperWallet, {
-    transaction: input.transaction,
-  })
-
-  res.status(200).json(checkoutResponse)
+    const checkoutResponse = await backendGQLClient.request<
+      SignTransactionForDapperWalletMutation,
+      SignTransactionForDapperWalletMutationVariables
+    >(SignTransactionForDapperWalletDocument, {
+      transaction: input.transaction,
+    })
+    res.status(200).json({ data: checkoutResponse.signTransactionForDapperWallet, success: true })
+  } catch (error) {
+    console.log("Error: ", error)
+    res.status(500).json({
+      error: [error],
+      success: false,
+    })
+  }
 }
 
 export default handler

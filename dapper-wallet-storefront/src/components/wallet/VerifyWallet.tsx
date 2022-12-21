@@ -29,7 +29,10 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
   return (
     <WalletSetupBox
       text={
-        "Step 2 is proving that the wallet is yours. Click the button below to send a secure message signed by your wallet."
+        <p className="flex flex-col">
+          <span>Step 2 is proving that the wallet is yours.</span>
+          <span>Click the button below to send a secure message signed by your wallet.</span>
+        </p>
       }
       buttonText="Verify wallet"
       onClick={onClick}
