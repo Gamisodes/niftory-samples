@@ -1,6 +1,7 @@
 import { Skeleton } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
 import { useNftModelQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
@@ -18,7 +19,9 @@ const NFTModelDetailPage = () => {
     description: nftModel?.description,
     amount: nftModel?.quantity,
     quantityMinted: +nftModel?.quantityMinted,
-    price: nftModel?.attributes?.price ? nftModel?.attributes?.price ?? 25 : 25,
+    price: nftModel?.attributes?.price
+      ? nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
+      : DEFAULT_NFT_PRICE,
     content: [
       {
         contentType: nftModel?.content?.files[0]?.contentType,

@@ -10,6 +10,7 @@ import {
   NftModelQueryVariables,
   NftModelsDocument,
 } from "generated/graphql"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
 const CheckoutWithDapperWallet = gql`
   mutation CheckoutWithDapperWallet(
@@ -68,14 +69,13 @@ const handler: NextApiHandler = async (req, res) => {
       }
     )
     const price = +nftModelResponse?.nftModel?.attributes?.price
-
     const checkoutResponse = await backendGQLClient.request<
       CheckoutWithDapperWalletMutation,
       CheckoutWithDapperWalletMutationVariables
     >(CheckoutWithDapperWallet, {
       nftModelId: nftModelId as string,
       address,
-      price: Number.isInteger(price) ? price : 25,
+      price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
       expiry: Number.MAX_SAFE_INTEGER,
     })
     res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })

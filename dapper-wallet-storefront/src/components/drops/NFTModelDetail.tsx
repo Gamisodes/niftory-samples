@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from "@chakra-ui/react"
+import { Text } from "@chakra-ui/react"
 import * as React from "react"
 import * as fcl from "@onflow/fcl"
 import { useCallback, useState } from "react"
@@ -10,6 +10,7 @@ import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Button from "src/ui/Button"
+import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
 
 type NFTModelDetailProps = {
   id: string
@@ -182,6 +183,7 @@ const checkoutStatusMessages = [
 function useCheckout(id: string) {
   const { currentUser } = useWalletContext()
   const router = useRouter()
+  const { data: user } = useSession()
 
   const [checkoutStatusIndex, setCheckoutStatusIndex] = useState(0)
   const signTransaction = useCallback(async (transaction: string) => {
@@ -191,6 +193,12 @@ function useCheckout(id: string) {
   const handleCheckout = useCallback(async () => {
     try {
       setCheckoutStatusIndex(1)
+      gaAPI.buy_nft({
+        label: EBuyNFTLabel.STARTING_CHECKOUT,
+        email: user?.user.email ?? "",
+        wallet: currentUser?.addr ?? "",
+        dropsId: id ?? "",
+      })
       const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
       const {
         cadence,
@@ -247,11 +255,34 @@ function useCheckout(id: string) {
         transactionId: tx,
         nftDatabaseId,
       })
+      gaAPI.buy_nft({
+        label: EBuyNFTLabel.COMPLETING_CHECKOUT,
+        email: user?.user.email ?? "",
+        wallet: currentUser?.addr ?? "",
+        dropsId: id ?? "",
+      })
 
       setCheckoutStatusIndex(5)
+
       const nft = completeCheckoutResponse.data.data
 
       await router.push(`/app/collection/${nft.id}`)
+    } catch (error) {
+      if (error === "Declined: Declined by user") {
+        gaAPI.buy_nft({
+          label: EBuyNFTLabel.DECLINE,
+          email: user?.user.email ?? "",
+          wallet: currentUser?.addr ?? "",
+          dropsId: id ?? "",
+        })
+      } else {
+        gaAPI.buy_nft({
+          label: EBuyNFTLabel.ERROR,
+          email: user?.user.email ?? "",
+          wallet: currentUser?.addr ?? "",
+          dropsId: id ?? "",
+        })
+      }
     } finally {
       setCheckoutStatusIndex(0)
     }
@@ -276,7 +307,6 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const { currentUser } = useWalletContext()
   const { data: authedUser } = useSession()
   const { checkoutStatusIndex, handleCheckout } = useCheckout(id)
-
   const NFT_READY_TO_BUY =
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
@@ -301,9 +331,6 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
             {TOTAL_AVAILABLE}
           </p>
           <p className="font-dosis font-bold text-4xl mb-2">${metadata.price}</p>
-          {/* <Link href={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
-            <Button className="">Purchase ticket</Button>
-          </Link> */}
 
           {authedUser?.user && currentUser?.addr ? (
             NFT_READY_TO_BUY > 0 ? (
