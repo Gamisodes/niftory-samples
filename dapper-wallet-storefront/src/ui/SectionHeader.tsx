@@ -1,5 +1,4 @@
-import { Center, Heading, HeadingProps } from "@chakra-ui/react"
-import React from "react"
+import { Center, HeadingProps } from "@chakra-ui/react"
 
 export interface SectionHeaderProps extends HeadingProps {
   text: JSX.Element | string
@@ -10,17 +9,7 @@ export const SectionHeader = (props: SectionHeaderProps) => {
 
   return (
     <Center>
-      <Heading
-        color="page.text"
-        as="h1"
-        size="2xl"
-        lineHeight="1"
-        fontWeight="extrabold"
-        letterSpacing="tight"
-        py="12"
-      >
-        {text}
-      </Heading>
+      <h1 className="text-white font-bangers uppercase text-5xl font-extrabold py-12">{text}</h1>
     </Center>
   )
 }
