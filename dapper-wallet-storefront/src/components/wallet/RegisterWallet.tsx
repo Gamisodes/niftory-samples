@@ -27,7 +27,7 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
       mutateCache()
       gaAPI.connect_dapper_wallet({
         email: User?.user?.email ?? "",
-        wallet: data?.data ?? currentUser?.addr ?? "",
+        wallet: data?.data?.registerWallet?.address ?? currentUser?.addr ?? "",
       })
     })
   }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])

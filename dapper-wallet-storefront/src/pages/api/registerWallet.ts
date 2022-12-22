@@ -65,7 +65,7 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     res.status(200).json({
-      data: response?.registerWallet?.address ?? response ?? {},
+      data: response,
       success: true,
     })
   } catch (error) {

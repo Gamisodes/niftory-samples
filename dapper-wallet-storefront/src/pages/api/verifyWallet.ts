@@ -1,6 +1,10 @@
 import { NextApiHandler } from "next"
 import { getBackendGraphQLClient } from "../../lib/BackendGraphQLClient"
-import { VerifyWalletDocument } from "../../../generated/graphql"
+import {
+  VerifyWalletDocument,
+  VerifyWalletMutation,
+  VerifyWalletMutationVariables,
+} from "../../../generated/graphql"
 import { getAddressFromCookie } from "../../lib/cookieUtils"
 
 const handler: NextApiHandler = async (req, res) => {
@@ -32,7 +36,10 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   try {
-    const postData = await backendGQLClient.request(VerifyWalletDocument, {
+    const postData = await backendGQLClient.request<
+      VerifyWalletMutation,
+      VerifyWalletMutationVariables
+    >(VerifyWalletDocument, {
       address,
       signedVerificationCode,
     })
