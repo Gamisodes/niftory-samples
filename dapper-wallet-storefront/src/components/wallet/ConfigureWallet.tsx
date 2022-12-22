@@ -10,7 +10,7 @@ export type ConfigureWalletProps = {
 }
 
 function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
-  const { mutate, isLoading: readying, isSuccess, error } = useSendReadyWalletQuery()
+  const { mutateAsync, isLoading: readying, error } = useSendReadyWalletQuery()
   const {
     configured,
     configure,
@@ -23,13 +23,8 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
     if (!configured || readying) {
       return
     }
-    mutate()
+    mutateAsync().then(mutateCache)
   }, [configured])
-
-  console.log("Configure Wallet: ", isSuccess)
-  useEffect(() => {
-    if (isSuccess) mutateCache()
-  }, [isSuccess, isLoading])
 
   return (
     <WalletSetupBox
