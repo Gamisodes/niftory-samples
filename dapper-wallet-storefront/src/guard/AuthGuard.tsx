@@ -22,7 +22,12 @@ function AuthGuard({ children }: PropsWithChildren) {
     return (
       <AppLayout>
         <VStack className="mx-auto">
-          <SectionHeader text="Access Denied. You need to login to our app" />
+          <SectionHeader text="Access denied" />
+          <p className="text-dosis text-white text-xl font-bold pb-6">
+            You need to login to our app
+          </p>
+
+          {/* <SectionHeader text="Access Denied. You need to login to our app" /> */}
           <Link href={"/app/sign-in"}>
             <Button>Sign in / Sign up</Button>
           </Link>

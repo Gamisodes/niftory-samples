@@ -39,7 +39,10 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
   return (
     <WalletSetupBox
       text={
-        "First, we need to create or connect to a Flow wallet. Hit the button below and follow the prompts."
+        <p className="flex flex-col">
+          <span>First, we need to create or connect to a Flow wallet.</span>
+          <span>Hit the button below and follow the prompts.</span>
+        </p>
       }
       buttonText="Link or create your wallet"
       onClick={signIn}

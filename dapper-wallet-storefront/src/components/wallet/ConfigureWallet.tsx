@@ -34,7 +34,11 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
   return (
     <WalletSetupBox
       text={
-        "You're almost there. Now we need to configure your wallet to receive NFTs. This is the last step!"
+        <p className="flex flex-col">
+          <span>You're almost there.</span>
+          <span>Now we need to configure your wallet to receive NFTs.</span>
+          <span>This is the last step!</span>
+        </p>
       }
       buttonText="Configure wallet"
       onClick={configure}
