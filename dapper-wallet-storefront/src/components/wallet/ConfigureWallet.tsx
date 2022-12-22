@@ -10,25 +10,21 @@ export type ConfigureWalletProps = {
 }
 
 function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
-  const { mutate, isLoading: readying, isSuccess, error } = useSendReadyWalletQuery()
+  const { mutateAsync, isLoading: readying, error } = useSendReadyWalletQuery()
   const {
     configured,
     configure,
     isLoading: isFlowAccountConfigurationLoading,
   } = useFlowAccountConfiguration()
+  const isLoading = isFlowAccountConfigurationLoading || readying
 
   // Once the wallet is configured, call the ready mutation to tell Niftory it's ready to receive NFTs
   useEffect(() => {
-    if (!configured) {
+    if (!configured || readying) {
       return
     }
-    mutate()
+    mutateAsync().then(mutateCache)
   }, [configured])
-
-  useEffect(() => {
-    if (isSuccess) mutateCache()
-  }, [isSuccess])
-  const isLoading = isFlowAccountConfigurationLoading || readying
 
   return (
     <WalletSetupBox

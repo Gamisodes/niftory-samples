@@ -1,5 +1,10 @@
 import { CompositeSignature } from "@onflow/fcl"
 import { useMutation } from "@tanstack/react-query"
+import {
+  ReadyWalletMutation,
+  RegisterWalletMutation,
+  VerifyWalletMutation,
+} from "generated/graphql"
 import { WalletRequest } from "./request"
 
 export const walletKeys = {
@@ -7,7 +12,7 @@ export const walletKeys = {
   lists: (userId: number) => [...walletKeys.all, "list", userId] as const,
 }
 interface ISuccessResponseFromReadyWallet {
-  data: unknown
+  data: ReadyWalletMutation
   success: boolean
 }
 interface IErrorsResponseFromReadyWallet {
@@ -29,13 +34,13 @@ interface IErrorsResponseFromRegisterWallet {
 }
 export function useSendRegisterWalletQuery() {
   return useMutation<
-    ISuccessResponseFromRegisterWallet<string>,
+    ISuccessResponseFromRegisterWallet<RegisterWalletMutation>,
     IErrorsResponseFromRegisterWallet,
     void
   >(() => WalletRequest.postRegisterWallet())
 }
 interface ISuccessResponseFromVerifyWallet {
-  data: unknown
+  data: VerifyWalletMutation
   success: boolean
 }
 interface IErrorsResponseFromVerifyWallet {
