@@ -355,7 +355,8 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
           ) : authedUser?.user && !currentUser?.addr ? (
             <>
               <p className="font-dosis text-lg mb-3">
-                To proceed with checkout, please connect your Dapper Wallet
+                To proceed with checkout, please connect your Dapper Wallet. If you've already
+                connected your Dapper Wallet, please refresh this page.
               </p>
               <Link href={"/app/account"}>
                 <Button>Connect Wallet</Button>
@@ -364,7 +365,8 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
           ) : (
             <>
               <p className="font-dosis text-lg mb-3">
-                To proceed with checkout, please sign in to your Google Account
+                To proceed with checkout, please sign in to your Google Account. If you've already
+                connected your Google Account, please refresh this page.
               </p>
               <Link href={"/app/sign-in"}>
                 <Button>Sign In</Button>
