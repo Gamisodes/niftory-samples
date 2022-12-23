@@ -1,20 +1,10 @@
-import { signOut, useSession } from "next-auth/react"
-import { useRouter } from "next/router"
-import { useCallback } from "react"
+import { useSession } from "next-auth/react"
 import AppLayout from "src/components/AppLayout"
 import { WalletSetup } from "src/components/wallet/WalletSetup"
-import { useWalletContext } from "src/hooks/useWalletContext"
 import { SectionHeader } from "src/ui/SectionHeader"
 
 const AccountPage = () => {
-  const { signOut: signOutWallet } = useWalletContext()
   const { data: session } = useSession()
-  const router = useRouter()
-
-  const logout = useCallback(async function () {
-    await Promise.all([signOut({ redirect: false, callbackUrl: "/" }), signOutWallet()])
-    router.push("/")
-  }, [])
 
   return (
     <AppLayout>
@@ -33,12 +23,6 @@ const AccountPage = () => {
           }
         />
         <WalletSetup />
-        <button
-          onClick={logout}
-          className="mt-2 uppercase font-dosis font-bold text-base p-2 px-16 text-white bg-black"
-        >
-          Sign Out
-        </button>
       </section>
     </AppLayout>
   )
