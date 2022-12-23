@@ -91,9 +91,9 @@ function Footer() {
         </div>
         <div className="flex flex-row justify-between font-roboto text-sm">
           <div>Copyright text</div>
-          <div className="font-dosis underline text-black space-x-6">
-            <span>Terms</span>
-            <span>Privacy Policy</span>
+          <div className="font-dosis text-sm underline text-black space-x-6">
+            <Link href="/app/terms">Terms</Link>
+            <Link href="/app/privacy">Privacy Policy</Link>
           </div>
         </div>
       </section>
