@@ -48,7 +48,7 @@ function Footer() {
   return (
     <footer className="bg-white w-full">
       <section className="container mx-auto pb-10 space-y-8">
-        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content_1fr] gap-14 justify-between content-between border border-[#9500CA] p-12 pb-8">
+        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content] gap-14 justify-between content-between border border-[#9500CA] p-12 pb-8">
           <div className="flex flex-col">
             <Image
               className="mb-6"
@@ -66,21 +66,27 @@ function Footer() {
               updates from our company.
             </p>
           </div>
-          <div className="flex flex-col">
-            <h6 className="font-roboto text-base text-black font-bold mb-6">Follow us</h6>
-            <ul className="flex flex-col space-y-5">
-              {SOCIAL_MEDIA.map(({ icon: Icon, href, name }, index) => (
-                <li className="" key={href + index}>
-                  <Link className="space-x-3 flex items-center " href={href} target="_blank">
-                    <Icon />
-                    <span>{name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="">
-            <Image src="/Inspector_footer.png" alt="" width={343} height={238} />
+          <div className="flex gap-12">
+            <div className="flex flex-col">
+              <h6 className="font-roboto text-base text-black font-bold mb-6">Follow us</h6>
+              <ul className="flex flex-col space-y-5">
+                {SOCIAL_MEDIA.map(({ icon: Icon, href, name }, index) => (
+                  <li className="" key={href + index}>
+                    <Link
+                      className="space-x-3 flex items-center transition-transform transform-gpu hover:translate-x-1 hover:scale-110"
+                      href={href}
+                      target="_blank"
+                    >
+                      <Icon />
+                      <span>{name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="">
+              <Image src="/Inspector_footer.png" alt="" width={343} height={238} />
+            </div>
           </div>
         </div>
         <div className="flex flex-row justify-between font-roboto text-sm">

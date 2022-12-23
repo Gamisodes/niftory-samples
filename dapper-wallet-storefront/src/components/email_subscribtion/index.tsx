@@ -92,7 +92,7 @@ function EmailSubscription() {
                         />
                         <button
                           type="button"
-                          className="font-dosis font-bold text-base text-white uppercase bg-header py-3 px-6"
+                          className="font-dosis font-bold text-base text-white transition-colors uppercase bg-header hover:bg-purple opacity py-3 px-6"
                           onClick={() => {
                             if (props.errors.email || props.values.email.length === 0) return
                             openModal()
