@@ -1,12 +1,11 @@
-import { VStack } from "@chakra-ui/react"
 import { memo } from "react"
 import AppLayout from "src/components/AppLayout"
 
 function PrivacyComponent() {
   return (
     <AppLayout>
-      <VStack className="mx-auto">
-        <div className="text-white">
+      <section className="mx-auto container pb-5">
+        <div className="text-black">
           <p className="pb-1 default_heading font-bangers mb-5 text-4xl">
             <b>Privacy Policy</b>
           </p>
@@ -416,7 +415,7 @@ function PrivacyComponent() {
             </p>
           </div>
         </div>
-      </VStack>
+      </section>
     </AppLayout>
   )
 }
