@@ -1,11 +1,10 @@
-import { VStack } from "@chakra-ui/react"
 import { memo } from "react"
 import AppLayout from "src/components/AppLayout"
 
 function Terms() {
   return (
     <AppLayout>
-      <VStack className="mx-auto text-white">
+      <section className="mx-auto text-black container pb-5">
         <div className="page-width  section-template--16282241106138__main-padding text-xl">
           <p className="pb-1 default_heading font-bangers mb-5 text-4xl">TERMS OF SERVICE</p>
           <p className="pb-2">Last Updated: July 20, 2022</p>
@@ -684,7 +683,7 @@ function Terms() {
             hello@gamisodes.com. <span className="Apple-converted-space">&nbsp;</span>
           </p>
         </div>
-      </VStack>
+      </section>
     </AppLayout>
   )
 }
