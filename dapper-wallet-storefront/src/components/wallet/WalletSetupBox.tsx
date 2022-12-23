@@ -31,7 +31,7 @@ export const WalletSetupBox = ({
 
   return (
     <>
-      <div className="font-dosis text-center text-lg pb-4">{text}</div>
+      <div className="font-dosis font-bold text-xl text-center pb-4">{text}</div>
 
       <button
         className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple"

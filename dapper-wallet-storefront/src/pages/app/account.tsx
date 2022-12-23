@@ -21,10 +21,10 @@ const AccountPage = () => {
       <section className="mx-auto text-black flex flex-col items-center">
         <SectionHeader
           text={
-            <section className="flex space-x-2">
+            <section className="flex items-center space-x-5">
               <div>
                 <img
-                  className="inline-block h-12 rounded-full ring-2 ring-white"
+                  className="inline-block w-20 rounded-full ring-2 ring-white"
                   src={session.user.image}
                 />
               </div>
