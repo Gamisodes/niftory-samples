@@ -4,64 +4,51 @@ import Discord from "src/icon/Discord.svg"
 import Facebook from "src/icon/Facebook.svg"
 import Instagram from "src/icon/Instagram.svg"
 import Twitter from "src/icon/Twitter.svg"
+import Youtube from "src/icon/Youtube.svg"
 import EmailSubscription from "src/components/email_subscribtion"
 import Image from "next/image"
 
 export interface IFooterLink {
   label?: string
   href?: string
+  name?: string
 }
 
 export interface IFooterProps {}
 
 const SOCIAL_MEDIA = [
   {
-    href: "https://discord.com/invite/ZB4Mubkwrf",
-    icon: () => <Discord />,
-  },
-  {
-    href: "https://twitter.com/PlayGamisodes",
-    icon: () => <Twitter />,
-  },
-  {
     href: "https://www.facebook.com/profile.php?id=100073143924225",
     icon: () => <Facebook />,
+    name: "Facebook",
   },
   {
     href: "https://www.instagram.com/gamisodes",
     icon: () => <Instagram />,
+    name: "Instagram",
+  },
+  {
+    href: "https://twitter.com/PlayGamisodes",
+    icon: () => <Twitter />,
+    name: "Twitter",
+  },
+  {
+    href: "https://www.youtube.com/@gamisodes4619",
+    icon: () => <Youtube />,
+    name: "Youtube",
+  },
+  {
+    href: "https://discord.com/invite/ZB4Mubkwrf",
+    icon: () => <Discord />,
+    name: "Discrod",
   },
 ]
-
-// function Footer({}: IFooterProps) {
-//   return (
-//     <footer className="flex text-white font-dosis py-8 pb-3 p-2">
-//       <section className="flex container mx-auto justify-center md:justify-between flex-wrap gap-5">
-//         <div className="social-media">
-//           <h6 className="text-xl font-normal mb-1">Join our community: </h6>
-//           <ul className="flex space-x-5">
-//             {SOCIAL_MEDIA.map(({ icon: Icon, href }, index) => (
-//               <li key={href + index}>
-//                 <Link href={href} target="_blank">
-//                   <Icon />
-//                 </Link>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//         <div className="contact-form">
-//           <EmailSubscription />
-//         </div>
-//       </section>
-//     </footer>
-//   )
-// }
 
 function Footer() {
   return (
     <footer className="bg-white w-full">
       <section className="container mx-auto pb-10 space-y-8">
-        <div className="grid md:grid-cols-[1fr_max-content_1fr] gap-5 border border-[#9500CA] p-12 pb-8">
+        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content_1fr] gap-14 justify-between content-between border border-[#9500CA] p-12 pb-8">
           <div className="flex flex-col">
             <Image
               className="mb-6"
@@ -69,28 +56,30 @@ function Footer() {
               alt="Footer element"
               width={179}
               height={58}
+              style={{ objectFit: "cover" }}
             />
-            <div className="mb-6">
+            <div className="mb-4">
               <EmailSubscription />
             </div>
-            <p>
+            <p className="font-roboto text-xs font-normal">
               By subscribing you agree to with our Privacy Policy and provide consent to receive
               updates from our company.
             </p>
           </div>
           <div className="flex flex-col">
-            <h6>Follow us</h6>
+            <h6 className="font-roboto text-base text-black font-bold mb-6">Follow us</h6>
             <ul className="flex flex-col space-y-5">
-              {SOCIAL_MEDIA.map(({ icon: Icon, href }, index) => (
+              {SOCIAL_MEDIA.map(({ icon: Icon, href, name }, index) => (
                 <li className="" key={href + index}>
-                  <Link href={href} target="_blank">
+                  <Link className="space-x-3 flex items-center " href={href} target="_blank">
                     <Icon />
+                    <span>{name}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="flex">
+          <div className="">
             <Image src="/Inspector_footer.png" alt="" width={343} height={238} />
           </div>
         </div>

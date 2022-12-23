@@ -69,7 +69,7 @@ function EmailSubscription() {
   return (
     <>
       <section>
-        <p className="font-dosis text-base font-normal mb-1">
+        <p className="font-dosis text-base font-normal mb-6">
           Stay up to date on the latest with Gamisodes
         </p>
         <Formik<IFormState>
@@ -83,26 +83,26 @@ function EmailSubscription() {
                 <Field name="email">
                   {({ field, form }) => (
                     <div className="flex flex-col">
-                      <div className="flex w-fit border-2 border-gray-500 shadow-[3px_3px_0px_3px_#000000]">
+                      <div className="flex w-full space-x-4">
                         <input
-                          className="shadow-xl max-w-sm w-full md:w-80 py-1 px-2 sm:px-4 sm:py-3 text-base sm:text-xl text-gray-500 border-2 border-gray-500"
+                          className="border border-black text-gray-600 w-full p-3 text-base font-roboto"
                           {...field}
                           type="email"
                           placeholder="Enter email"
                         />
                         <button
                           type="button"
-                          className="flex items-center justify-center py-1 px-2  sm:py-2 sm:px-5 uppercase text-base sm:text-2xl bg-purple hover:bg-purple.hover border-2 border-gray-500 shadow-xl"
+                          className="font-dosis font-bold text-base text-white uppercase bg-header py-3 px-6"
                           onClick={() => {
                             if (props.errors.email || props.values.email.length === 0) return
                             openModal()
                           }}
                         >
-                          Submit
+                          Subscribe
                         </button>
                       </div>
                       <section
-                        className={classNames("text-red-500 pt-2 h-8", {
+                        className={classNames("text-red-500 text-base pt-2 h-8", {
                           invisible: !(form.errors.email && form.touched.email),
                         })}
                       >
