@@ -69,7 +69,9 @@ function EmailSubscription() {
   return (
     <>
       <section>
-        <p className="text-xl font-normal mb-1">Stay up to date on the latest with Gamisodes</p>
+        <p className="font-dosis text-base font-normal mb-1">
+          Stay up to date on the latest with Gamisodes
+        </p>
         <Formik<IFormState>
           initialValues={{ email: "", year: String(yearArray[0]), month: monthList[0] }}
           validationSchema={EmailSchema}
@@ -81,7 +83,7 @@ function EmailSubscription() {
                 <Field name="email">
                   {({ field, form }) => (
                     <div className="flex flex-col">
-                      <div className="flex border-2 border-gray-500 shadow-[3px_3px_0px_3px_#000000]">
+                      <div className="flex w-fit border-2 border-gray-500 shadow-[3px_3px_0px_3px_#000000]">
                         <input
                           className="shadow-xl max-w-sm w-full md:w-80 py-1 px-2 sm:px-4 sm:py-3 text-base sm:text-xl text-gray-500 border-2 border-gray-500"
                           {...field}
