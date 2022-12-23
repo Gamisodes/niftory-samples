@@ -13,28 +13,24 @@ type RegisterWalletProps = {
 function RegisterWallet({ mutateCache }: RegisterWalletProps) {
   const { data: User } = useSession()
   const { currentUser, signIn, isLoading: walletContextLoading } = useWalletContext()
-  const { mutate, isSuccess, error, isLoading, data } = useSendRegisterWalletQuery()
+  const { mutateAsync, error, isLoading, data } = useSendRegisterWalletQuery()
   const ref = useRef(null)
 
   // When the user logs in, register their wallet
   useEffect(() => {
-    if (walletContextLoading || !currentUser?.addr) {
+    if (walletContextLoading || !currentUser?.addr || isLoading) {
       return
     }
     if (ref.current === true) return
     ref.current = currentUser.loggedIn
-    mutate()
-  }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
-
-  useEffect(() => {
-    if (isSuccess) {
+    mutateAsync().then(() => {
       mutateCache()
       gaAPI.connect_dapper_wallet({
         email: User?.user?.email ?? "",
-        wallet: data?.data ?? currentUser?.addr ?? "",
+        wallet: data?.data?.registerWallet?.address ?? currentUser?.addr ?? "",
       })
-    }
-  }, [isSuccess])
+    })
+  }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
 
   return (
     <WalletSetupBox

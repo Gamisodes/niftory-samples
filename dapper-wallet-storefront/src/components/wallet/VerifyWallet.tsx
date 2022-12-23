@@ -1,5 +1,5 @@
 import * as fcl from "@onflow/fcl"
-import { useCallback, useEffect } from "react"
+import { useCallback } from "react"
 import { useSendVerifyWalletQuery } from "src/services/wallet/hooks"
 import { WalletSetupBox } from "./WalletSetupBox"
 
@@ -9,23 +9,19 @@ export type VerifyWalletProps = {
 }
 
 function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
-  const { mutate, error, isSuccess, isLoading } = useSendVerifyWalletQuery()
+  const { mutateAsync, error, isLoading } = useSendVerifyWalletQuery()
 
   // On click, prompt the user to sign the verification message
   const onClick = useCallback(async () => {
     // Use FCL to sign the verification message
     const signedVerificationCode = await fcl.currentUser.signUserMessage(verificationCode)
 
-    if (!signedVerificationCode) {
+    if (!signedVerificationCode || isLoading) {
       return
     }
-    mutate({ signature: signedVerificationCode })
+    mutateAsync({ signature: signedVerificationCode }).then(mutateCache)
   }, [mutateCache, verificationCode])
 
-  useEffect(() => {
-    if (isSuccess) mutateCache()
-  }, [isSuccess])
-  console.log("error: ", error)
   return (
     <WalletSetupBox
       text={

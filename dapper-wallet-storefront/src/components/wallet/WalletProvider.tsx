@@ -43,8 +43,9 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
   const leaveSignOutWithMessage = useCallback(() => {
     toast({
       title: "Wallet Sign-In Error",
-      description:
-        "This wallet is already connected to another account. Please use another wallet or create a new wallet. If you believe you received this error by mistake, please contact support@gamisodes.com.",
+      description: `This Google Account ${
+        user?.user?.email && `"${user.user.email}"`
+      } is already connected to another Dapper Wallet. Please use another wallet or create a new wallet. If you believe you received this error by mistake, please contact support@gamisodes.com.`,
       status: "error",
       duration: 4000,
       isClosable: true,
