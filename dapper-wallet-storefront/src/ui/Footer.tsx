@@ -47,8 +47,8 @@ const SOCIAL_MEDIA = [
 function Footer() {
   return (
     <footer className="bg-white w-full">
-      <section className="container mx-auto pb-10 space-y-8">
-        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content] gap-14 justify-between content-between border border-[#9500CA] p-12 pb-8">
+      <section className="container px-7 mx-auto pb-10 space-y-8">
+        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content] gap-14 justify-between content-between border border-[#9500CA] p-6 pb-4 sm:p-12 sm:pb-8">
           <div className="flex flex-col">
             <Image
               className="mb-6"
@@ -66,10 +66,10 @@ function Footer() {
               updates from our company.
             </p>
           </div>
-          <div className="flex gap-12">
+          <div className="flex flex-col-reverse sm:flex-row gap-6 md:gap-12">
             <div className="flex flex-col">
               <h6 className="font-roboto text-base text-black font-bold mb-6">Follow us</h6>
-              <ul className="flex flex-col space-y-5">
+              <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] sm:flex sm:flex-col gap-5">
                 {SOCIAL_MEDIA.map(({ icon: Icon, href, name }, index) => (
                   <li className="" key={href + index}>
                     <Link
