@@ -27,13 +27,19 @@ export function WalletSetup() {
     useWalletByAddressQuery({
       variables: { address: currentUser?.addr },
       pause: !currentUser?.addr,
+      requestPolicy: "cache-and-network",
     })
 
   const mutateCache = useCallback(() => {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
 
+  // const wallet = useMemo(
+  //   () => currentUser?.addr && walletData?.walletByAddress,
+  //   [currentUser?.addr, walletFetching, walletData?.walletByAddress.state]
+  // )
   const wallet = currentUser?.addr && walletData?.walletByAddress
+
   if (!error && !walletFetching) {
     // No Wallet for this address
     if (!wallet || !wallet?.address) {
