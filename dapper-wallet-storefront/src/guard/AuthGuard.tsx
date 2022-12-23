@@ -1,4 +1,3 @@
-import { Button, VStack } from "@chakra-ui/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
@@ -11,9 +10,9 @@ function AuthGuard({ children }: PropsWithChildren) {
   if (status === "loading") {
     return (
       <AppLayout>
-        <VStack className="mx-auto">
+        <section className="mx-auto">
           <SectionHeader text="Loading..." />
-        </VStack>
+        </section>
       </AppLayout>
     )
   }
@@ -21,17 +20,19 @@ function AuthGuard({ children }: PropsWithChildren) {
   if (status === "unauthenticated") {
     return (
       <AppLayout>
-        <VStack className="mx-auto">
+        <section className="mx-auto">
           <SectionHeader text="Access denied" />
-          <p className="text-dosis text-white text-xl font-bold pb-6">
-            You need to login to our app
-          </p>
-
-          {/* <SectionHeader text="Access Denied. You need to login to our app" /> */}
-          <Link href={"/app/sign-in"}>
-            <Button>Sign in / Sign up</Button>
-          </Link>
-        </VStack>
+          <div className="flex flex-col justify-center items-center">
+            <p className="text-dosis text-black text-xl font-bold pb-6">
+              You need to login to our app
+            </p>
+            <Link href={"/app/sign-in"} className="flex w-fit items-center">
+              <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
+                Sign in / Sign up
+              </button>
+            </Link>
+          </div>
+        </section>
       </AppLayout>
     )
   }
