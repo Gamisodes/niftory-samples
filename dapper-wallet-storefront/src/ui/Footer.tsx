@@ -48,7 +48,7 @@ function Footer() {
   return (
     <footer className="bg-white w-full">
       <section className="container px-7 mx-auto pb-10 space-y-8">
-        <div className="grid md:grid-cols-[minmax(500px,1fr)_max-content] gap-14 justify-between content-between border border-[#9500CA] p-6 pb-4 sm:p-12 sm:pb-8">
+        <div className="grid md:grid-cols-[minmax(300px,1fr)_max-content] lg:grid-cols-[minmax(350px,1fr)_max-content] gap-14 md:gap-5 lg:gap-14 justify-between content-between border border-[#9500CA] p-6 pb-4 sm:p-12 sm:pb-8">
           <div className="flex flex-col">
             <Image
               className="mb-6"
@@ -66,7 +66,7 @@ function Footer() {
               updates from our company.
             </p>
           </div>
-          <div className="flex flex-col-reverse sm:flex-row gap-6 md:gap-12">
+          <div className="flex flex-col-reverse sm:flex-row md:flex-col-reverse lg:flex-row gap-6 md:gap-12">
             <div className="flex flex-col">
               <h6 className="font-roboto text-base text-black font-bold mb-6">Follow us</h6>
               <ul className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] sm:flex sm:flex-col gap-5">
@@ -84,7 +84,7 @@ function Footer() {
                 ))}
               </ul>
             </div>
-            <div className="">
+            <div className="flex justify-center">
               <Image src="/Inspector_footer.png" alt="" width={343} height={238} />
             </div>
           </div>
