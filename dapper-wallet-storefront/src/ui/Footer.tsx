@@ -90,7 +90,7 @@ function Footer() {
           </div>
         </div>
         <div className="flex flex-row justify-between font-roboto text-sm">
-          <div>Copyright text</div>
+          <div>© 2022, Gamisodes Powered by NextJS</div>
           <div className="font-dosis text-sm underline text-black space-x-6">
             <Link href="/app/terms">Terms</Link>
             <Link href="/app/privacy">Privacy Policy</Link>
