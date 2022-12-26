@@ -12,13 +12,17 @@ interface CollectionProps {
 }
 export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
   if (isLoading) {
-    return <Spinner />
+    return (
+      <section>
+        <Spinner />
+      </section>
+    )
   }
 
   const noNfts = !nfts?.length
 
   return (
-    <Box>
+    <section>
       {noNfts && (
         <CallToAction
           contentBefore={`Your collection is empty. Start Collecting!`}
@@ -38,6 +42,6 @@ export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
               <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
             ))}
       </SimpleGrid>
-    </Box>
+    </section>
   )
 }

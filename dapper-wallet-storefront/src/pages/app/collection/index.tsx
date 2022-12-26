@@ -17,7 +17,7 @@ const CollectionPage = () => {
 
   const nfts: Subset<Nft>[] = nftsByWalletResponse?.data?.nftsByWallet?.items
   const title = `My Collection | Gamisodes`
-
+  console.log(nfts)
   return (
     <>
       <Head>
