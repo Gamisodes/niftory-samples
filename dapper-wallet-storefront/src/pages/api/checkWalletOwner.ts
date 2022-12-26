@@ -1,4 +1,10 @@
+import {
+  WalletByAddressDocument,
+  WalletByAddressQuery,
+  WalletByAddressQueryVariables,
+} from "generated/graphql"
 import { NextApiHandler } from "next"
+import { getBackendGraphQLClient } from "src/lib/BackendGraphQLClient"
 import prisma from "src/lib/prisma"
 
 const handler: NextApiHandler = async (req, res) => {
@@ -33,6 +39,25 @@ const handler: NextApiHandler = async (req, res) => {
     })
     //If this wallet don't exist at all and you don't have wallet
     if (!wallet && user?.wallet === null) {
+      const backendGQLClient = await getBackendGraphQLClient()
+      const response = await backendGQLClient.request<
+        WalletByAddressQuery,
+        WalletByAddressQueryVariables
+      >(WalletByAddressDocument, { address: loggedWithAddress })
+      const walletByAddress = response?.walletByAddress ?? null
+      //If this wallet not exist at all - we might wan't create it in future
+      if (!walletByAddress) {
+        res.status(200).json({ shouldLogout: false, success: true })
+        return
+      } else {
+        //If for some reason, this wallet marked as registered and our user didn't have assigned it yet - let's do this
+        await prisma.wallet.create({
+          data: {
+            address: loggedWithAddress,
+            user: { connect: { email: user.email } },
+          },
+        })
+      }
       res.status(200).json({ shouldLogout: false, success: true })
       return
     }
