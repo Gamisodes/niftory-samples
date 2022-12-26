@@ -23,7 +23,7 @@ export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
         <CallToAction
           contentBefore={`Your collection is empty. Start Collecting!`}
           buttonContent={`Go to Drops`}
-          buttonPath={"/app/drops"}
+          buttonPath={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}
         />
       )}
       <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={{ base: "8", lg: "10" }}>

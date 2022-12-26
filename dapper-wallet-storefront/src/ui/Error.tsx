@@ -8,7 +8,7 @@ function Error({ statusCode }: ErrorProps) {
   return (
     <Box as="section" bgSize="cover" paddingTop="10%" position="relative" w="100%">
       <VStack>
-        <Center>
+        <Center className="text-black">
           <SectionHeader
             text={
               statusCode == 404 ? "Uh oh. We couldn't find that page." : "Something went wrong."

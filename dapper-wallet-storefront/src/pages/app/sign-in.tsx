@@ -22,7 +22,7 @@ const SignInPage = ({ providers }: ISignInPageProps) => {
         <meta property="og:title" content={title} key="title" />
       </Head>
       <AppLayout>
-        <section className="mx-auto flex flex-col items-center">
+        <section className="mx-auto flex flex-col items-center text-black">
           <SectionHeader text="Sign-in to our app" />
           {Object.values(providers).map((provider) => (
             <div key={provider.name}>

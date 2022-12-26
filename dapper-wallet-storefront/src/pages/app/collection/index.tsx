@@ -1,12 +1,11 @@
-import { Box } from "@chakra-ui/react"
-
+import Head from "next/head"
+import CollectionWrapper from "src/components/collection/CollectionWrapper"
+import { SectionHeader } from "src/ui/SectionHeader"
 import { Nft, useNftsByWalletQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 import { Subset } from "../../../lib/types"
-import { SectionHeader } from "../../../ui/SectionHeader"
-import Head from "next/head"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
@@ -26,10 +25,10 @@ const CollectionPage = () => {
         <meta property="og:title" content={title} key="title" />
       </Head>
       <AppLayout>
-        <Box maxW="7xl" mx="auto">
+        <CollectionWrapper>
           <SectionHeader text="My Collection" />
           <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
-        </Box>
+        </CollectionWrapper>
       </AppLayout>
     </>
   )
