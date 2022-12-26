@@ -6,6 +6,7 @@ import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 import { Subset } from "../../../lib/types"
 import { SectionHeader } from "../../../ui/SectionHeader"
+import Head from "next/head"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
@@ -16,14 +17,21 @@ const CollectionPage = () => {
   })
 
   const nfts: Subset<Nft>[] = nftsByWalletResponse?.data?.nftsByWallet?.items
+  const title = `My Collection | Gamisodes`
 
   return (
-    <AppLayout>
-      <Box maxW="7xl" mx="auto">
-        <SectionHeader text="My Collection" />
-        <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
-      </Box>
-    </AppLayout>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
+      <AppLayout>
+        <Box maxW="7xl" mx="auto">
+          <SectionHeader text="My Collection" />
+          <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
+        </Box>
+      </AppLayout>
+    </>
   )
 }
 
