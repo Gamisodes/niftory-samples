@@ -2,7 +2,7 @@ import Head from "next/head"
 import { useMemo } from "react"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 import { SectionHeader } from "src/ui/SectionHeader"
-import { Nft, useNftsByWalletQuery } from "../../../../generated/graphql"
+import { Nft, NftBlockchainState, useNftsByWalletQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
@@ -16,7 +16,12 @@ const CollectionPage = () => {
     requestPolicy: "cache-and-network",
   })
   const nfts: Subset<Nft>[] = useMemo(
-    () => nftsByWalletResponse?.data?.nftsByWallet?.items,
+    () =>
+      nftsByWalletResponse?.data?.nftsByWallet?.items.filter((nft) =>
+        [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
+          nft.blockchainState
+        )
+      ),
     [nftsByWalletResponse.fetching, nftsByWalletResponse.stale]
   )
   const title = `My Collection | Gamisodes`
@@ -29,7 +34,7 @@ const CollectionPage = () => {
       <AppLayout>
         <CollectionWrapper>
           <section className="pt-10">
-            <SectionHeader text="My Collection" />
+            <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
           <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
         </CollectionWrapper>

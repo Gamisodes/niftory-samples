@@ -23,17 +23,11 @@ export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
   if (!noNfts)
     return (
       <section className="flex flex-col gap-4">
-        <div className="grid gap-4 lg:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-2 lg:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {nfts &&
-            nfts
-              .filter((nft) =>
-                [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
-                  nft.blockchainState
-                )
-              )
-              .map((nft) => (
-                <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
-              ))}
+            nfts.map((nft) => (
+              <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
+            ))}
         </div>
       </section>
     )
