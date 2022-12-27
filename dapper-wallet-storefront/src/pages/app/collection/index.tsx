@@ -1,4 +1,5 @@
 import Head from "next/head"
+import { useMemo } from "react"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 import { SectionHeader } from "src/ui/SectionHeader"
 import { Nft, useNftsByWalletQuery } from "../../../../generated/graphql"
@@ -14,10 +15,11 @@ const CollectionPage = () => {
     pause: !currentUser?.addr,
     requestPolicy: "cache-and-network",
   })
-
-  const nfts: Subset<Nft>[] = nftsByWalletResponse?.data?.nftsByWallet?.items
+  const nfts: Subset<Nft>[] = useMemo(
+    () => nftsByWalletResponse?.data?.nftsByWallet?.items,
+    [nftsByWalletResponse.fetching, nftsByWalletResponse.stale]
+  )
   const title = `My Collection | Gamisodes`
-  console.log(nfts)
   return (
     <>
       <Head>
@@ -26,7 +28,9 @@ const CollectionPage = () => {
       </Head>
       <AppLayout>
         <CollectionWrapper>
-          <SectionHeader text="My Collection" />
+          <section className="pt-10">
+            <SectionHeader text="My Collection" />
+          </section>
           <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
         </CollectionWrapper>
       </AppLayout>

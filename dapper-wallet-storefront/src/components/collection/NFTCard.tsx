@@ -10,7 +10,8 @@ import {
   Text,
 } from "@chakra-ui/react"
 import router from "next/router"
-import * as React from "react"
+import React from "react"
+import { ProductCardStats } from "src/ui/Content/ProductCard/ProductCardStats"
 
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
@@ -22,6 +23,10 @@ export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
   const imageUrl = nftModel?.content?.poster?.url
   const title = nftModel?.title
 
+  const stats = {
+    rarity: nftModel?.rarity,
+    serial: nft?.serialNumber?.toString(),
+  }
   return (
     <Link onClick={() => router.push(clickUrl)}>
       <Stack
@@ -43,7 +48,7 @@ export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
           </Text>
         </Center>
 
-        {/* {stats && <ProductCardStats {...stats} />} */}
+        {stats && <ProductCardStats {...stats} />}
       </Stack>
     </Link>
   )
