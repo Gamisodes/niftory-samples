@@ -3,9 +3,8 @@ import Ellipsis from "src/ui/Ellipsis"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 
-export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
-  const { nft, clickUrl } = props
-
+type NFTCard = { nft: Subset<Nft>; clickUrl: string }
+export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const nftModel = nft?.model
   const imageUrl = nftModel?.content?.poster?.url
   const title = nftModel?.title
@@ -26,7 +25,7 @@ export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
             draggable="false"
           />
         </div>
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col h-full justify-between">
           <div className="my-2 text-center font-dosis font-bold text-base">
             <Ellipsis lines={3} breakWord>
               {title}
@@ -36,7 +35,8 @@ export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
             <div className="flex justify-center mt-auto">
               <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-2">
                 <p>
-                  <span className="font-bold">Serial: </span> {stats.serial}
+                  <span className="font-bold">Serial: </span>
+                  {nft && nft.serialNumber} / {nftModel.quantity}
                 </p>
               </div>
             </div>
