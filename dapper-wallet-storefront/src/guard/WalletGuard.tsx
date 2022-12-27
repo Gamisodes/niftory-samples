@@ -9,7 +9,7 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (isLoading) {
     return (
       <AppLayout>
-        <section className="mx-auto">
+        <section className="mx-auto text-black">
           <SectionHeader text="Loading..." />
         </section>
       </AppLayout>
@@ -19,7 +19,7 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (currentUser && !currentUser.loggedIn) {
     return (
       <AppLayout>
-        <section className="mx-auto">
+        <section className="mx-auto text-black">
           <SectionHeader text="Access denied" />
           <div className="flex flex-col justify-center items-center">
             <p className="text-dosis text-black text-xl font-bold pb-6">

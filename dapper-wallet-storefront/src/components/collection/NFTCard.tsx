@@ -1,50 +1,48 @@
-import {
-  AspectRatio,
-  Box,
-  Center,
-  HStack,
-  Image,
-  Link,
-  Skeleton,
-  Stack,
-  Text,
-} from "@chakra-ui/react"
-import router from "next/router"
-import * as React from "react"
-
+import Link from "next/link"
+import Ellipsis from "src/ui/Ellipsis"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 
-export const NFTCard = (props: { nft: Subset<Nft>; clickUrl: string }) => {
-  const { nft, clickUrl } = props
-
+type NFTCard = { nft: Subset<Nft>; clickUrl: string }
+export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const nftModel = nft?.model
   const imageUrl = nftModel?.content?.poster?.url
   const title = nftModel?.title
 
-  return (
-    <Link onClick={() => router.push(clickUrl)}>
-      <Stack
-        spacing="3"
-        padding="4"
-        bg="gray.900"
-        borderRadius="8px"
-        _hover={{ bg: "#202020", borderColor: "gray.600" }}
-      >
-        <Box position="relative" className="group">
-          <AspectRatio ratio={3 / 4}>
-            <Image src={imageUrl} alt={title} draggable="false" fallback={<Skeleton />} />
-          </AspectRatio>
-          <HStack spacing="3" position="absolute" top="4" left="4"></HStack>
-        </Box>
-        <Center>
-          <Text fontWeight="medium" fontSize="sm" color="page.accent">
-            {title}
-          </Text>
-        </Center>
+  const stats = {
+    rarity: nftModel?.rarity,
+    serial: nft?.serialNumber?.toString(),
+  }
 
-        {/* {stats && <ProductCardStats {...stats} />} */}
-      </Stack>
+  return (
+    <Link className="flex" href={clickUrl}>
+      <div className="flex flex-col bg-white h-full text-black max-w-xs md:max-w-[157px] p-4 rounded-lg transform-gpu transition-all hover:bg-gray-200 hover:border-purple hover:shadow-sm hover:-translate-y-1">
+        <div className="relative group">
+          <img
+            className="aspect-square object-contain w-full"
+            src={imageUrl}
+            alt={title}
+            draggable="false"
+          />
+        </div>
+        <div className="flex flex-col h-full justify-between">
+          <div className="my-2 text-center font-dosis font-bold text-base">
+            <Ellipsis lines={3} breakWord>
+              {title}
+            </Ellipsis>
+          </div>
+          {stats && (
+            <div className="flex justify-center mt-auto">
+              <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-2">
+                <p>
+                  <span className="font-bold">Serial: </span>
+                  {nft && nft.serialNumber} / {nftModel.quantity}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </Link>
   )
 }

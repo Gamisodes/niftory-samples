@@ -25,10 +25,10 @@ export const NFTModelsPage = () => {
         <meta property="og:title" content={title} key="title" />
       </Head>
       <AppLayout>
-        <Box maxW="7xl" mx="auto">
+        <section className="text-black mx-auto">
           <SectionHeader text="Get A Drop: TBD" />
           {/* {nftModels && <NFTModelsGrid nftModels={nftModels} />} */}
-        </Box>
+        </section>
       </AppLayout>
     </>
   )

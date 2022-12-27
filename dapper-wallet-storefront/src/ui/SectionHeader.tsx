@@ -1,5 +1,8 @@
+import classNames from "classnames"
+
 export interface SectionHeaderProps {
   text: JSX.Element | string
+  classNames?: string
 }
 
 export const SectionHeader = (props: SectionHeaderProps) => {
@@ -7,7 +10,14 @@ export const SectionHeader = (props: SectionHeaderProps) => {
 
   return (
     <section className="flex justify-center">
-      <h1 className="text-black font-bangers uppercase text-5xl font-extrabold py-12">{text}</h1>
+      <h1
+        className={classNames(
+          "font-bangers uppercase text-5xl font-extrabold py-12",
+          props.classNames
+        )}
+      >
+        {text}
+      </h1>
     </section>
   )
 }
