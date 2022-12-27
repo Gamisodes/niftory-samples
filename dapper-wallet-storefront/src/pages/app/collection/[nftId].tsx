@@ -33,7 +33,7 @@ export const NFTDetailPage = () => {
         <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
       </Head>
       <AppLayout>
-        <CollectionWrapper>
+        <CollectionWrapper paddingBottom={false}>
           <NFTDetail nft={nft} />
         </CollectionWrapper>
       </AppLayout>

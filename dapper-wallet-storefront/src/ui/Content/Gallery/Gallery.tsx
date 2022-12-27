@@ -29,8 +29,8 @@ export const Gallery = ({ content }: GalleryProps) => {
   console.log(content)
 
   return (
-    <div className="flex w-full flex-col gap-3 overflow-hidden">
-      <div className="flex relative">
+    <div className="flex w-full flex-col gap-3 ">
+      <div className="flex relative h-full">
         {content[index].contentType?.includes("video") ? (
           <video
             className="aspect-[4_/_3] object-cover w-full"
@@ -46,8 +46,9 @@ export const Gallery = ({ content }: GalleryProps) => {
           />
         ) : (
           <Image
-            className="aspect-square w-full object-cover"
+            className="aspect-square w-full object-contain"
             src={content[index].contentUrl}
+            // fill
             width={300}
             height={300}
             placeholder="blur"
@@ -57,7 +58,7 @@ export const Gallery = ({ content }: GalleryProps) => {
           />
         )}
       </div>
-      <div className="flex">
+      {/* <div className="flex">
         <Carousel ref={ref} direction="row" width="lg">
           {content.map((media, i) => (
             <CarouselSlide key={i} onClick={() => setIndex(i)} cursor="pointer">
@@ -77,7 +78,7 @@ export const Gallery = ({ content }: GalleryProps) => {
             </CarouselSlide>
           ))}
         </Carousel>
-      </div>
+      </div> */}
     </div>
   )
 }
