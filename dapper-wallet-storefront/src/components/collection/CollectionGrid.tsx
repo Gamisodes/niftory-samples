@@ -1,9 +1,8 @@
-import { Box, SimpleGrid, Spinner } from "@chakra-ui/react"
-import * as React from "react"
+import Link from "next/link"
+import { Loading } from "src/icon/Loading"
 
 import { Nft, NftBlockchainState } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
-import { CallToAction } from "../../ui/CallToAction"
 import { NFTCard } from "./NFTCard"
 
 interface CollectionProps {
@@ -11,33 +10,37 @@ interface CollectionProps {
   nfts: Subset<Nft>[]
 }
 export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
-  if (isLoading) {
-    return <Spinner />
-  }
-
   const noNfts = !nfts?.length
 
-  return (
-    <Box>
-      {noNfts && (
-        <CallToAction
-          contentBefore={`Your collection is empty. Start Collecting!`}
-          buttonContent={`Go to Drops`}
-          buttonPath={"/app/drops"}
-        />
-      )}
-      <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={{ base: "8", lg: "10" }}>
-        {nfts &&
-          nfts
-            .filter((nft) =>
-              [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
-                nft.blockchainState
-              )
-            )
-            .map((nft) => (
+  if (isLoading) {
+    return (
+      <section>
+        <Loading />
+      </section>
+    )
+  }
+
+  if (!noNfts)
+    return (
+      <section className="flex flex-col gap-4">
+        <div className="grid gap-2 lg:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {nfts &&
+            nfts.map((nft) => (
               <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
             ))}
-      </SimpleGrid>
-    </Box>
+        </div>
+      </section>
+    )
+  return (
+    <section className="flex flex-col gap-4">
+      <section className="flex flex-col items-center gap-4">
+        <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
+        <Link href={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
+          <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
+            Go to Drops
+          </button>
+        </Link>
+      </section>
+    </section>
   )
 }

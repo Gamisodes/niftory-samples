@@ -1,4 +1,5 @@
 import { Skeleton } from "@chakra-ui/react"
+import Head from "next/head"
 import { useRouter } from "next/router"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
@@ -31,13 +32,22 @@ const NFTModelDetailPage = () => {
       },
     ],
   }
-  console.log(metadata)
+  console.log(metadata.content)
+  const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
-    <AppLayout>
-      <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
-        <NFTModelDetail id={nftModelId} metadata={metadata} />
-      </Skeleton>
-    </AppLayout>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+        <meta property="og:description" content={metadata.description} key="description" />
+        <meta property="og:image" content={metadata.content[0].contentUrl ?? ""} key="image" />
+      </Head>
+      <AppLayout>
+        <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
+          <NFTModelDetail id={nftModelId} metadata={metadata} />
+        </Skeleton>
+      </AppLayout>
+    </>
   )
 }
 

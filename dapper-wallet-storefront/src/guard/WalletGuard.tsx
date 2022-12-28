@@ -1,4 +1,3 @@
-import { Button, VStack } from "@chakra-ui/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
 import AppLayout from "src/components/AppLayout"
@@ -10,9 +9,9 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (isLoading) {
     return (
       <AppLayout>
-        <VStack className="mx-auto">
+        <section className="mx-auto text-black">
           <SectionHeader text="Loading..." />
-        </VStack>
+        </section>
       </AppLayout>
     )
   }
@@ -20,16 +19,19 @@ function WalletGuard({ children }: PropsWithChildren) {
   if (currentUser && !currentUser.loggedIn) {
     return (
       <AppLayout>
-        <VStack className="mx-auto">
+        <section className="mx-auto text-black">
           <SectionHeader text="Access denied" />
-          <p className="text-dosis text-white text-xl font-bold pb-6">
-            You need to login to your Dapper Wallet
-          </p>
-          {/* <SectionHeader text="Access to Wallet functionality Denied" /> */}
-          <Link href={"/app/account"}>
-            <Button>Sign in / Sign up</Button>
-          </Link>
-        </VStack>
+          <div className="flex flex-col justify-center items-center">
+            <p className="text-dosis text-black text-xl font-bold pb-6">
+              You need to login to your Dapper Wallet
+            </p>
+            <Link href={"/app/account"} className="flex w-fit items-center">
+              <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
+                Sign in / Sign up
+              </button>
+            </Link>
+          </div>
+        </section>
       </AppLayout>
     )
   }

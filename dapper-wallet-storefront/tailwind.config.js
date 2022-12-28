@@ -6,6 +6,7 @@ module.exports = {
       fontFamily: {
         dosis: ['"Dosis"', "sans-serif"],
         bangers: ['"Bangers"', "cursive"],
+        roboto: ['"Roboto"', "sans-serif"],
       },
       colors: {
         main: "#15318E",
