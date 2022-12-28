@@ -1,44 +1,22 @@
 import classNames from "classnames"
 import { Field, Form, Formik, FormikHelpers } from "formik"
-import { memo, useCallback, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { Loading } from "src/icon/Loading"
 import { useSendEmailToKlaviyo } from "src/services/klaviyo/hooks"
 import * as yup from "yup"
 import Modal from "./Modal"
-import Select from "./Select"
 const EmailSchema = yup.object({
   email: yup.string().email().required(),
-  year: yup.string().required(),
-  month: yup.string().required(),
 })
 
 interface IFormState {
   email: string
-  year: string
-  month: string
 }
 
-const currentYear = new Date().getFullYear()
-const yearArray = Array(120)
-  .fill(1)
-  .map((_, index) => {
-    return String(currentYear - index)
-  })
-const monthList = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]
-
-function useModal() {
+interface ISetting {
+  timeout?: number
+}
+function useModal({ timeout }: ISetting) {
   const [isOpen, setIsOpen] = useState(false)
 
   function closeModal() {
@@ -48,22 +26,31 @@ function useModal() {
   function openModal() {
     setIsOpen(true)
   }
+
+  useEffect(() => {
+    if (!timeout) return
+    let timer: NodeJS.Timer
+    if (isOpen) {
+      timer = setTimeout(() => {
+        setIsOpen(false)
+      }, timeout)
+    }
+    return () => {
+      if (timer) clearTimeout(timer)
+    }
+  }, [isOpen])
   return useMemo(() => ({ isOpen, closeModal, openModal }), [isOpen])
 }
 
 function EmailSubscription() {
-  const { isOpen, closeModal, openModal } = useModal()
+  const { isOpen, closeModal, openModal } = useModal({ timeout: undefined })
 
   const { mutateAsync } = useSendEmailToKlaviyo()
 
   const onSubmit = useCallback(async (values: IFormState, actions: FormikHelpers<IFormState>) => {
-    if (+values.year > currentYear - 18) {
-      actions.setFieldError("year", "You must be upper than 18")
-      return
-    }
     await mutateAsync(values)
+    openModal()
     actions.setSubmitting(false)
-    closeModal()
     actions.resetForm()
   }, [])
   return (
@@ -73,11 +60,11 @@ function EmailSubscription() {
           Stay up to date on the latest with Gamisodes
         </p>
         <Formik<IFormState>
-          initialValues={{ email: "", year: String(yearArray[0]), month: monthList[0] }}
+          initialValues={{ email: "" }}
           validationSchema={EmailSchema}
           onSubmit={onSubmit}
         >
-          {(props) => {
+          {({ isSubmitting }) => {
             return (
               <Form id="email_subscription_form">
                 <Field name="email">
@@ -91,14 +78,18 @@ function EmailSubscription() {
                           placeholder="Enter email"
                         />
                         <button
-                          type="button"
-                          className="font-dosis font-bold text-base text-white transition-colors uppercase bg-header hover:bg-purple opacity py-3 px-6"
-                          onClick={() => {
-                            if (props.errors.email || props.values.email.length === 0) return
-                            openModal()
-                          }}
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="flex items-center font-dosis font-bold text-base text-white transition-colors uppercase bg-header hover:bg-purple opacity py-3 px-6 disabled:bg-header.opacity"
                         >
-                          Subscribe
+                          {isSubmitting ? (
+                            <>
+                              <Loading className="w-4 h-4" />
+                              Loading
+                            </>
+                          ) : (
+                            "Subscribe"
+                          )}
                         </button>
                       </div>
                       <section
@@ -115,56 +106,16 @@ function EmailSubscription() {
                     </div>
                   )}
                 </Field>
-                <Modal title="When’s your birthday?" closeModal={closeModal} isOpen={isOpen}>
-                  <div className="mt-2">
-                    <Field name="month">
-                      {({ form }) => (
-                        <div>
-                          <label htmlFor="month">Month</label>
-                          <Select name="month" list={monthList} />
-                          <section
-                            className={classNames("text-white pt-2 h-8", {
-                              hidden: !(form.errors.month && form.touched.month),
-                            })}
-                          >
-                            {!form.errors.month && form.touched.month && <p>{form.errors.month}</p>}
-                          </section>
-                        </div>
-                      )}
-                    </Field>
-                    <Field name="year">
-                      {({ form }) => (
-                        <div>
-                          <label htmlFor="year">Year</label>
-                          <Select name="year" list={yearArray} />
-                          <section
-                            className={classNames("text-white pt-2 h-8", {
-                              hidden: !(form.errors.year && form.touched.year),
-                            })}
-                          >
-                            {form.errors.year && form.touched.year && <p>{form.errors.year}</p>}
-                          </section>
-                        </div>
-                      )}
-                    </Field>
+                <Modal title="Gotcha!" closeModal={closeModal} isOpen={isOpen}>
+                  <div className="mt-2 font-dosis font-bold text-lg text-center">
+                    Great work Inspector, you are subscribed!
                   </div>
-
-                  <div className="flex space-x-3 mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
-                    >
-                      Close
-                    </button>
-                    <button
-                      form="email_subscription_form"
-                      type="submit"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      // isLoading={props.isSubmitting}
-                    >
-                      Submit
-                    </button>
+                  <div
+                    onClick={closeModal}
+                    className="w-7 h-7  absolute top-2 right-2 cursor-pointer transform-gpu transition-transform hover:scale-105"
+                  >
+                    <div className="transform-gpu h-0.5 w-3/4 bg-white absolute rotate-45 top-1/2 left-1/2 -translate-x-1/2"></div>
+                    <div className="transform-gpu h-0.5 w-3/4 bg-white absolute -rotate-45 top-1/2 left-1/2 -translate-x-1/2"></div>
                   </div>
                 </Modal>
               </Form>

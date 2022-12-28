@@ -35,7 +35,7 @@ export default function MyModal({ title, isOpen, closeModal, children }: IModalP
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform-gpu rounded-2xl text-white bg-purple p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full relative max-w-md transform-gpu rounded-2xl text-white bg-purple p-6 text-left align-middle shadow-xl transition-all">
                   {title && (
                     <Dialog.Title
                       as="h3"
