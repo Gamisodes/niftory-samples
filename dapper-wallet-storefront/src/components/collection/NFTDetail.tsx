@@ -1,5 +1,3 @@
-import { Box, Heading, Spacer, Stack, Text } from "@chakra-ui/react"
-
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 import { Gallery } from "../../ui/Content/Gallery/Gallery"
@@ -24,37 +22,30 @@ export const NFTDetail = (props: Props) => {
       alt: nftModel?.title,
     })),
   }
-
   return (
-    <Box p="8">
-      <Stack direction={{ base: "column", lg: "row" }} spacing={{ base: "6", lg: "12", xl: "16" }}>
-        <Stack
-          spacing={{ base: "6", lg: "8" }}
-          minW={{ lg: "sm" }}
-          maxW={{ lg: "sm" }}
-          justify="center"
-          p="8"
-          borderRadius="4"
-          backgroundColor="gray.800"
-        >
-          <Stack spacing={{ base: "3", md: "4" }}>
-            <Stack spacing="3">
-              <Heading size="3xl" fontWeight="medium" color="page.accent">
-                {product.title}
-              </Heading>
-            </Stack>
+    <section className="h-auto sm:h-full py-4 lg:py-24">
+      <div className="flex h-auto sm:h-full flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
+        <div className="flex justify-center sm:min-w-[384px] lg:max-w-sm space-x-6 lg:space-x-8 p-8 rounded bg-white text-black font-dosis">
+          <div className="space-y-3 md:space-y-6 font-normal text-xl">
+            <div className="space-y-3">
+              <h3 className="text-5xl font-bold">{product.title}</h3>
+            </div>
 
-            <Text color="page.text">{product.description}</Text>
+            <p>{product.description}</p>
 
-            <Text color="page.text">
-              Serial: {nft && nft.serialNumber} / {nftModel.quantity}
-              <Spacer />
-              Blockchain Id: {nft && nft.blockchainId}
-            </Text>
-          </Stack>
-        </Stack>
+            <div className="pt-6">
+              <div className="flex w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-6">
+                <p>
+                  <span className="font-bold">Serial: </span>
+                  {nft && nft.serialNumber} / {nftModel.quantity}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {product.content?.length > 0 && <Gallery content={product.content} />}
-      </Stack>
-    </Box>
+      </div>
+    </section>
   )
 }

@@ -1412,7 +1412,7 @@ export type NftsByWalletQueryVariables = Exact<{
 }>;
 
 
-export type NftsByWalletQuery = { __typename?: 'Query', nftsByWallet?: { __typename?: 'NFTList', cursor?: string | null, items?: Array<{ __typename?: 'NFT', id: string, blockchainId?: string | null, serialNumber?: number | null, blockchainState: NftBlockchainState, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, title: string, description: string, rarity?: SimpleRarityLevel | null, attributes?: any | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null } | null } | null } | null> | null } | null };
+export type NftsByWalletQuery = { __typename?: 'Query', nftsByWallet?: { __typename?: 'NFTList', cursor?: string | null, items?: Array<{ __typename?: 'NFT', id: string, blockchainId?: string | null, serialNumber?: number | null, blockchainState: NftBlockchainState, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, title: string, description: string, rarity?: SimpleRarityLevel | null, attributes?: any | null, quantity?: any | null, quantityMinted?: any | null, metadata?: any | null, status?: Status | null, state: NftModelBlockchainState, updatedAt?: any | null, blockchainId?: string | null, createdAt: any, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null } | null } | null } | null> | null } | null };
 
 export type WalletByAddressQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1634,6 +1634,14 @@ export const NftsByWalletDocument = gql`
         description
         rarity
         attributes
+        quantity
+        quantityMinted
+        metadata
+        status
+        state
+        updatedAt
+        blockchainId
+        createdAt
         content {
           id
           poster {

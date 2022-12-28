@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react"
+import Head from "next/head"
 import { useMemo } from "react"
 
 import { useNftModelsQuery } from "../../../../generated/graphql"
@@ -14,13 +15,22 @@ export const NFTModelsPage = () => {
   const nftModels = useMemo(() => {
     return result?.data?.nftModels?.items?.filter((val) => val) ?? []
   }, [result?.data?.nftModels?.items, result.fetching])
+
+  const title = `Get A Drop: TBD | Gamisodes`
+
   return (
-    <AppLayout>
-      <Box maxW="7xl" mx="auto">
-        <SectionHeader text="Get A Drop: TBD" />
-        {/* {nftModels && <NFTModelsGrid nftModels={nftModels} />} */}
-      </Box>
-    </AppLayout>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
+      <AppLayout>
+        <section className="text-black mx-auto">
+          <SectionHeader text="Get A Drop: TBD" />
+          {/* {nftModels && <NFTModelsGrid nftModels={nftModels} />} */}
+        </section>
+      </AppLayout>
+    </>
   )
 }
 

@@ -1,5 +1,7 @@
 import { Box } from "@chakra-ui/react"
+import Head from "next/head"
 import { useRouter } from "next/router"
+import CollectionWrapper from "src/components/collection/CollectionWrapper"
 
 import { Nft, useNftQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
@@ -19,12 +21,23 @@ export const NFTDetailPage = () => {
     return <LoginSkeleton />
   }
 
+  const nftModel = nft?.model
+  const title = `${nftModel?.title ?? "Your's idea with"} | Gamisodes`
+
   return (
-    <AppLayout>
-      <Box maxW="7xl" mx="auto" mt="12">
-        {nft && <NFTDetail nft={nft} />}
-      </Box>
-    </AppLayout>
+    <>
+      <Head>
+        <title>{nftModel?.title ?? ""}</title>
+        <meta property="og:title" content={title} key="title" />
+        <meta property="og:description" content={nftModel?.description ?? ""} key="description" />
+        <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
+      </Head>
+      <AppLayout>
+        <CollectionWrapper paddingBottom={false}>
+          <NFTDetail nft={nft} />
+        </CollectionWrapper>
+      </AppLayout>
+    </>
   )
 }
 

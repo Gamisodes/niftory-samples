@@ -11,6 +11,14 @@ query nftsByWallet($address: String) {
         description
         rarity
         attributes
+        quantity
+        quantityMinted
+        metadata
+        status
+        state
+        updatedAt
+        blockchainId
+        createdAt
         content {
           id
           poster {
