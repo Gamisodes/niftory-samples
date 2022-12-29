@@ -40,7 +40,7 @@ const SOCIAL_MEDIA = [
   {
     href: "https://discord.com/invite/ZB4Mubkwrf",
     icon: () => <Discord />,
-    name: "Discrod",
+    name: "Discord",
   },
 ]
 
