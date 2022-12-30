@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Button from "src/ui/Button"
 import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
+import usePreventLeave from "src/hooks/usePreventLeave"
 
 type NFTModelDetailProps = {
   id: string
@@ -287,6 +288,10 @@ function useCheckout(id: string) {
       setCheckoutStatusIndex(0)
     }
   }, [currentUser?.addr, id, router, signTransaction])
+
+  usePreventLeave(() => {
+    return checkoutStatusIndex !== 0
+  }, [checkoutStatusIndex])
 
   return { handleCheckout, checkoutStatusIndex }
 }

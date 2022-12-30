@@ -34,10 +34,6 @@ export function WalletSetup() {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
 
-  // const wallet = useMemo(
-  //   () => currentUser?.addr && walletData?.walletByAddress,
-  //   [currentUser?.addr, walletFetching, walletData?.walletByAddress.state]
-  // )
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
   if (!error && !walletFetching) {
@@ -56,7 +52,6 @@ export function WalletSetup() {
         return <ConfigureWallet address={wallet.address} mutateCache={mutateCache} />
     }
   }
-
   return (
     <WalletSetupBox
       text={`You're all set up! Your wallet address is ${wallet?.address}`}
