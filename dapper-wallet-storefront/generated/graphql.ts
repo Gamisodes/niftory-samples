@@ -568,8 +568,10 @@ export type Nft = BlockchainEntity & Identifiable & SellableEntity & {
   id: Scalars['ID'];
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
-  /** The model from which this NFT was created. */
+  /** The NFTModel from which this NFT was created. */
   model?: Maybe<NftModel>;
+  /** The ID of the NFTModel from which this NFT was created */
+  modelId?: Maybe<Scalars['ID']>;
   /** This state of this object's sale. */
   saleState?: Maybe<SaleState>;
   /** The serial number for this NFT within its model. */
@@ -1391,7 +1393,7 @@ export type NftQueryVariables = Exact<{
 }>;
 
 
-export type NftQuery = { __typename?: 'Query', nft?: { __typename?: 'NFT', blockchainId?: string | null, metadata?: any | null, id: string, serialNumber?: number | null, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, attributes?: any | null, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null } | null } | null };
+export type NftQuery = { __typename?: 'Query', nft?: { __typename?: 'NFT', blockchainId?: string | null, metadata?: any | null, id: string, serialNumber?: number | null, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, attributes?: any | null, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, set: { __typename?: 'NFTSet', attributes?: any | null, blockchainId?: string | null, createdAt: any, id: string, image?: any | null, metadata?: any | null, state: NftSetBlockchainState, status?: Status | null, title: string, updatedAt?: any | null }, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null } | null } | null };
 
 export type NftModelQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1527,6 +1529,18 @@ export const NftDocument = gql`
       description
       rarity
       quantity
+      set {
+        attributes
+        blockchainId
+        createdAt
+        id
+        image
+        metadata
+        state
+        status
+        title
+        updatedAt
+      }
       content {
         id
         poster {

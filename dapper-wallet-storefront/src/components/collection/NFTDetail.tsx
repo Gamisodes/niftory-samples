@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { ESetAttribute } from "src/typings/SetAttribute"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 import { Gallery } from "../../ui/Content/Gallery/Gallery"
@@ -105,14 +106,17 @@ export const NFTDetail = (props: Props) => {
   }
 
   const traits: ITraits | undefined = useMemo(() => {
-    return (
-      product.attributes?.traits?.reduce(
-        (acc, { trait_type, value }) => {
-          return { ...acc, [trait_type]: value }
-        },
-        { costumeType: product?.attributes?.costumeType ?? "" } as ITraits
-      ) ?? undefined
-    )
+    const setAttributes = nftModel?.set?.attributes ?? {}
+    if (setAttributes?.type === ESetAttribute.TICKET)
+      return (
+        product.attributes?.traits?.reduce(
+          (acc, { trait_type, value }) => {
+            return { ...acc, [trait_type]: value }
+          },
+          { costumeType: product?.attributes?.costumeType ?? "" } as ITraits
+        ) ?? undefined
+      )
+    return undefined
   }, [])
   return (
     <section className="h-auto sm:h-full py-4 lg:py-24">

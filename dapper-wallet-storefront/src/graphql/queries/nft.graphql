@@ -14,6 +14,18 @@ query nft($id: ID!) {
       description
       rarity
       quantity
+      set {
+        attributes
+        blockchainId
+        createdAt
+        id
+        image
+        metadata
+        state
+        status
+        title
+        updatedAt
+      }
       content {
         id
         poster {
