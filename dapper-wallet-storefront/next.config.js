@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: "niftory-assets-prod.s3.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "niftory-assets-staging.s3.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   webpack(config) {

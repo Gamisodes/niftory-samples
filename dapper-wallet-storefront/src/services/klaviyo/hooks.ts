@@ -15,9 +15,7 @@ interface IErrorsResponseFromKvyilo {
   errors: []
 }
 export function useSendEmailToKlaviyo() {
-  return useMutation<
-    ISuccessResponseFromKvyilo,
-    IErrorsResponseFromKvyilo,
-    { email: string; year: string; month: string }
-  >((props) => KlaviyoRequest.postKlaviyoEmail(props))
+  return useMutation<ISuccessResponseFromKvyilo, IErrorsResponseFromKvyilo, { email: string }>(
+    (props) => KlaviyoRequest.postKlaviyoEmail(props)
+  )
 }

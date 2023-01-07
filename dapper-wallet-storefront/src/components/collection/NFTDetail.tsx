@@ -1,9 +1,90 @@
+import { useMemo } from "react"
+import { ESetAttribute } from "src/typings/SetAttribute"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 import { Gallery } from "../../ui/Content/Gallery/Gallery"
 
 interface Props {
   nft: Subset<Nft>
+}
+
+export interface ITraits {
+  costumeType: string
+  "Background Color": string
+  "Background Pattern": string
+  Outfit: string
+  Coms: string
+  Eyes: string
+  "Head Piece": string
+  Mouth: string
+}
+
+interface ITraitsProps {
+  traits: ITraits
+}
+const TraitsBlock = ({ traits }: ITraitsProps) => {
+  return (
+    <div className="pt-2 text-lg">
+      {Object.entries(traits).map(([key, val]) => {
+        if (key === "costumeType") return
+        return (
+          <p key={val}>
+            <span className="text-xl font-bold">{key}</span> : <span>{val}</span>
+          </p>
+        )
+      })}
+      {traits["costumeType"] && (
+        <p>
+          <span className="text-xl font-bold">Costume Type</span> :{" "}
+          <span>{traits.costumeType}</span>
+        </p>
+      )}
+      {/* {traits["costumeType"] && (
+        <p>
+          <span className="text-xl font-bold">Costume Type</span> :{" "}
+          <span>{traits.costumeType}</span>
+        </p>
+      )}
+      {traits["Head Piece"] && (
+        <p>
+          <span className="text-xl font-bold">Head Piece</span> :{" "}
+          <span>{traits["Head Piece"]}</span>
+        </p>
+      )}
+      {traits["Eyes"] && (
+        <p>
+          <span className="text-xl font-bold">Eyes</span> : <span>{traits["Eyes"]}</span>
+        </p>
+      )}
+      {traits["Mouth"] && (
+        <p>
+          <span className="text-xl font-bold">Mouth</span> : <span>{traits["Mouth"]}</span>
+        </p>
+      )}
+      {traits["Coms"] && (
+        <p>
+          <span className="text-xl font-bold">Coms</span> : <span>{traits["Coms"]}</span>
+        </p>
+      )}
+      {traits["Outfit"] && (
+        <p>
+          <span className="text-xl font-bold">Outfit</span> : <span>{traits["Outfit"]}</span>
+        </p>
+      )}
+      {traits["Background Color"] && (
+        <p>
+          <span className="text-xl font-bold">Background Color</span> :{" "}
+          <span>{traits["Background Color"]}</span>
+        </p>
+      )}
+      {traits["Background Pattern"] && (
+        <p>
+          <span className="text-xl font-bold">Background Pattern</span> :{" "}
+          <span>{traits["Background Pattern"]}</span>
+        </p>
+      )} */}
+    </div>
+  )
 }
 
 export const NFTDetail = (props: Props) => {
@@ -21,7 +102,22 @@ export const NFTDetail = (props: Props) => {
       thumbnailUrl: poster,
       alt: nftModel?.title,
     })),
+    attributes: { ...nftModel.metadata, ...nftModel.attributes },
   }
+
+  const traits: ITraits | undefined = useMemo(() => {
+    const setAttributes = nftModel?.set?.attributes ?? {}
+    if (setAttributes?.type === ESetAttribute.TICKET)
+      return (
+        product.attributes?.traits?.reduce(
+          (acc, { trait_type, value }) => {
+            return { ...acc, [trait_type]: value }
+          },
+          { costumeType: product?.attributes?.costumeType ?? "" } as ITraits
+        ) ?? undefined
+      )
+    return undefined
+  }, [])
   return (
     <section className="h-auto sm:h-full py-4 lg:py-24">
       <div className="flex h-auto sm:h-full flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
@@ -36,11 +132,12 @@ export const NFTDetail = (props: Props) => {
             <div className="pt-6">
               <div className="flex w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-6">
                 <p>
-                  <span className="font-bold">Serial: </span>
+                  <span className="font-bold">Edition: </span>
                   {nft && nft.serialNumber} / {nftModel.quantity}
                 </p>
               </div>
             </div>
+            {traits && <TraitsBlock traits={traits} />}
           </div>
         </div>
 

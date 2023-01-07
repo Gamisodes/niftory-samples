@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useRef } from "react"
+import usePreventLeave from "src/hooks/usePreventLeave"
 import gaAPI from "src/services/ga_events"
 
 import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
@@ -31,6 +32,10 @@ function RegisterWallet({ mutateCache }: RegisterWalletProps) {
       })
     })
   }, [currentUser?.addr, currentUser?.loggedIn, walletContextLoading])
+
+  usePreventLeave(() => {
+    return isLoading
+  }, [isLoading])
 
   return (
     <WalletSetupBox

@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl"
 import { useCallback } from "react"
+import usePreventLeave from "src/hooks/usePreventLeave"
 import { useSendVerifyWalletQuery } from "src/services/wallet/hooks"
 import { WalletSetupBox } from "./WalletSetupBox"
 
@@ -21,7 +22,9 @@ function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
     }
     mutateAsync({ signature: signedVerificationCode }).then(mutateCache)
   }, [mutateCache, verificationCode])
-
+  usePreventLeave(() => {
+    return isLoading
+  }, [isLoading])
   return (
     <WalletSetupBox
       text={

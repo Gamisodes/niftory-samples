@@ -56,7 +56,6 @@ export function WalletSetup() {
         return <ConfigureWallet address={wallet.address} mutateCache={mutateCache} />
     }
   }
-
   return (
     <WalletSetupBox
       text={`You're all set up! Your wallet address is ${wallet?.address}`}

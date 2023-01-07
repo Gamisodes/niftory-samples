@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import usePreventLeave from "src/hooks/usePreventLeave"
 import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 
 import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
@@ -25,7 +26,9 @@ function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
     }
     mutateAsync().then(mutateCache)
   }, [configured])
-
+  usePreventLeave(() => {
+    return isLoading
+  }, [isLoading])
   return (
     <WalletSetupBox
       text={
