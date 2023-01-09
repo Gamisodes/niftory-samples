@@ -109,12 +109,9 @@ export const NFTDetail = (props: Props) => {
     const setAttributes = nftModel?.set?.attributes ?? {}
     if (setAttributes?.type === ESetAttribute.TICKET)
       return (
-        product.attributes?.traits?.reduce(
-          (acc, { trait_type, value }) => {
-            return { ...acc, [trait_type]: value }
-          },
-          { costumeType: product?.attributes?.costumeType ?? "" } as ITraits
-        ) ?? undefined
+        product.attributes?.traits?.reduce((acc, { trait_type, value }) => {
+          return { ...acc, [trait_type]: value }
+        }, {} as ITraits) ?? undefined
       )
     return undefined
   }, [])
