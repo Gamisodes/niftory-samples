@@ -28,6 +28,8 @@ export type Scalars = {
 /** Current Prisma Mapping: User (with role >= MARKETER). A user of the Niftory admin portal and APIs. */
 export type AdminUser = Identifiable & UserData & {
   __typename?: 'AdminUser';
+  /** The apps this user is an admin for. */
+  apps?: Maybe<Array<Maybe<App>>>;
   /** This user's email. */
   email?: Maybe<Scalars['EmailAddress']>;
   /** A unique identifier for this object in the Niftory API. */
@@ -38,7 +40,10 @@ export type AdminUser = Identifiable & UserData & {
   name?: Maybe<Scalars['String']>;
   /** The organizations this user belongs to. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
-  /** This user's orgs and its roles there. */
+  /**
+   * This user's orgs and its roles there.
+   * @deprecated Deprecated. Use apps/organizations instead.
+   */
   orgs?: Maybe<Array<Maybe<UserRoleMapping>>>;
 };
 
@@ -49,6 +54,8 @@ export type App = Identifiable & {
   contract?: Maybe<Contract>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The name for this app. */
+  name?: Maybe<Scalars['String']>;
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -937,7 +944,7 @@ export type Pageable = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Gets an [AdminUser]({{Types.AdminUser}}) by ID. */
+  /** Gets the currently signed in [AdminUser]({{Types.AdminUser}}). */
   adminUser?: Maybe<AdminUser>;
   /** Gets the [App]({{Types.App}}) for the current application context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   app?: Maybe<App>;
@@ -1001,7 +1008,7 @@ export type Query = {
 
 
 export type QueryAdminUserArgs = {
-  id: Scalars['ID'];
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 
