@@ -7,14 +7,26 @@ import { Subset } from "../../lib/types"
 import { NFTCard } from "./NFTCard"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
-import { useState } from "react"
+import { SetStateAction, useState } from "react"
+
+interface IFilterState {
+  label: string
+  options: { selected: boolean; value: string }[]
+  optionsHash: { [key: string]: number }
+}
 interface CollectionProps {
   isLoading: boolean
   nfts: Subset<Nft>[]
+  filter: {
+    label: string
+    options: { selected: boolean; value: string }[]
+    optionsHash: { [key: string]: number }
+  }[]
+  setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
-export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
+export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: CollectionProps) => {
   const noNfts = !nfts?.length
-  const [showFilter, setShowFilter] = useState(false)
+  const [showFilter, setShowFilter] = useState(true)
 
   if (isLoading) {
     return (
@@ -27,18 +39,18 @@ export const CollectionGrid = ({ isLoading, nfts }: CollectionProps) => {
   if (!noNfts)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        <div className="col-span-12">
+        {/* <div className="col-span-12">
           <HorizontalFilter setShowFilter={setShowFilter} showFilter={showFilter} />
-        </div>
+        </div> */}
         {showFilter && (
-          <div className="col-span-3">
-            <CollectionFilter />
+          <div className="lg:col-span-3 col-span-12">
+            <CollectionFilter filter={filter} setFilter={setFilter} />
           </div>
         )}
-        <div className={cn({ "col-span-9": showFilter, "col-span-12": !showFilter })}>
+        <div className={cn({ "lg:col-span-9 col-span-12": showFilter, "col-span-12": !showFilter })}>
           <div
             className={cn(
-              "grid gap-2 lg:gap-8 grid-cols-1 sm:grid-cols-2",
+              "grid gap-2 justify-items-center lg:gap-8 grid-cols-1 sm:grid-cols-2",
               `${showFilter ? "md:grid-cols-3 lg:grid-cols-4" : "md:grid-cols-4 lg:grid-cols-5"}`
             )}
           >
