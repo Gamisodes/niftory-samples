@@ -25,7 +25,7 @@ interface CollectionProps {
   setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
 export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: CollectionProps) => {
-  const noNfts = !nfts?.length
+  const hasNfts = !!nfts?.length
   const [showFilter, setShowFilter] = useState(true)
 
   if (isLoading) {
@@ -36,7 +36,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
     )
   }
 
-  if (!noNfts)
+  if (hasNfts || (!!filter.length && !hasNfts))
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         {/* <div className="col-span-12">
@@ -47,17 +47,22 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
             <CollectionFilter filter={filter} setFilter={setFilter} />
           </div>
         )}
-        <div className={cn({ "lg:col-span-9 col-span-12": showFilter, "col-span-12": !showFilter })}>
+        <div
+          className={cn({ "lg:col-span-9 col-span-12": showFilter, "col-span-12": !showFilter })}
+        >
           <div
             className={cn(
-              "grid gap-2 justify-items-center lg:gap-8 grid-cols-1 sm:grid-cols-2",
+              "lg:min-w-[725px] grid gap-2 justify-items-center lg:gap-8 grid-cols-1 sm:grid-cols-2",
               `${showFilter ? "md:grid-cols-3 lg:grid-cols-4" : "md:grid-cols-4 lg:grid-cols-5"}`
             )}
           >
-            {nfts &&
+            {!!nfts.length ? (
               nfts.map((nft) => (
                 <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
-              ))}
+              ))
+            ) : (
+              <div className="col-span-full text-2xl">There is no NFTs to shown</div>
+            )}
           </div>
         </div>
       </section>
