@@ -28,6 +28,8 @@ export type Scalars = {
 /** Current Prisma Mapping: User (with role >= MARKETER). A user of the Niftory admin portal and APIs. */
 export type AdminUser = Identifiable & UserData & {
   __typename?: 'AdminUser';
+  /** The apps this user is an admin for. */
+  apps?: Maybe<Array<Maybe<App>>>;
   /** This user's email. */
   email?: Maybe<Scalars['EmailAddress']>;
   /** A unique identifier for this object in the Niftory API. */
@@ -38,8 +40,6 @@ export type AdminUser = Identifiable & UserData & {
   name?: Maybe<Scalars['String']>;
   /** The organizations this user belongs to. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
-  /** This user's orgs and its roles there. */
-  orgs?: Maybe<Array<Maybe<UserRoleMapping>>>;
 };
 
 /** An application in the Niftory ecosystem. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -49,6 +49,8 @@ export type App = Identifiable & {
   contract?: Maybe<Contract>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The name for this app. */
+  name?: Maybe<Scalars['String']>;
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -396,6 +398,8 @@ export type Mutation = {
   uploadNFTContent?: Maybe<NftContent>;
   /** Verifies a [Wallet]({{Types.Wallet}}) to the currently signed-in user. If the signed verification code fails to decode with the wallet's public key or doesn't match the wallet's verification code, the request will fail. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
   verifyWallet?: Maybe<Wallet>;
+  /** Initiates the withdrawal of an [NFT]({{Types.NFT}}) from a custodial Niftory [Wallet]{{Types.Wallet}} to a receiver [Wallet]({{Types.Wallet}}) address */
+  withdraw?: Maybe<Nft>;
 };
 
 
@@ -423,6 +427,7 @@ export type MutationCompleteCheckoutWithDapperWalletArgs = {
 
 
 export type MutationCreateFileUploadUrlArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   options?: InputMaybe<CreateFileOptionsInput>;
@@ -473,6 +478,7 @@ export type MutationMintNftArgs = {
 
 
 export type MutationMintNftModelArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
   quantity?: InputMaybe<Scalars['PositiveInt']>;
 };
@@ -507,6 +513,7 @@ export type MutationSignTransactionForDapperWalletArgs = {
 
 export type MutationTransferArgs = {
   address?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['ID']>;
   id?: InputMaybe<Scalars['ID']>;
   nftModelId?: InputMaybe<Scalars['ID']>;
   userId?: InputMaybe<Scalars['ID']>;
@@ -555,6 +562,12 @@ export type MutationUploadNftContentArgs = {
 export type MutationVerifyWalletArgs = {
   address: Scalars['String'];
   signedVerificationCode: Scalars['JSON'];
+};
+
+
+export type MutationWithdrawArgs = {
+  id: Scalars['ID'];
+  receiverAddress: Scalars['String'];
 };
 
 /** Respresentation of a [non-fungible token](https://en.wikipedia.org/wiki/Non-fungible_token) in the Niftory ecosystem (it doesn't have to be minted on the blockchain yet). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts). */
@@ -905,18 +918,6 @@ export type NftSetUpdateInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-/** An org within the Niftory ecosystem. Orgs manage [App]({{Types.App}})s. Read more [here](https://docs.niftory.com/home/v/admin/explore/org-and-apps). */
-export type Org = Identifiable & {
-  __typename?: 'Org';
-  /** The apps this org has. */
-  apps?: Maybe<Array<Maybe<App>>>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** This org's members. */
-  members?: Maybe<Array<Maybe<AdminUser>>>;
-  name?: Maybe<Scalars['String']>;
-};
-
 /** An organization within the Niftory ecosystem. Organization manages [App]({{Types.App}})s. Read more [here](https://docs.niftory.com/home/v/admin/explore/org-and-apps). */
 export type Organization = Identifiable & {
   __typename?: 'Organization';
@@ -937,7 +938,7 @@ export type Pageable = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Gets an [AdminUser]({{Types.AdminUser}}) by ID. */
+  /** Gets the currently signed in [AdminUser]({{Types.AdminUser}}). */
   adminUser?: Maybe<AdminUser>;
   /** Gets the [App]({{Types.App}}) for the current application context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   app?: Maybe<App>;
@@ -975,12 +976,6 @@ export type Query = {
   nfts?: Maybe<NftList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current wallet, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nftsByWallet?: Maybe<NftList>;
-  /** Gets the [Org]({{Types.Org}}) corresponding to the current [App]({{Types.App}}) context. */
-  org?: Maybe<Org>;
-  /** Gets an [Org]({{Types.Org}}) by ID. */
-  orgById?: Maybe<Org>;
-  /** Gets an [Org]({{Types.Org}}) by Org Name. */
-  orgByName?: Maybe<Org>;
   /** Gets a [Organization]({{Types.Organization}}) by ID. */
   organization?: Maybe<Organization>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
@@ -1001,7 +996,7 @@ export type Query = {
 
 
 export type QueryAdminUserArgs = {
-  id: Scalars['ID'];
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -1096,16 +1091,6 @@ export type QueryNftsByWalletArgs = {
   filter?: InputMaybe<NftFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
   walletId?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryOrgByIdArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryOrgByNameArgs = {
-  name: Scalars['String'];
 };
 
 
@@ -1296,17 +1281,6 @@ export type UserData = {
   name?: Maybe<Scalars['String']>;
 };
 
-/** Maps a user to a role in an org */
-export type UserRoleMapping = {
-  __typename?: 'UserRoleMapping';
-  /** The org this mapping refers to. */
-  org?: Maybe<Org>;
-  /** The AdminUser's role in this org. */
-  role?: Maybe<Role>;
-  /** The ID of the AdminUser this mapping refers to. */
-  userId: Scalars['ID'];
-};
-
 /** Represents a blockchain wallet scoped to a particular [App]({{Types.App}}) and [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets). */
 export type Wallet = Attributable & HasTimes & Identifiable & {
   __typename?: 'Wallet';
@@ -1328,6 +1302,8 @@ export type Wallet = Attributable & HasTimes & Identifiable & {
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** The verification code that can be used to verify this wallet for this user. */
   verificationCode?: Maybe<Scalars['String']>;
+  /** The type of wallet. This represents if the wallet was linked externally or created by Niftory */
+  walletType?: Maybe<WalletType>;
 };
 
 /** A list of Wallets. */
@@ -1351,6 +1327,14 @@ export enum WalletState {
   Unverified = 'UNVERIFIED',
   /** The wallet is verified to belong to the signed-in user, but not yet ready to receive NFTs from this app's contract. */
   Verified = 'VERIFIED'
+}
+
+/** The type of wallet. */
+export enum WalletType {
+  /** A custodial wallet created by the niftory API. */
+  Custodial = 'CUSTODIAL',
+  /** An external wallet linked by the user. */
+  External = 'EXTERNAL'
 }
 
 export type ReadyWalletMutationVariables = Exact<{
