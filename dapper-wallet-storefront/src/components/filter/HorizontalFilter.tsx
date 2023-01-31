@@ -36,7 +36,7 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
             ></path>
           </svg>
         </div>
-        <div>
+        {/* <div>
           <label className="relative block text-black">
             <span className="sr-only">Search</span>
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -55,9 +55,9 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
               name="search"
             />
           </label>
-        </div>
+        </div> */}
       </div>
-      <div className="col-span-9">
+      {/* <div className="col-span-9">
         <RadioGroup
           value={collection}
           onChange={setCollection}
@@ -81,7 +81,7 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
             </RadioGroup.Option>
           ))}
         </RadioGroup>
-      </div>
+      </div> */}
     </div>
   )
 }
