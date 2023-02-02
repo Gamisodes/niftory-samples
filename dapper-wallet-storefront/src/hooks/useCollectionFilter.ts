@@ -33,8 +33,8 @@ export function useCollectionFilter(
             ...nft.model,
             metadata: {
               ...nft.model.metadata,
-              traits: nft.model.metadata.traits?.reduce((accum, trait) => {
-                return { ...accum, [trait.trait_type]: trait.value }
+              traits: nft.model.metadata.traits?.reduce((accum, trait) => {                
+                return { ...accum, [trait.trait_type]: trait.value, ['Costume Type']: nft?.model?.attributes?.costumeType }
               }, {}),
             },
           },

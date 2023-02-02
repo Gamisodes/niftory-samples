@@ -18,7 +18,7 @@ const CollectionPage = () => {
     requestPolicy: "cache-and-network",
   })
   const {nfts, filter, setFilter} = useCollectionFilter(nftsByWalletResponse);
-
+  
   const title = `My Collection | Gamisodes`
   return (
     <>
