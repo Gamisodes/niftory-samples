@@ -17,7 +17,6 @@ export function useCollectionFilter(
   >
 ) {
   const [filter, setFilter] = useState<IFilterState[]>(allFilters);
-  // const [allFilters, setAllFilters] = useState<IFilterState[]>([])
   const [nfts, setNfts] = useState([])
 
   // const intarfaceAllBTNFTS = allBTNFTS.map((nft) => {

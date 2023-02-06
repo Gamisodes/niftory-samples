@@ -12,7 +12,7 @@ import { SetStateAction, useState } from "react"
 interface IFilterState {
   label: string
   options: { selected: boolean; value: string }[]
-  optionsHash: { [key: string]: number }
+  // optionsHash: { [key: string]: number }
 }
 interface CollectionProps {
   isLoading: boolean
@@ -20,7 +20,7 @@ interface CollectionProps {
   filter: {
     label: string
     options: { selected: boolean; value: string }[]
-    optionsHash: { [key: string]: number }
+    // optionsHash: { [key: string]: number }
   }[]
   setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
