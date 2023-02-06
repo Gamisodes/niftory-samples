@@ -56,7 +56,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
               `${showFilter ? "md:grid-cols-3 lg:grid-cols-4" : "md:grid-cols-4 lg:grid-cols-5"}`
             )}
           >
-            {!!nfts.length ? (
+            {!!nfts?.length ? (
               nfts.map((nft) => (
                 <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
               ))
