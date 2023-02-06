@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
 import AppLayout from "src/components/AppLayout"
@@ -26,6 +26,12 @@ function AuthGuard({ children }: PropsWithChildren) {
             <p className="text-dosis text-black text-xl font-bold pb-6">
               You need to login to our app
             </p>
+            {/* <button
+              onClick={() => signIn()}
+              className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple"
+            >
+              Sign in / Sign up
+            </button> */}
             <Link href={"/app/sign-in"} className="flex w-fit items-center">
               <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
                 Sign in / Sign up
