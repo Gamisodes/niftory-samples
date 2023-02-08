@@ -1,7 +1,6 @@
 import { getProviders, signIn } from "next-auth/react"
 import Head from "next/head"
 import { useRouterHistory } from "src/components/RouterHistory"
-import Head from "next/head"
 
 import EmailOAuth from "src/icon/EmailOAuth.svg"
 import GoogleIcon from "src/icon/GoogleOAuth.svg"
