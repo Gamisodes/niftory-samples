@@ -8,4 +8,4 @@ services:
     image: with-docker-multi-env-preprod
     restart: on-failure
     ports:
-      - "3000:3002"
+      - "3002:3000"
