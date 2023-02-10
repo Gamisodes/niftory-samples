@@ -9,6 +9,12 @@ import {
   NftModelQuery,
   NftModelQueryVariables,
   NftModelsDocument,
+  NftsByWalletDocument,
+  NftsByWalletQuery,
+  NftsByWalletQueryVariables,
+  TransferNftToWalletDocument,
+  TransferNftToWalletMutation,
+  TransferNftToWalletMutationVariables,
 } from "generated/graphql"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
@@ -53,7 +59,7 @@ const handler: NextApiHandler = async (req, res) => {
     return
   }
 
-  const { nftModelId } = req.query
+  const { nftModelId } = req.query as { nftModelId: string }
   if (!nftModelId) {
     res.status(400).send("nftModelId is required")
     return
@@ -69,16 +75,38 @@ const handler: NextApiHandler = async (req, res) => {
       }
     )
     const price = +nftModelResponse?.nftModel?.attributes?.price
-    const checkoutResponse = await backendGQLClient.request<
-      CheckoutWithDapperWalletMutation,
-      CheckoutWithDapperWalletMutationVariables
-    >(CheckoutWithDapperWallet, {
-      nftModelId: nftModelId as string,
-      address,
-      price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
-      expiry: Number.MAX_SAFE_INTEGER,
-    })
-    res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+    if (price > 0) {
+      const checkoutResponse = await backendGQLClient.request<
+        CheckoutWithDapperWalletMutation,
+        CheckoutWithDapperWalletMutationVariables
+      >(CheckoutWithDapperWallet, {
+        nftModelId: nftModelId as string,
+        address,
+        price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
+        expiry: Number.MAX_SAFE_INTEGER,
+      })
+      res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+    } else if (price === 0) {
+      const maxNftForUser = +nftModelResponse?.nftModel?.attributes?.maxNftForUser
+      if (!maxNftForUser) {
+        throw new Error("Maximum NFT's for user isn't specified")
+      }
+      const nfts = await backendGQLClient.request<NftsByWalletQuery, NftsByWalletQueryVariables>(
+        NftsByWalletDocument,
+        { address, filter: { nftModelIds: [nftModelId] } }
+      )
+      if (nfts.nftsByWallet.items.length < maxNftForUser) {
+        const transferToUser = await backendGQLClient.request<
+          TransferNftToWalletMutation,
+          TransferNftToWalletMutationVariables
+        >(TransferNftToWalletDocument, { address, nftModelId })
+        res.status(200).json({ data: transferToUser.transfer, success: true })
+      } else {
+        throw new Error("User reach NFT limit for his wallet")
+      }
+    } else {
+      throw new Error("No price attribute")
+    }
   } catch (error) {
     res.status(500).json({
       error: [error],
