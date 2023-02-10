@@ -1,7 +1,7 @@
 query nftsByWallet(
   $address: String = ""
   $cursor: String = ""
-  $maxResults: PositiveInt = ""
+  $maxResults: PositiveInt = 25
   $walletId: ID = ""
   $filter: NFTFilterInput = {}
 ) {

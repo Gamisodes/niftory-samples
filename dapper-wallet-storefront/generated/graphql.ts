@@ -1680,7 +1680,7 @@ export function useNftModelsQuery(options?: Omit<Urql.UseQueryArgs<NftModelsQuer
   return Urql.useQuery<NftModelsQuery, NftModelsQueryVariables>({ query: NftModelsDocument, ...options });
 };
 export const NftsByWalletDocument = gql`
-    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = "", $walletId: ID = "", $filter: NFTFilterInput = {}) {
+    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
   nftsByWallet(
     address: $address
     cursor: $cursor
