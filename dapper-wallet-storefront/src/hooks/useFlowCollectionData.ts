@@ -11,7 +11,7 @@ function waitforme(millisec) {
 const flow = FlowCollections.create()
 
 export function useFlowCollectionData(wallet: string) {
-  const [collections, setCollections] = useState(undefined)
+  const [gamisodesCollections, setCollections] = useState(undefined)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -32,5 +32,5 @@ export function useFlowCollectionData(wallet: string) {
     }
     getCollections()
   }, [])
-  return { collections, loading }
+  return { gamisodesCollections, loading }
 }

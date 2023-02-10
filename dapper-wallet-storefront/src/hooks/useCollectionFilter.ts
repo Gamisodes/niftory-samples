@@ -1,6 +1,4 @@
-import { Exact, NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useEffect, useMemo, useState } from "react"
-import { UseQueryState } from "urql"
 import { allFilters } from 'src/const/allFilters'
 interface IFilterState {
   label: string
@@ -8,77 +6,23 @@ interface IFilterState {
   // optionsHash: { [key: string]: number }
 }
 
-export function useCollectionFilter(
-  nftsByWalletResponse: UseQueryState<
-    NftsByWalletQuery,
-    Exact<{
-      address?: string
-    }>
-  >
-) {
-  const [filter, setFilter] = useState<IFilterState[]>(allFilters);
+export function useCollectionFilter(allCollections, selectedCollection) {
+  const [filter, setFilter] = useState<IFilterState[]>(allFilters[selectedCollection]);
   const [nfts, setNfts] = useState([])
 
-  const allNfts = useMemo(() => {
-    const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items
-      .filter((nft) =>
-        [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
-          nft.blockchainState
-        )
-      )
-      .map((nft) => {
-        return {
-          ...nft,
-          model: {
-            ...nft.model,
-            metadata: {
-              ...nft.model.metadata,
-              traits: nft.model.metadata.traits?.reduce((accum, trait) => {
-                return {
-                  ...accum,
-                  [trait.trait_type]: trait.value,
-                  ["Costume Type"]: nft?.model?.attributes?.costumeType,
-                }
-              }, {}),
-            },
-          },
-        }
-      })
-    return nftsList
-  }, [nftsByWalletResponse.fetching, nftsByWalletResponse.stale])
+  console.log(filter, nfts);
+  
 
   useEffect(() => {
-    setNfts(allNfts)
-    // const filterHashMap = {}
-    // const baseFilter = []
-
-    // allNfts?.forEach((nft) => {
-    //   try {
-    //     Object.keys(nft.model.metadata.traits).forEach((key) => {
-    //       const index = filterHashMap[key]
-    //       const value = nft.model.metadata.traits[key]
-
-    //       if (typeof index === "number") {
-    //         const j = baseFilter[index].optionsHash[value]
-    //         if (typeof j !== "number") {
-    //           baseFilter[index].optionsHash[value] = baseFilter[index].options.length
-    //           baseFilter[index].options.push({ selected: false, value })
-    //         }
-    //       } else {
-    //         filterHashMap[key] = baseFilter.length
-    //         baseFilter.push({
-    //           label: key,
-    //           options: [{ selected: false, value }],
-    //           optionsHash: { [value]: 0 },
-    //         })
-    //       }
-    //     })
-    //   } catch {}
-    // })
-    // setFilter(baseFilter)
-  }, [allNfts])
+    setNfts(allCollections?.brainTrainCollection)
+  }, [allCollections])
 
   useEffect(() => {
+    setFilter(allFilters[selectedCollection])
+    setNfts(allCollections[selectedCollection])
+  }, [selectedCollection])
+
+  useEffect(() => {    
     const selectedFilters = filter.reduce((accum, { options, label }) => {
       const optionTrue = options
         .filter((option) => option.selected === true)
@@ -88,18 +32,50 @@ export function useCollectionFilter(
     }, [])
 
     if (selectedFilters.length > 0) {
-      const filteredNfts = allNfts?.filter(({ model }) => {
+      const filteredNfts = allCollections[selectedCollection].filter(({ filters }) => {
         let counter = 0
         selectedFilters?.forEach(({ label, options }) => {
-          if (model?.metadata?.traits !== undefined && label in model?.metadata?.traits) {
-            options.includes(model.metadata.traits[label]) && ++counter
+          if (filters !== undefined && label in filters) {
+            options.includes(filters[label]) && ++counter
           }
         })
         return selectedFilters.length === counter
       })
       setNfts(filteredNfts)
-    } else setNfts(allNfts)
+    } else setNfts(allCollections[selectedCollection])
   }, [filter])
+
+
+  // useEffect(() => {
+  //   setNfts(allCollections?.brainTrainCollection)
+  //   const filterHashMap = {}
+  //   const baseFilter = []
+
+  //   allNfts?.forEach((nft) => {
+  //     try {
+  //       Object.keys(nft.model.metadata.traits).forEach((key) => {
+  //         const index = filterHashMap[key]
+  //         const value = nft.model.metadata.traits[key]
+
+  //         if (typeof index === "number") {
+  //           const j = baseFilter[index].optionsHash[value]
+  //           if (typeof j !== "number") {
+  //             baseFilter[index].optionsHash[value] = baseFilter[index].options.length
+  //             baseFilter[index].options.push({ selected: false, value })
+  //           }
+  //         } else {
+  //           filterHashMap[key] = baseFilter.length
+  //           baseFilter.push({
+  //             label: key,
+  //             options: [{ selected: false, value }],
+  //             optionsHash: { [value]: 0 },
+  //           })
+  //         }
+  //       })
+  //     } catch {}
+  //   })
+  //   setFilter(baseFilter)
+  // }, [allCollections])
 
   return useMemo(() => ({ nfts, filter, setFilter }), [filter, nfts])
 }

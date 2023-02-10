@@ -7,7 +7,8 @@ import { Subset } from "../../lib/types"
 import { NFTCard } from "./NFTCard"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
-import { SetStateAction, useState } from "react"
+import { useState } from "react"
+import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 
 interface IFilterState {
   label: string
@@ -16,18 +17,21 @@ interface IFilterState {
 }
 interface CollectionProps {
   isLoading: boolean
-  nfts: Subset<Nft>[]
-  filter: {
-    label: string
-    options: { selected: boolean; value: string }[]
-    // optionsHash: { [key: string]: number }
-  }[]
-  setFilter: (value: SetStateAction<IFilterState[]>) => void
+  allCollections: {[key: string]: Subset<Nft>[]}
+  // filter: {
+  //   label: string
+  //   options: { selected: boolean; value: string }[]
+  //   // optionsHash: { [key: string]: number }
+  // }[]
+  // setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
-export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: CollectionProps) => {
-  const hasNfts = !!nfts?.length
+export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) => {
+  const [selectedCollection, setCollection] = useState('brainTrainCollection')
   const [showFilter, setShowFilter] = useState(true)
 
+  const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
+  const hasNfts = !!nfts?.length
+  
   if (isLoading) {
     return (
       <section>
@@ -39,9 +43,14 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
   if (hasNfts || (!!filter.length && !hasNfts))
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        {/* <div className="col-span-12">
-          <HorizontalFilter setShowFilter={setShowFilter} showFilter={showFilter} />
-        </div> */}
+        <div className="col-span-12">
+          <HorizontalFilter 
+            setShowFilter={setShowFilter} 
+            showFilter={showFilter}
+            selectedCollection={selectedCollection}
+            setCollection={setCollection}
+          />
+        </div>
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />

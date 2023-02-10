@@ -1,4 +1,5 @@
 import { useNftsByWalletQuery } from "generated/graphql"
+import { useCollectionMainInterface } from "./useCollectionMainInterface"
 import { useFlowCollectionData } from "./useFlowCollectionData"
 
 export function useGetFlowAndNiftoryData (currentUser) {
@@ -7,7 +8,11 @@ export function useGetFlowAndNiftoryData (currentUser) {
       pause: !currentUser?.addr,
       requestPolicy: "cache-and-network",
     })
-    const {collections, loading} = useFlowCollectionData(currentUser?.addr)
+    const { gamisodesCollections, loading} = useFlowCollectionData(currentUser?.addr)
+    const allCollections = useCollectionMainInterface(gamisodesCollections, nftsByWalletResponse)
 
-    return {isLoading: loading || nftsByWalletResponse?.fetching, collections, nftsByWalletResponse}
+    return {
+      isLoading: loading || nftsByWalletResponse?.fetching, 
+      allCollections
+    }
 }

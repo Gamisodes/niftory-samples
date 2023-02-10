@@ -6,11 +6,11 @@ import { Subset } from "../../lib/types"
 type NFTCard = { nft: Subset<Nft>; clickUrl: string }
 export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const nftModel = nft?.model
-  const imageUrl = nftModel?.content?.poster?.url
-  const title = nftModel?.title
+  const imageUrl = nft?.imageUrl
+  const title = nft?.title
 
   const stats = {
-    rarity: nftModel?.rarity,
+    rarity: nft?.rarity,
     serial: nft?.serialNumber?.toString(),
   }
 
@@ -31,7 +31,7 @@ export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
               {title}
             </Ellipsis>
           </div>
-          {stats && (
+          {/* {stats && (
             <div className="flex justify-center mt-auto">
               <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-2">
                 <p>
@@ -40,7 +40,7 @@ export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
                 </p>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </Link>

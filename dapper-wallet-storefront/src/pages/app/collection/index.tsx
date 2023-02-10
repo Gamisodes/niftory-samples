@@ -1,7 +1,5 @@
 import Head from "next/head"
-import { useMemo, useState, useEffect } from "react"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
-import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { SectionHeader } from "src/ui/SectionHeader"
 import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
@@ -10,9 +8,7 @@ import { useGetFlowAndNiftoryData } from "src/hooks/useGetFlowAndNiftoryData"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
-  const { isLoading, collections, nftsByWalletResponse} = useGetFlowAndNiftoryData(currentUser)
-  const {nfts, filter, setFilter} = useCollectionFilter(nftsByWalletResponse)
-  console.log(collections);
+  const { isLoading, allCollections } = useGetFlowAndNiftoryData(currentUser)
   
   const title = `My Collection | Gamisodes`
   return (
@@ -27,9 +23,7 @@ const CollectionPage = () => {
             <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
           <CollectionGrid
-            nfts={nfts}
-            filter={filter}
-            setFilter={setFilter}
+            allCollections={allCollections}
             isLoading={isLoading}
           />
         </CollectionWrapper>
