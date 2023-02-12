@@ -7,17 +7,53 @@ export const Navbar = () => {
     return [
       [
         {
-          title: "Buy Ticket",
-          href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
+          title: "Store",
+          href: "https://gamisodes.com/collections",
         },
         {
-          title: "My Collection",
-          href: "/app/collection",
+          title: "Collections",
+          href: "https://gamisodes.com/pages/collections",
+        },
+        {
+          title: "About",
+          href: "/",
+          submenu: [
+            {
+              title: 'Team',
+              href: 'https://gamisodes.com/pages/team-1'
+            },
+            {
+              title: 'FAQ',
+              href: 'https://gamisodes.com/pages/faqs'
+            },
+            {
+              title: 'Blog',
+              href: 'https://gamisodes.com/blogs/news'
+            },
+          ]
         },
         {
           title: "My Account",
-          href: "/app/account",
+          href: "/",
+          submenu: [
+            {
+              title: 'Sign in / Sign up',
+              href: '/app/account'
+            },
+            {
+              title: 'My collection',
+              href: '/app/collection'
+            },
+          ]
         },
+        {
+          title: "Cart",
+          href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
+        },
+        // {
+        //   title: "Buy Ticket",
+        //   href: ,
+        // },
       ],
     ]
   }, [])
