@@ -28,6 +28,15 @@ export interface IMenuItem {
   onClick?: () => void
   hideOnMobile?: boolean
   hideOnWeb?: boolean
+  submenu?: {
+    title?: string
+    href?: string
+    target?: string
+    component?: React.ReactNode
+    onClick?: () => void
+    hideOnMobile?: boolean
+    hideOnWeb?: boolean
+  }[]
 }
 
 interface MobileNavProps {
