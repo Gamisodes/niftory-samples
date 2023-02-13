@@ -53,7 +53,8 @@ export const Navbar = () => {
         },
         {
           title: "Cart",
-          href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
+          href: "https://gamisodes.com/cart",
+          // href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
           hideOnMobile: true
         }
       ],

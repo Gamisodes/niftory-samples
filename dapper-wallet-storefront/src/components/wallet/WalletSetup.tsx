@@ -58,7 +58,8 @@ export function WalletSetup() {
       buttonText="Go to Drops"
       error={error as Error}
       isLoading={walletFetching}
-      onClick={() => router.push(`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`)}
+      onClick={() => router.push(`https://gamisodes.com/pages/collections`)}
+      // onClick={() => router.push(`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`)}
     />
   )
 }
