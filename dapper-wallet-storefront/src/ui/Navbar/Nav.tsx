@@ -41,19 +41,21 @@ export const Navbar = () => {
               href: '/app/account'
             },
             {
-              title: 'My collection',
+              title: 'My Brain & Paris Cards',
               href: '/app/collection'
+            },
+            {
+              title: 'My VIP & Trading Cards',
+              href: 'https://gamisodes.mint.store',
+              newTab: true
             },
           ]
         },
         {
           title: "Cart",
           href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
-        },
-        // {
-        //   title: "Buy Ticket",
-        //   href: ,
-        // },
+          hideOnMobile: true
+        }
       ],
     ]
   }, [])
