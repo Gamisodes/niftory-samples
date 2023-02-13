@@ -61,7 +61,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
                 <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
               ))
             ) : (
-              <div className="col-span-full text-2xl">There is no NFTs to shown</div>
+              <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
         </div>

@@ -53,7 +53,7 @@ const Burger = ({ onClick, isOpen }: IBurgerProps) => {
 
 function NavbarBase({
   menu,
-  homeUrl = "/",
+  homeUrl = "https://gamisodes.com/",
   children,
 }: // additionalLinks,
 Props) {
