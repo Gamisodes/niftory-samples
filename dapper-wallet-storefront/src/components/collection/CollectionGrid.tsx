@@ -36,7 +36,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
     )
   }
 
-  if (hasNfts || (!!filter.length && !hasNfts))
+  if (hasNfts)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         {/* <div className="col-span-12">
