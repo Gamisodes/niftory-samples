@@ -1,4 +1,5 @@
 import { Skeleton } from "@chakra-ui/react"
+import { EModelTypes } from "consts/const"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
@@ -23,6 +24,9 @@ const NFTModelDetailPage = () => {
     price: nftModel?.attributes?.price
       ? nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
       : DEFAULT_NFT_PRICE,
+    type: (nftModel?.metadata?.type ??
+      nftModel?.attributes?.type ??
+      EModelTypes.GENERAL) as EModelTypes,
     content: [
       {
         contentType: nftModel?.content?.files[0]?.contentType,
@@ -32,7 +36,6 @@ const NFTModelDetailPage = () => {
       },
     ],
   }
-  console.log(metadata.content)
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
     <>

@@ -46,6 +46,11 @@ const CheckoutWithDapperWallet = gql`
   }
 `
 
+export enum EErrorIdentity {
+  NO_PRICE = "NO_PRICE",
+  NFT_LIMIT_REACHED = "NFT_LIMIT_REACHED",
+}
+
 const handler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed, this endpoint only supports POST")
@@ -112,10 +117,10 @@ const handler: NextApiHandler = async (req, res) => {
         >(TransferNftToWalletDocument, { address, nftModelId })
         res.status(200).json({ data: transferToUser.transfer, success: true })
       } else {
-        throw new Error("You reach NFT limit for this wallet")
+        throw new Error(EErrorIdentity.NFT_LIMIT_REACHED)
       }
     } else {
-      throw new Error("No price attribute")
+      throw new Error(EErrorIdentity.NO_PRICE)
     }
   } catch (error) {
     res.status(500).json({
