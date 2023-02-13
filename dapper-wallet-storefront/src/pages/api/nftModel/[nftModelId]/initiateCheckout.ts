@@ -1,3 +1,4 @@
+import { convertNumber } from "consts/helpers"
 import {
   CheckoutWithDapperWalletMutation,
   CheckoutWithDapperWalletMutationVariables,
@@ -86,13 +87,13 @@ const handler: NextApiHandler = async (req, res) => {
       >(CheckoutWithDapperWallet, {
         nftModelId: nftModelId as string,
         address,
-        price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
+        price: convertNumber(+price, DEFAULT_NFT_PRICE),
         expiry: Number.MAX_SAFE_INTEGER,
       })
       res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
     } else if (price === 0) {
-      const maxNftForUser = +nftModelResponse?.nftModel?.attributes?.maxNftForUser
-      if (!Number.isInteger(maxNftForUser)) {
+      const maxNftForUser = convertNumber(nftModelResponse?.nftModel?.attributes?.maxNftForUser)
+      if (maxNftForUser === 0) {
         const transferToUser = await backendGQLClient.request<
           TransferNftToWalletMutation,
           TransferNftToWalletMutationVariables

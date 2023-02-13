@@ -1,4 +1,6 @@
+import { convertNumber } from "consts/helpers"
 import { useMemo } from "react"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { ESetAttribute } from "src/typings/SetAttribute"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
@@ -105,6 +107,7 @@ export const NFTDetail = (props: Props) => {
     attributes: { ...nftModel.metadata, ...nftModel.attributes },
   }
 
+  const price = useMemo(() => convertNumber(+nftModel?.attributes?.price, DEFAULT_NFT_PRICE), [])
   const traits: ITraits | undefined = useMemo(() => {
     const setAttributes = nftModel?.set?.attributes ?? {}
     if (setAttributes?.type === ESetAttribute.TICKET)
@@ -130,7 +133,9 @@ export const NFTDetail = (props: Props) => {
               <div className="flex w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-6">
                 <p>
                   <span className="font-bold">Edition: </span>
-                  {nft && nft.serialNumber} / {nftModel.quantity}
+                  {price === 0
+                    ? `${nft?.serialNumber} / Open`
+                    : `${nft.serialNumber} / ${nftModel.quantity}`}
                 </p>
               </div>
             </div>

@@ -1,7 +1,9 @@
 import { Skeleton } from "@chakra-ui/react"
 import { EModelTypes } from "consts/const"
+import { convertNumber } from "consts/helpers"
 import Head from "next/head"
 import { useRouter } from "next/router"
+import { useMemo } from "react"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
@@ -16,26 +18,30 @@ const NFTModelDetailPage = () => {
   const [nftModelResponse] = useNftModelQuery({ variables: { id: nftModelId } })
 
   const nftModel = nftModelResponse?.data?.nftModel
-  const metadata = {
-    title: nftModel?.title,
-    description: nftModel?.description,
-    amount: nftModel?.quantity,
-    quantityMinted: +nftModel?.quantityMinted,
-    price: nftModel?.attributes?.price
-      ? nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
-      : DEFAULT_NFT_PRICE,
-    type: (nftModel?.metadata?.type ??
-      nftModel?.attributes?.type ??
-      EModelTypes.GENERAL) as EModelTypes,
-    content: [
-      {
-        contentType: nftModel?.content?.files[0]?.contentType,
-        contentUrl: nftModel?.content?.files[0]?.url,
-        thumbnailUrl: nftModel?.content?.poster?.url,
-        alt: nftModel?.title,
-      },
-    ],
-  }
+  const metadata = useMemo(
+    () => ({
+      title: nftModel?.title,
+      description: nftModel?.description,
+      amount: nftModel?.quantity,
+      quantityMinted: +nftModel?.quantityMinted,
+      price: convertNumber(
+        nftModel?.attributes?.price,
+        convertNumber(nftModel?.metadata?.price, DEFAULT_NFT_PRICE)
+      ),
+      type: (nftModel?.metadata?.type ??
+        nftModel?.attributes?.type ??
+        EModelTypes.GENERAL) as EModelTypes,
+      content: [
+        {
+          contentType: nftModel?.content?.files[0]?.contentType,
+          contentUrl: nftModel?.content?.files[0]?.url,
+          thumbnailUrl: nftModel?.content?.poster?.url,
+          alt: nftModel?.title,
+        },
+      ],
+    }),
+    []
+  )
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
     <>

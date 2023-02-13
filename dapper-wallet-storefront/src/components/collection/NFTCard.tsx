@@ -1,8 +1,9 @@
+import { convertNumber } from "consts/helpers"
 import Link from "next/link"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import Ellipsis from "src/ui/Ellipsis"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
-
 type NFTCard = { nft: Subset<Nft>; clickUrl: string }
 export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const nftModel = nft?.model
@@ -12,6 +13,7 @@ export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const stats = {
     rarity: nftModel?.rarity,
     serial: nft?.serialNumber?.toString(),
+    price: convertNumber(+nft?.model?.attributes?.price, DEFAULT_NFT_PRICE),
   }
 
   return (
@@ -36,7 +38,9 @@ export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
               <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-2">
                 <p>
                   <span className="font-bold">Serial: </span>
-                  {nft && nft.serialNumber} / {nftModel.quantity}
+                  {stats.price === 0
+                    ? `${nft?.serialNumber} / Open`
+                    : `${nft.serialNumber} / ${nftModel.quantity}`}
                 </p>
               </div>
             </div>
