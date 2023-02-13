@@ -20,7 +20,7 @@ const handleClick = (value) => () => {
   Router.push(value)
 }
 
-export interface IMenuItem {
+interface IMemuItemBase {
   title?: string
   href?: string
   target?: string
@@ -36,6 +36,18 @@ export interface IMenuItem {
     onClick?: () => void
     hideOnMobile?: boolean
     hideOnWeb?: boolean
+  }[]
+}
+export interface IMenuItem extends IMemuItemBase {
+  submenu?: {
+    title?: string
+    href?: string
+    target?: string
+    component?: React.ReactNode
+    onClick?: () => void
+    hideOnMobile?: boolean
+    hideOnWeb?: boolean
+    secondSubmenu?: IMemuItemBase[]
   }[]
 }
 

@@ -5,6 +5,7 @@ import React, { PropsWithChildren, useState, useEffect } from "react"
 type ActiveLinkProps = LinkProps & {
   className?: string
   activeClassName?: string
+  target?: string
 }
 
 const ActiveLink = ({
