@@ -336,11 +336,26 @@ export enum InvoiceState {
 
 /** The state of a listing. */
 export enum ListingState {
-  /** The listing is active and available for sale. */
+  /**
+   * The listing is active and available for sale.
+   * @deprecated Use SHOW_IN_STORE instead
+   */
   Active = 'ACTIVE',
   /** The listing is inactive, so it's not open for sale. */
+  HideFromStore = 'HIDE_FROM_STORE',
+  /**
+   * The listing is inactive, so it's not open for sale.
+   * @deprecated Use HIDE_FROM_STORE instead
+   */
   Inactive = 'INACTIVE',
   /** All NFTs in this listing have been sold. */
+  NotAvailaibleForPurchase = 'NOT_AVAILAIBLE_FOR_PURCHASE',
+  /** The listing is active and available for sale. */
+  ShowInStore = 'SHOW_IN_STORE',
+  /**
+   * All NFTs in this listing have been sold.
+   * @deprecated Use NOT_AVAILAIBLE_FOR_PURCHASE instead
+   */
   Sold = 'SOLD'
 }
 
@@ -440,17 +455,20 @@ export type MutationCreateNftListingArgs = {
 
 
 export type MutationCreateNftModelArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data: NftModelCreateInput;
   setId: Scalars['ID'];
 };
 
 
 export type MutationCreateNftSetArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data: NftSetCreateInput;
 };
 
 
 export type MutationCreateNiftoryWalletArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data?: InputMaybe<CreateNiftoryWalletInput>;
   userId?: InputMaybe<Scalars['ID']>;
 };
@@ -514,6 +532,7 @@ export type MutationSignTransactionForDapperWalletArgs = {
 export type MutationTransferArgs = {
   address?: InputMaybe<Scalars['String']>;
   appId?: InputMaybe<Scalars['ID']>;
+  force?: InputMaybe<Scalars['Boolean']>;
   id?: InputMaybe<Scalars['ID']>;
   nftModelId?: InputMaybe<Scalars['ID']>;
   userId?: InputMaybe<Scalars['ID']>;
@@ -566,7 +585,9 @@ export type MutationVerifyWalletArgs = {
 
 
 export type MutationWithdrawArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
+  niftoryWalletAddress?: InputMaybe<Scalars['String']>;
   receiverAddress: Scalars['String'];
 };
 
@@ -741,6 +762,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Ha
   id: Scalars['ID'];
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
+  /** The listings for this model. These can be used to sell the NFTs creating using this model */
+  nftListings?: Maybe<Array<Maybe<NftListing>>>;
   /** The NFTs created using this model. */
   nfts?: Maybe<Array<Maybe<Nft>>>;
   /** The total quantity of NFTs that will be available for this model. */
@@ -869,6 +892,8 @@ export type NftSet = Attributable & BlockchainEntity & BlockchainResource & HasT
   state: NftSetBlockchainState;
   /** The status of this resource. Can be used to track progress in designing and creating resources. */
   status?: Maybe<Status>;
+  /** String labels to tag this NFTSet with. These will be stored in the Niftory API but will not be added to the blockchain. */
+  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
   /** The display image for this set. */
   title: Scalars['String'];
   /** Most recent updated date of this item, if any */
@@ -1105,6 +1130,7 @@ export type QuerySetArgs = {
 
 
 export type QuerySetsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   filter?: InputMaybe<NftSetFilterInput>;
 };
 
@@ -1359,6 +1385,14 @@ export type TransferNftToWalletMutationVariables = Exact<{
 
 export type TransferNftToWalletMutation = { __typename?: 'Mutation', transfer?: { __typename?: 'NFT', id: string } | null };
 
+export type UpdateNftModelMutationVariables = Exact<{
+  data?: InputMaybe<NftModelUpdateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type UpdateNftModelMutation = { __typename?: 'Mutation', updateNFTModel?: { __typename?: 'NFTModel', attributes?: any | null, blockchainId?: string | null, createdAt: any, description: string, id: string, metadata?: any | null, rarity?: SimpleRarityLevel | null, quantityMinted?: any | null, quantity?: any | null, updatedAt?: any | null, title: string, status?: Status | null, state: NftModelBlockchainState } | null };
+
 export type VerifyWalletMutationVariables = Exact<{
   address: Scalars['String'];
   signedVerificationCode: Scalars['JSON'];
@@ -1395,6 +1429,10 @@ export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 
 
 export type NftsByWalletQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+  walletId?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<NftFilterInput>;
 }>;
 
 
@@ -1470,6 +1508,29 @@ export const TransferNftToWalletDocument = gql`
 
 export function useTransferNftToWalletMutation() {
   return Urql.useMutation<TransferNftToWalletMutation, TransferNftToWalletMutationVariables>(TransferNftToWalletDocument);
+};
+export const UpdateNftModelDocument = gql`
+    mutation UpdateNFTModel($data: NFTModelUpdateInput = {}, $id: ID = "") {
+  updateNFTModel(data: $data, id: $id) {
+    attributes
+    blockchainId
+    createdAt
+    description
+    id
+    metadata
+    rarity
+    quantityMinted
+    quantity
+    updatedAt
+    title
+    status
+    state
+  }
+}
+    `;
+
+export function useUpdateNftModelMutation() {
+  return Urql.useMutation<UpdateNftModelMutation, UpdateNftModelMutationVariables>(UpdateNftModelDocument);
 };
 export const VerifyWalletDocument = gql`
     mutation verifyWallet($address: String!, $signedVerificationCode: JSON!) {
@@ -1619,8 +1680,14 @@ export function useNftModelsQuery(options?: Omit<Urql.UseQueryArgs<NftModelsQuer
   return Urql.useQuery<NftModelsQuery, NftModelsQueryVariables>({ query: NftModelsDocument, ...options });
 };
 export const NftsByWalletDocument = gql`
-    query nftsByWallet($address: String) {
-  nftsByWallet(address: $address) {
+    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
+  nftsByWallet(
+    address: $address
+    cursor: $cursor
+    maxResults: $maxResults
+    walletId: $walletId
+    filter: $filter
+  ) {
     items {
       id
       blockchainId
