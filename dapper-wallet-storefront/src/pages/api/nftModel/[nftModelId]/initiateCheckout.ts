@@ -88,7 +88,12 @@ const handler: NextApiHandler = async (req, res) => {
     } else if (price === 0) {
       const maxNftForUser = +nftModelResponse?.nftModel?.attributes?.maxNftForUser
       if (!Number.isInteger(maxNftForUser)) {
-        throw new Error("Maximum NFT's for user isn't specified")
+        const transferToUser = await backendGQLClient.request<
+          TransferNftToWalletMutation,
+          TransferNftToWalletMutationVariables
+        >(TransferNftToWalletDocument, { address, nftModelId })
+        res.status(200).json({ data: transferToUser.transfer, success: true })
+        return
       }
       let cursor = ""
       const nftsItems: NftsByWalletQuery["nftsByWallet"]["items"] = []
