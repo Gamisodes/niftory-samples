@@ -50,6 +50,18 @@ export interface IMenuItem extends IMemuItemBase {
     secondSubmenu?: IMemuItemBase[]
   }[]
 }
+export interface IMenuItem extends IMemuItemBase {
+  submenu?: {
+    title?: string
+    href?: string
+    target?: string
+    component?: React.ReactNode
+    onClick?: () => void
+    hideOnMobile?: boolean
+    hideOnWeb?: boolean
+    secondSubmenu?: IMemuItemBase[]
+  }[]
+}
 
 interface MobileNavProps {
   menu?: IMenuItem[]
