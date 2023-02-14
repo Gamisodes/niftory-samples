@@ -79,7 +79,7 @@ const handler: NextApiHandler = async (req, res) => {
         id: nftModelId as string,
       }
     )
-    const price = +nftModelResponse?.nftModel?.attributes?.price
+    const price = convertNumber(nftModelResponse?.nftModel?.attributes?.price)
     if (price > 0) {
       const checkoutResponse = await backendGQLClient.request<
         CheckoutWithDapperWalletMutation,
