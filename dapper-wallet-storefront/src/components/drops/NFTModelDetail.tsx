@@ -1,26 +1,31 @@
 import { Text } from "@chakra-ui/react"
-import * as React from "react"
 import * as fcl from "@onflow/fcl"
-import { useCallback, useState } from "react"
-import { useWalletContext } from "../../hooks/useWalletContext"
-import Link from "next/link"
-import { Gallery } from "../../ui/Content/Gallery/Gallery"
 import axios from "axios"
-import { useRouter } from "next/router"
+import { EModelTypes } from "consts/const"
+import { useNftModelQuery } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import Button from "src/ui/Button"
-import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import * as React from "react"
+import { useCallback, useRef, useState } from "react"
 import usePreventLeave from "src/hooks/usePreventLeave"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
+import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
+import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
+import Button from "src/ui/Button"
+import { useWalletContext } from "../../hooks/useWalletContext"
 
 type NFTModelDetailProps = {
   id: string
   metadata: {
+    type: EModelTypes
     title: string
     description: string
     amount: number
     quantityMinted: number
     price: number
+    editionSize: string | null
     content: {
       contentType: string
       contentUrl: string
@@ -39,161 +44,76 @@ const checkoutStatusMessages = [
   "Purchase complete! Redirecting...",
 ]
 
-// export const NFTModelDetail = ({ id, metadata }: NFTModelDetailProps) => {
-//   const router = useRouter()
-//   const [checkoutStatusIndex, setCheckoutStatusIndex] = useState(0)
-
-//   const { currentUser } = useWalletContext()
-//   const { data: authedUser } = useSession()
-
-//   const signTransaction = useCallback(async (transaction: string) => {
-//     const response = await axios.post("/api/signTransaction", { transaction })
-//     return response.data.signTransactionForDapperWallet
-//   }, [])
-
-//   const handleCheckout = useCallback(async () => {
-//     try {
-//       setCheckoutStatusIndex(1)
-//       const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
-//       const {
-//         cadence,
-//         registryAddress,
-//         brand,
-//         nftId,
-//         nftDatabaseId,
-//         nftTypeRef,
-//         setId,
-//         templateId,
-//         price,
-//         expiry,
-//         signerKeyId,
-//         signerAddress,
-//       } = initiateCheckoutResponse.data
-
-//       setCheckoutStatusIndex(2)
-//       const tx = await fcl.mutate({
-//         cadence,
-//         args: (arg, t) => [
-//           arg(process.env.NEXT_PUBLIC_MERCHANT_ACCOUNT_ADDRESS, t.Address),
-//           arg(registryAddress, t.Address),
-//           arg(brand, t.String),
-//           arg(nftId, t.Optional(t.UInt64)),
-//           arg(nftTypeRef, t.String),
-//           arg(setId, t.Optional(t.Int)),
-//           arg(templateId, t.Optional(t.Int)),
-//           arg(price, t.UFix64),
-//           arg(expiry, t.UInt64),
-//         ],
-//         authorizations: [
-//           async (account) => ({
-//             ...account,
-//             addr: signerAddress,
-//             tempId: `${signerAddress}-${signerKeyId}`,
-//             keyId: signerKeyId,
-//             signingFunction: async (signable) => {
-//               return {
-//                 keyId: signerKeyId,
-//                 addr: signerAddress,
-//                 signature: await signTransaction(signable.message),
-//               }
-//             },
-//           }),
-//           fcl.authz,
-//         ],
-//         limit: 9999,
-//       })
-
-//       setCheckoutStatusIndex(3)
-//       await fcl.tx(tx).onceSealed()
-
-//       setCheckoutStatusIndex(4)
-//       const completeCheckoutResponse = await axios.post(`/api/nftModel/${id}/completeCheckout`, {
-//         transactionId: tx,
-//         nftDatabaseId,
-//       })
-
-//       setCheckoutStatusIndex(5)
-//       const nft = completeCheckoutResponse.data
-
-//       await router.push(`/app/collection/${nft.id}`)
-//     } finally {
-//       setCheckoutStatusIndex(0)
-//     }
-//   }, [currentUser?.addr, id, router, signTransaction])
-
-//   const NFT_READY_TO_BUY =
-//     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
-//   const TOTAL_AVAILABLE =
-//     `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY}/` : ""}` +
-//     `${metadata.amount} Total Available`
-
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-2">
-//       <Stack p="8" borderRadius="4" minW={{ lg: "sm" }} maxW={{ lg: "lg" }} justify="center">
-//         <Stack>
-//           <Stack>
-//             <Heading size="lg" fontWeight="medium" color="page.accent">
-//               {metadata.title}
-//             </Heading>
-//           </Stack>
-
-//           <Text color="page.text">{metadata.description}</Text>
-//           <Text color="page.text">{TOTAL_AVAILABLE}</Text>
-//         </Stack>
-//         {authedUser?.user && currentUser?.addr ? (
-//           NFT_READY_TO_BUY > 0 ? (
-//             <Button
-//               isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
-//               loadingText={checkoutStatusMessages[checkoutStatusIndex]}
-//               onClick={handleCheckout}
-//               my="auto"
-//               p="8"
-//             >
-//               <Text>Checkout</Text>
-//             </Button>
-//           ) : (
-//             <Button
-//               isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
-//               loadingText={checkoutStatusMessages[checkoutStatusIndex]}
-//               my="auto"
-//               p="8"
-//               disabled
-//             >
-//               <Text>Not Available</Text>
-//             </Button>
-//           )
-//         ) : authedUser?.user && !currentUser?.addr ? (
-//           <Link href={"/app/account"}>
-//             <Button my="auto" p="8">
-//               To proceed checkout you need to sign into wallet
-//             </Button>
-//           </Link>
-//         ) : (
-//           <Link href={"/app/sign-in"}>
-//             <Button my="auto" p="8">
-//               To proceed checkout you need to sign into account
-//             </Button>
-//           </Link>
-//         )}
-//       </Stack>
-//       <Gallery content={metadata.content} />
-//     </div>
-//   )
-// }
+const ERROR_MESSAGES = {
+  [EErrorIdentity.NFT_LIMIT_REACHED]: "You reached the limit for this wallet",
+  [EErrorIdentity.NO_PRICE]: "You should contact our administrator if you have this error",
+}
 
 function useCheckout(id: string) {
+  const [nftModelResponse] = useNftModelQuery({ variables: { id } })
+
   const { currentUser } = useWalletContext()
   const router = useRouter()
   const { data: user } = useSession()
 
-  const [checkoutStatusIndex, setCheckoutStatusIndex] = useState(0)
+  const checkoutStatusIndexRef = useRef(0)
+  const [checkoutProgress, setCheckoutProgress] = useState(0)
+
+  const [errorState, setErrorState] = useState<EErrorIdentity | string | null>(null)
+
+  const updateCheckoutProgress = (num: number) => {
+    setCheckoutProgress(num)
+    checkoutStatusIndexRef.current = num
+  }
+
+  usePreventLeave(() => {
+    return checkoutStatusIndexRef.current !== 0
+  }, [])
+
   const signTransaction = useCallback(async (transaction: string) => {
     const response = await axios.post("/api/signTransaction", { transaction })
     return response.data.data
   }, [])
-  const handleCheckout = useCallback(async () => {
+
+  const checkoutFreeNft = async () => {
     try {
-      setCheckoutStatusIndex(1)
+      updateCheckoutProgress(1)
+      gaAPI.buy_nft({
+        label: EBuyNFTLabel.STARTING_CHECKOUT,
+        email: user?.user.email ?? "",
+        wallet: currentUser?.addr ?? "",
+        dropsId: id ?? "",
+      })
+      const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
+      const nftId = initiateCheckoutResponse?.data?.data?.id ?? ""
+      console.log(nftId)
+      updateCheckoutProgress(0)
+      await router.push(`/app/collection/${nftId}`)
+    } catch (error) {
+      setErrorState(error?.response?.data?.error[0] ?? error?.message)
+      updateCheckoutProgress(0)
+
+      if (error === "Declined: Declined by user") {
+        gaAPI.buy_nft({
+          label: EBuyNFTLabel.DECLINE,
+          email: user?.user.email ?? "",
+          wallet: currentUser?.addr ?? "",
+          dropsId: id ?? "",
+        })
+      } else {
+        gaAPI.buy_nft({
+          label: EBuyNFTLabel.ERROR,
+          email: user?.user.email ?? "",
+          wallet: currentUser?.addr ?? "",
+          dropsId: id ?? "",
+        })
+      }
+    }
+  }
+  const checkoutPaidNft = async () => {
+    try {
+      updateCheckoutProgress(1)
+
       gaAPI.buy_nft({
         label: EBuyNFTLabel.STARTING_CHECKOUT,
         email: user?.user.email ?? "",
@@ -215,7 +135,8 @@ function useCheckout(id: string) {
         signerKeyId,
         signerAddress,
       } = initiateCheckoutResponse.data.data
-      setCheckoutStatusIndex(2)
+      updateCheckoutProgress(2)
+
       const tx = await fcl.mutate({
         cadence,
         args: (arg, t) => [
@@ -248,14 +169,18 @@ function useCheckout(id: string) {
         limit: 9999,
       })
 
-      setCheckoutStatusIndex(3)
+      updateCheckoutProgress(3)
+
       await fcl.tx(tx).onceSealed()
 
-      setCheckoutStatusIndex(4)
+      updateCheckoutProgress(4)
+
       const completeCheckoutResponse = await axios.post(`/api/nftModel/${id}/completeCheckout`, {
         transactionId: tx,
         nftDatabaseId,
       })
+      updateCheckoutProgress(5)
+
       gaAPI.buy_nft({
         label: EBuyNFTLabel.COMPLETING_CHECKOUT,
         email: user?.user.email ?? "",
@@ -263,12 +188,13 @@ function useCheckout(id: string) {
         dropsId: id ?? "",
       })
 
-      setCheckoutStatusIndex(5)
-
       const nft = completeCheckoutResponse.data.data
-
+      updateCheckoutProgress(0)
       await router.push(`/app/collection/${nft.id}`)
     } catch (error) {
+      setErrorState(error?.response?.data?.error[0] ?? error?.message)
+      updateCheckoutProgress(0)
+
       if (error === "Declined: Declined by user") {
         gaAPI.buy_nft({
           label: EBuyNFTLabel.DECLINE,
@@ -284,16 +210,22 @@ function useCheckout(id: string) {
           dropsId: id ?? "",
         })
       }
-    } finally {
-      setCheckoutStatusIndex(0)
     }
-  }, [currentUser?.addr, id, router, signTransaction])
+  }
 
-  usePreventLeave(() => {
-    return checkoutStatusIndex !== 0
-  }, [checkoutStatusIndex])
+  const handleCheckout = useCallback(async () => {
+    // router.push("/app/collection/d4548186-78b3-4cb8-bd33-7fee34a38c5c")
+    const price = +nftModelResponse?.data?.nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
+    setErrorState(null)
 
-  return { handleCheckout, checkoutStatusIndex }
+    if (price > 0) {
+      await checkoutPaidNft()
+    } else if (price === 0) {
+      await checkoutFreeNft()
+    }
+  }, [currentUser?.addr, id, router, signTransaction, checkoutStatusIndexRef])
+
+  return { handleCheckout, errorState, checkoutProgress }
 }
 
 const brain_train_links = [
@@ -311,24 +243,34 @@ const brain_train_links = [
 function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const { currentUser } = useWalletContext()
   const { data: authedUser } = useSession()
-  const { checkoutStatusIndex, handleCheckout } = useCheckout(id)
+  const { handleCheckout, errorState, checkoutProgress } = useCheckout(id)
   const NFT_READY_TO_BUY =
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
     `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY} /` : ""}` +
-    `${metadata.amount} Remaining`
+    ` ${
+      metadata?.editionSize && metadata?.editionSize === "Open"
+        ? `Open`
+        : `${metadata.amount} Remaining`
+    }`
 
+  const mainImage = metadata.content[0]
   return (
     <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.jpg')] bg-cover relative -top-16 py-16">
-      <div className="flex justify-center items-center h-full flex-col lg:flex-row">
+      <div className="flex justify-center gap-5 items-center h-full flex-col lg:flex-row">
         <div className="z-10">
-          <Image src="/product.png" alt="BrainTrain Product" width={556} height={498} />
+          {metadata.type === EModelTypes.WRAPPER ? (
+            <Image src="/product.png" alt="BrainTrain Product" width={556} height={498} />
+          ) : (
+            <Image alt="BrainTrain Product" src={mainImage.contentUrl} width={556} height={459} />
+          )}
         </div>
         <div className="text-white font-bangers max-w-md flex flex-col justify-center">
           <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
-            {brain_train_links.map((val) => (
-              <Image key={val} src={val} alt="nft element" width={70} height={80} />
-            ))}
+            {metadata.type === EModelTypes.WRAPPER &&
+              brain_train_links.map((val) => (
+                <Image key={val} src={val} alt="nft element" width={70} height={80} />
+              ))}
           </div>
           <h1 className="uppercase leading-[61px] text-[56px] mb-2 md:mb-6"> {metadata.title}</h1>
           <p className="font-dosis text-lg mb-5">
@@ -337,14 +279,22 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
           </p>
           <p className="font-dosis font-bold text-4xl mb-2">${metadata.price}</p>
 
+          {errorState && (
+            <>
+              <p className="font-dosis text-lg mb-3">
+                {ERROR_MESSAGES[errorState] ?? errorState ?? ""}
+              </p>
+            </>
+          )}
           {authedUser?.user && currentUser?.addr ? (
             NFT_READY_TO_BUY > 0 ? (
               <>
                 <p className="font-dosis text-lg mb-3">
-                  {checkoutStatusMessages[checkoutStatusIndex]}
+                  {checkoutStatusMessages[checkoutProgress]}
                 </p>
                 <Button
-                  isLoading={!currentUser?.addr || checkoutStatusIndex > 0}
+                  disabled={errorState && errorState === EErrorIdentity.NFT_LIMIT_REACHED}
+                  isLoading={!currentUser?.addr || checkoutProgress > 0}
                   onClick={handleCheckout}
                 >
                   Checkout
@@ -373,7 +323,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
                 To proceed with checkout, please sign in to your Google Account. If you've already
                 connected your Google Account, please refresh this page.
               </p>
-              <Link href={"/app/sign-in"}>
+              <Link href="/app/sign-in">
                 <Button>Sign In</Button>
               </Link>
             </>

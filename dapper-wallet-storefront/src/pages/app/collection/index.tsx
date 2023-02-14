@@ -1,12 +1,12 @@
 import Head from "next/head"
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
+import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { SectionHeader } from "src/ui/SectionHeader"
 import { Nft, NftBlockchainState, useNftsByWalletQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
-import { Subset } from "../../../lib/types"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
@@ -15,15 +15,8 @@ const CollectionPage = () => {
     pause: !currentUser?.addr,
     requestPolicy: "cache-and-network",
   })
-  const nfts: Subset<Nft>[] = useMemo(
-    () =>
-      nftsByWalletResponse?.data?.nftsByWallet?.items.filter((nft) =>
-        [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
-          nft.blockchainState
-        )
-      ),
-    [nftsByWalletResponse.fetching, nftsByWalletResponse.stale]
-  )
+  const { nfts, filter, setFilter } = useCollectionFilter(nftsByWalletResponse)
+
   const title = `My Collection | Gamisodes`
   return (
     <>
@@ -36,7 +29,12 @@ const CollectionPage = () => {
           <section className="pt-10">
             <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
-          <CollectionGrid nfts={nfts} isLoading={nftsByWalletResponse.fetching} />
+          <CollectionGrid
+            nfts={nfts}
+            filter={filter}
+            setFilter={setFilter}
+            isLoading={nftsByWalletResponse.fetching}
+          />
         </CollectionWrapper>
       </AppLayout>
     </>

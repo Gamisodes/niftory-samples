@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  with-docker-multi-env-preprod:
+    build:
+      context: ../../
+      dockerfile: docker/preprod/Dockerfile
+    image: with-docker-multi-env-preprod
+    restart: on-failure
+    ports:
+      - "3002:3000"
