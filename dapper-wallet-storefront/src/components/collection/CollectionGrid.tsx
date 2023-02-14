@@ -12,7 +12,6 @@ import { SetStateAction, useState } from "react"
 interface IFilterState {
   label: string
   options: { selected: boolean; value: string }[]
-  // optionsHash: { [key: string]: number }
 }
 interface CollectionProps {
   isLoading: boolean
@@ -20,7 +19,6 @@ interface CollectionProps {
   filter: {
     label: string
     options: { selected: boolean; value: string }[]
-    // optionsHash: { [key: string]: number }
   }[]
   setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
@@ -36,7 +34,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
     )
   }
 
-  if (hasNfts || (!!filter.length && !hasNfts))
+  if (hasNfts)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         {/* <div className="col-span-12">
@@ -71,7 +69,11 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
     <section className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-4">
         <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link href={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
+        <Link 
+          href={ process.env.NODE_ENV === 'development'
+            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+            : `https://gamisodes.com/pages/collections`}
+        >
           <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
             Go to Drops
           </button>

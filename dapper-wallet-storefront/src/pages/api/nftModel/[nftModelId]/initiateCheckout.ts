@@ -1,3 +1,4 @@
+import { convertNumber } from "consts/helpers"
 import {
   CheckoutWithDapperWalletMutation,
   CheckoutWithDapperWalletMutationVariables,
@@ -46,6 +47,11 @@ const CheckoutWithDapperWallet = gql`
   }
 `
 
+export enum EErrorIdentity {
+  NO_PRICE = "NO_PRICE",
+  NFT_LIMIT_REACHED = "NFT_LIMIT_REACHED",
+}
+
 const handler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed, this endpoint only supports POST")
@@ -81,14 +87,19 @@ const handler: NextApiHandler = async (req, res) => {
       >(CheckoutWithDapperWallet, {
         nftModelId: nftModelId as string,
         address,
-        price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
+        price: convertNumber(+price, DEFAULT_NFT_PRICE),
         expiry: Number.MAX_SAFE_INTEGER,
       })
       res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
     } else if (price === 0) {
-      const maxNftForUser = +nftModelResponse?.nftModel?.attributes?.maxNftForUser
-      if (!Number.isInteger(maxNftForUser)) {
-        throw new Error("Maximum NFT's for user isn't specified")
+      const maxNftForUser = convertNumber(nftModelResponse?.nftModel?.attributes?.maxNftForUser)
+      if (maxNftForUser === 0) {
+        const transferToUser = await backendGQLClient.request<
+          TransferNftToWalletMutation,
+          TransferNftToWalletMutationVariables
+        >(TransferNftToWalletDocument, { address, nftModelId })
+        res.status(200).json({ data: transferToUser.transfer, success: true })
+        return
       }
       let cursor = ""
       const nftsItems: NftsByWalletQuery["nftsByWallet"]["items"] = []
@@ -107,10 +118,10 @@ const handler: NextApiHandler = async (req, res) => {
         >(TransferNftToWalletDocument, { address, nftModelId })
         res.status(200).json({ data: transferToUser.transfer, success: true })
       } else {
-        throw new Error("You reach NFT limit for this wallet")
+        throw new Error(EErrorIdentity.NFT_LIMIT_REACHED)
       }
     } else {
-      throw new Error("No price attribute")
+      throw new Error(EErrorIdentity.NO_PRICE)
     }
   } catch (error) {
     res.status(500).json({
