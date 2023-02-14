@@ -25,6 +25,7 @@ type NFTModelDetailProps = {
     amount: number
     quantityMinted: number
     price: number
+    editionSize: string | null
     content: {
       contentType: string
       contentUrl: string
@@ -247,7 +248,11 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
     `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY} /` : ""}` +
-    `${metadata.amount} Remaining`
+    ` ${
+      metadata?.editionSize && metadata?.editionSize === "Open"
+        ? `Open`
+        : `${metadata.amount} Remaining`
+    }`
 
   const mainImage = metadata.content[0]
   console.log(metadata)

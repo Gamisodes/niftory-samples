@@ -8,8 +8,6 @@ import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 
-
-
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
   const [nftsByWalletResponse] = useNftsByWalletQuery({
@@ -17,8 +15,8 @@ const CollectionPage = () => {
     pause: !currentUser?.addr,
     requestPolicy: "cache-and-network",
   })
-  const {nfts, filter, setFilter} = useCollectionFilter(nftsByWalletResponse);
-  
+  const { nfts, filter, setFilter } = useCollectionFilter(nftsByWalletResponse)
+
   const title = `My Collection | Gamisodes`
   return (
     <>

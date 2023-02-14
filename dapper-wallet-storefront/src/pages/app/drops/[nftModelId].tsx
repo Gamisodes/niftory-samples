@@ -31,6 +31,9 @@ const NFTModelDetailPage = () => {
       type: (nftModel?.metadata?.type ??
         nftModel?.attributes?.type ??
         EModelTypes.GENERAL) as EModelTypes,
+      editionSize: ((nftModel?.metadata?.editionSize as string) ??
+        (nftModel?.attributes?.editionSize as string) ??
+        null) as string | null,
       content: [
         {
           contentType: nftModel?.content?.files[0]?.contentType,
@@ -42,6 +45,7 @@ const NFTModelDetailPage = () => {
     }),
     [nftModel?.id]
   )
+
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
     <>
