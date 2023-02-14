@@ -250,7 +250,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
     `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY} /` : ""}` +
     ` ${
       metadata?.editionSize && metadata?.editionSize === "Open"
-        ? `Open`
+        ? `Open Edition`
         : `${metadata.amount} Remaining`
     }`
 

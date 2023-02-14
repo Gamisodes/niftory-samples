@@ -63,7 +63,8 @@ export function useCollectionFilter(
       const filteredNfts = allNfts?.filter(({ model }) => {
         let counter = 0
         selectedFilters?.forEach(({ label, options }) => {
-          if (model?.metadata?.traits !== undefined && label in model?.metadata?.traits) {
+          if (model?.metadata?.traits !== undefined && label in model?.metadata?.traits) 
+          {
             options.includes(model.metadata.traits[label]) && ++counter
           }
         })
@@ -73,5 +74,5 @@ export function useCollectionFilter(
     } else setNfts(allNfts)
   }, [filter])
 
-  return useMemo(() => ({ nfts, filter, setFilter }), [filter, nfts])
+  return useMemo(() => ({ allNfts, nfts, filter, setFilter }), [filter, nfts])
 }
