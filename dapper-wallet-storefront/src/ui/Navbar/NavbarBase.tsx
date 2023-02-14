@@ -53,12 +53,13 @@ const Burger = ({ onClick, isOpen }: IBurgerProps) => {
 
 function NavbarBase({
   menu,
-  homeUrl = "https://gamisodes.com/",
+  homeUrl = process.env.NODE_ENV === 'development' ? '/' : "https://gamisodes.com/",
   children,
 }: // additionalLinks,
 Props) {
   const [isOpen, setOpen] = useState(false)
-  // const [subOpen, setSubOpen] = useState(false)
+  console.log(process.env.NODE_ENV);
+  
 
   const onClick = useCallback(() => {
     setOpen((prev) => !prev)
