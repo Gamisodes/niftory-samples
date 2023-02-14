@@ -1,6 +1,5 @@
 import { getProviders, signIn } from "next-auth/react"
 import Head from "next/head"
-import { useRouterHistory } from "src/components/RouterHistory"
 
 import EmailOAuth from "src/icon/EmailOAuth.svg"
 import GoogleIcon from "src/icon/GoogleOAuth.svg"
@@ -18,15 +17,6 @@ const icons = {
 
 const SignInPage = ({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const title = `Sign-in | Gamisodes`
-  const previousRoute = useRouterHistory()
-
-  const optionsMemo: Record<string, unknown> = useMemo(
-    () => ({
-      callbackUrl:
-        typeof window !== "undefined" ? `${window?.location?.origin ?? "" + previousRoute}` : "",
-    }),
-    []
-  )
 
   const optionsMemo: Record<string, unknown> = useMemo(
     () => ({
