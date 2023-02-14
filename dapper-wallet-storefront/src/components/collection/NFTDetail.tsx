@@ -141,7 +141,7 @@ export const NFTDetail = (props: Props) => {
                 <p>
                   <span className="font-bold">Edition: </span>
                   {product?.editionSize && product?.editionSize === "Open"
-                    ? `${nft?.serialNumber ?? "~"} / Open`
+                    ? `Open Edition`
                     : `${nft?.serialNumber ?? "~"} / ${nftModel.quantity}`}
                 </p>
               </div>

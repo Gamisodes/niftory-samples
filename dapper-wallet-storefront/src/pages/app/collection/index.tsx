@@ -15,8 +15,8 @@ const CollectionPage = () => {
     pause: !currentUser?.addr,
     requestPolicy: "cache-and-network",
   })
-  const { nfts, filter, setFilter } = useCollectionFilter(nftsByWalletResponse)
-
+  const { allNfts, nfts, filter, setFilter } = useCollectionFilter(nftsByWalletResponse);
+  
   const title = `My Collection | Gamisodes`
   return (
     <>
@@ -30,6 +30,7 @@ const CollectionPage = () => {
             <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
           <CollectionGrid
+            allNfts={allNfts}
             nfts={nfts}
             filter={filter}
             setFilter={setFilter}
