@@ -14,6 +14,7 @@ interface IFilterState {
   options: { selected: boolean; value: string }[]
 }
 interface CollectionProps {
+  allNfts:Subset<Nft>[]
   isLoading: boolean
   nfts: Subset<Nft>[]
   filter: {
@@ -22,7 +23,7 @@ interface CollectionProps {
   }[]
   setFilter: (value: SetStateAction<IFilterState[]>) => void
 }
-export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: CollectionProps) => {
+export const CollectionGrid = ({ allNfts, isLoading, nfts, filter, setFilter }: CollectionProps) => {
   const hasNfts = !!nfts?.length
   const [showFilter, setShowFilter] = useState(true)
 
@@ -34,7 +35,7 @@ export const CollectionGrid = ({ isLoading, nfts, filter, setFilter }: Collectio
     )
   }
 
-  if (hasNfts)
+  if (allNfts)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         {/* <div className="col-span-12">
