@@ -247,7 +247,11 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const NFT_READY_TO_BUY =
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
-    `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY} /` : ""}` +
+    `${
+      metadata?.editionSize !== "Open" && NFT_READY_TO_BUY < metadata.amount
+        ? `${NFT_READY_TO_BUY} /`
+        : ""
+    }` +
     ` ${
       metadata?.editionSize && metadata?.editionSize === "Open"
         ? `Open Edition`
