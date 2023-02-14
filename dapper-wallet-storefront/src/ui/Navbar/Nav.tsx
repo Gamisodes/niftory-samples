@@ -1,9 +1,41 @@
-import * as React from "react"
-
+import { useMemo } from "react"
 import NavbarBase from "./NavbarBase"
 
 export const Navbar = () => {
-  const menuItems = React.useMemo(() => {
+  const menuItems = useMemo(() => {
+    if (process.env.NODE_ENV === 'development')
+      {
+        return [
+          [
+            {
+              title: 'Sign in / Sign up',
+              href: '/app/account'
+            },
+            {
+              title: 'My collection',
+              href: '/app/collection'
+            },
+            {
+              title: "My Account",
+              href: "/",
+              submenu: [
+                {
+                  title: 'Sign in / Sign up',
+                  href: '/app/account'
+                },
+                {
+                  title: 'My collection',
+                  href: '/app/collection'
+                },
+              ]
+            },
+            {
+              title: "Cart",
+              href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
+            }
+          ]
+        ]
+      } else
     return [
       [
         {
@@ -54,7 +86,6 @@ export const Navbar = () => {
         {
           title: "Cart",
           href: "https://gamisodes.com/cart",
-          // href: "/app/drops/" + process.env.NEXT_PUBLIC_DROP_ID,
           hideOnMobile: true
         }
       ],
