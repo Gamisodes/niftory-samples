@@ -5,7 +5,6 @@ import { allFilters } from 'src/const/allFilters'
 interface IFilterState {
   label: string
   options: { selected: boolean; value: string }[]
-  // optionsHash: { [key: string]: number }
 }
 
 export function useCollectionFilter(
@@ -18,46 +17,6 @@ export function useCollectionFilter(
 ) {
   const [filter, setFilter] = useState<IFilterState[]>(allFilters);
   const [nfts, setNfts] = useState([])
-
-  // const intarfaceAllBTNFTS = allBTNFTS.map((nft) => {
-  //   return {
-  //     ...nft,
-  //     attributes: nft.attributes?.reduce((accum, trait) => {
-  //       return { ...accum, [trait.trait_type]: trait.value, ["Costume Type"]: nft?.costumeType }
-  //     }, {}),
-  //   }
-  // })
-
-  // useEffect(() => {
-  //   const filterHashMap = {}
-  //   const baseFilter = []
-
-  //   intarfaceAllBTNFTS?.forEach((nft) => {
-  //     try {
-  //       Object.keys(nft.attributes).forEach((key) => {
-  //         const index = filterHashMap[key]
-  //         const value = nft.attributes[key]
-
-  //         if (typeof index === "number") {
-  //           const j = baseFilter[index].optionsHash[value]
-  //           if (typeof j !== "number") {
-  //             baseFilter[index].optionsHash[value] = baseFilter[index].options.length
-  //             baseFilter[index].options.push({ selected: false, value })
-  //           }
-  //         } else {
-  //           filterHashMap[key] = baseFilter.length
-  //           baseFilter.push({
-  //             label: key,
-  //             options: [{ selected: false, value }],
-  //             optionsHash: { [value]: 0 },
-  //           })
-  //         }
-  //       })
-  //     } catch {}
-  //   })
-  //   setAllFilters(baseFilter)
-  // }, [])
-
 
   const allNfts = useMemo(() => {
     const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items
@@ -89,33 +48,6 @@ export function useCollectionFilter(
 
   useEffect(() => {
     setNfts(allNfts)
-    // const filterHashMap = {}
-    // const baseFilter = []
-
-    // allNfts?.forEach((nft) => {
-    //   try {
-    //     Object.keys(nft.model.metadata.traits).forEach((key) => {
-    //       const index = filterHashMap[key]
-    //       const value = nft.model.metadata.traits[key]
-
-    //       if (typeof index === "number") {
-    //         const j = baseFilter[index].optionsHash[value]
-    //         if (typeof j !== "number") {
-    //           baseFilter[index].optionsHash[value] = baseFilter[index].options.length
-    //           baseFilter[index].options.push({ selected: false, value })
-    //         }
-    //       } else {
-    //         filterHashMap[key] = baseFilter.length
-    //         baseFilter.push({
-    //           label: key,
-    //           options: [{ selected: false, value }],
-    //           optionsHash: { [value]: 0 },
-    //         })
-    //       }
-    //     })
-    //   } catch {}
-    // })
-    // setFilter(baseFilter)
   }, [allNfts])
 
   useEffect(() => {
