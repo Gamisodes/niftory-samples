@@ -73,5 +73,5 @@ export function useCollectionFilter(
     } else setNfts(allNfts)
   }, [filter])
 
-  return useMemo(() => ({ nfts, filter, setFilter }), [filter, nfts])
+  return useMemo(() => ({ allNfts, nfts, filter, setFilter }), [filter, nfts])
 }
