@@ -90,7 +90,7 @@ Props) {
         </section>
         <section
           className={classnames(
-            "flex justify-center items-center bg-header/40 backdrop-blur-md min-h-[50px] lg:bg-transparent flex-col absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
+            "flex justify-center items-center bg-header/40 backdrop-blur-md lg:backdrop-blur-none min-h-[50px] lg:bg-transparent flex-col absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
             {
               "translate-x-0 lg:translate-x-0 mt-[81px] overflow-y-auto h-screen": isOpen,
               "-translate-x-full lg:translate-x-0 mt-[81px] h-screen lg:mt-0 lg:h-auto": !isOpen,
