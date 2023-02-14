@@ -2,6 +2,7 @@ import { Text } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
 import axios from "axios"
 import { EModelTypes } from "consts/const"
+import { convertNumber } from "consts/helpers"
 import { useNftModelQuery } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -215,7 +216,11 @@ function useCheckout(id: string) {
 
   const handleCheckout = useCallback(async () => {
     // router.push("/app/collection/d4548186-78b3-4cb8-bd33-7fee34a38c5c")
-    const price = +nftModelResponse?.data?.nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
+    const price = convertNumber(
+      nftModelResponse?.data?.nftModel?.attributes?.price,
+      DEFAULT_NFT_PRICE
+    )
+    console.log(price)
     setErrorState(null)
 
     if (price > 0) {
