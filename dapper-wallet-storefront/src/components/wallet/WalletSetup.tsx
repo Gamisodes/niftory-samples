@@ -34,6 +34,10 @@ export function WalletSetup() {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
 
+  // const wallet = useMemo(
+  //   () => currentUser?.addr && walletData?.walletByAddress,
+  //   [currentUser?.addr, walletFetching, walletData?.walletByAddress.state]
+  // )
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
   if (!error && !walletFetching) {

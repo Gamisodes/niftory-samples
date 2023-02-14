@@ -38,6 +38,7 @@ make run-local
 ```
 
 For production environment you need `.env.production`
+For preproduction environment you need `.env.preprod`
 For staging environment you need `.env.staging`
 
 ## Using Docker and Makefile
@@ -50,6 +51,13 @@ make start-staging
 ```
 
 Open http://localhost:3000
+
+### Preproduction environment - for doing testing on real blockchain
+
+```
+make build-preprod
+make start-preprod
+```
 
 ### Production environment - for users
 
