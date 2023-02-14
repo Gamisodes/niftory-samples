@@ -75,11 +75,6 @@ export const CollectionGrid = ({ allNfts, isLoading, nfts, filter, setFilter }: 
             ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
             : `https://gamisodes.com/pages/collections`}
         >
-        <Link 
-          href={ process.env.NODE_ENV === 'development'
-            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-            : `https://gamisodes.com/pages/collections`}
-        >
           <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
             Go to Drops
           </button>
