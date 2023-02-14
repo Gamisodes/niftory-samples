@@ -8,8 +8,6 @@ import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 
-
-
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
   const [nftsByWalletResponse] = useNftsByWalletQuery({
