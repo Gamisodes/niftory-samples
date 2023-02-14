@@ -255,7 +255,6 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
     }`
 
   const mainImage = metadata.content[0]
-  console.log(metadata)
   return (
     <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.jpg')] bg-cover relative -top-16 py-16">
       <div className="flex justify-center gap-5 items-center h-full flex-col lg:flex-row">
