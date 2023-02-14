@@ -28,6 +28,8 @@ export type Scalars = {
 /** Current Prisma Mapping: User (with role >= MARKETER). A user of the Niftory admin portal and APIs. */
 export type AdminUser = Identifiable & UserData & {
   __typename?: 'AdminUser';
+  /** The apps this user is an admin for. */
+  apps?: Maybe<Array<Maybe<App>>>;
   /** This user's email. */
   email?: Maybe<Scalars['EmailAddress']>;
   /** A unique identifier for this object in the Niftory API. */
@@ -38,8 +40,6 @@ export type AdminUser = Identifiable & UserData & {
   name?: Maybe<Scalars['String']>;
   /** The organizations this user belongs to. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
-  /** This user's orgs and its roles there. */
-  orgs?: Maybe<Array<Maybe<UserRoleMapping>>>;
 };
 
 /** An application in the Niftory ecosystem. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -49,6 +49,8 @@ export type App = Identifiable & {
   contract?: Maybe<Contract>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The name for this app. */
+  name?: Maybe<Scalars['String']>;
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -334,11 +336,26 @@ export enum InvoiceState {
 
 /** The state of a listing. */
 export enum ListingState {
-  /** The listing is active and available for sale. */
+  /**
+   * The listing is active and available for sale.
+   * @deprecated Use SHOW_IN_STORE instead
+   */
   Active = 'ACTIVE',
   /** The listing is inactive, so it's not open for sale. */
+  HideFromStore = 'HIDE_FROM_STORE',
+  /**
+   * The listing is inactive, so it's not open for sale.
+   * @deprecated Use HIDE_FROM_STORE instead
+   */
   Inactive = 'INACTIVE',
   /** All NFTs in this listing have been sold. */
+  NotAvailaibleForPurchase = 'NOT_AVAILAIBLE_FOR_PURCHASE',
+  /** The listing is active and available for sale. */
+  ShowInStore = 'SHOW_IN_STORE',
+  /**
+   * All NFTs in this listing have been sold.
+   * @deprecated Use NOT_AVAILAIBLE_FOR_PURCHASE instead
+   */
   Sold = 'SOLD'
 }
 
@@ -396,6 +413,8 @@ export type Mutation = {
   uploadNFTContent?: Maybe<NftContent>;
   /** Verifies a [Wallet]({{Types.Wallet}}) to the currently signed-in user. If the signed verification code fails to decode with the wallet's public key or doesn't match the wallet's verification code, the request will fail. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
   verifyWallet?: Maybe<Wallet>;
+  /** Initiates the withdrawal of an [NFT]({{Types.NFT}}) from a custodial Niftory [Wallet]{{Types.Wallet}} to a receiver [Wallet]({{Types.Wallet}}) address */
+  withdraw?: Maybe<Nft>;
 };
 
 
@@ -423,6 +442,7 @@ export type MutationCompleteCheckoutWithDapperWalletArgs = {
 
 
 export type MutationCreateFileUploadUrlArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   options?: InputMaybe<CreateFileOptionsInput>;
@@ -435,17 +455,20 @@ export type MutationCreateNftListingArgs = {
 
 
 export type MutationCreateNftModelArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data: NftModelCreateInput;
   setId: Scalars['ID'];
 };
 
 
 export type MutationCreateNftSetArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data: NftSetCreateInput;
 };
 
 
 export type MutationCreateNiftoryWalletArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data?: InputMaybe<CreateNiftoryWalletInput>;
   userId?: InputMaybe<Scalars['ID']>;
 };
@@ -473,6 +496,7 @@ export type MutationMintNftArgs = {
 
 
 export type MutationMintNftModelArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
   quantity?: InputMaybe<Scalars['PositiveInt']>;
 };
@@ -507,6 +531,8 @@ export type MutationSignTransactionForDapperWalletArgs = {
 
 export type MutationTransferArgs = {
   address?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['ID']>;
+  force?: InputMaybe<Scalars['Boolean']>;
   id?: InputMaybe<Scalars['ID']>;
   nftModelId?: InputMaybe<Scalars['ID']>;
   userId?: InputMaybe<Scalars['ID']>;
@@ -555,6 +581,14 @@ export type MutationUploadNftContentArgs = {
 export type MutationVerifyWalletArgs = {
   address: Scalars['String'];
   signedVerificationCode: Scalars['JSON'];
+};
+
+
+export type MutationWithdrawArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
+  niftoryWalletAddress?: InputMaybe<Scalars['String']>;
+  receiverAddress: Scalars['String'];
 };
 
 /** Respresentation of a [non-fungible token](https://en.wikipedia.org/wiki/Non-fungible_token) in the Niftory ecosystem (it doesn't have to be minted on the blockchain yet). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts). */
@@ -728,6 +762,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Ha
   id: Scalars['ID'];
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
+  /** The listings for this model. These can be used to sell the NFTs creating using this model */
+  nftListings?: Maybe<Array<Maybe<NftListing>>>;
   /** The NFTs created using this model. */
   nfts?: Maybe<Array<Maybe<Nft>>>;
   /** The total quantity of NFTs that will be available for this model. */
@@ -856,6 +892,8 @@ export type NftSet = Attributable & BlockchainEntity & BlockchainResource & HasT
   state: NftSetBlockchainState;
   /** The status of this resource. Can be used to track progress in designing and creating resources. */
   status?: Maybe<Status>;
+  /** String labels to tag this NFTSet with. These will be stored in the Niftory API but will not be added to the blockchain. */
+  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
   /** The display image for this set. */
   title: Scalars['String'];
   /** Most recent updated date of this item, if any */
@@ -905,18 +943,6 @@ export type NftSetUpdateInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-/** An org within the Niftory ecosystem. Orgs manage [App]({{Types.App}})s. Read more [here](https://docs.niftory.com/home/v/admin/explore/org-and-apps). */
-export type Org = Identifiable & {
-  __typename?: 'Org';
-  /** The apps this org has. */
-  apps?: Maybe<Array<Maybe<App>>>;
-  /** A unique identifier for this object in the Niftory API. */
-  id: Scalars['ID'];
-  /** This org's members. */
-  members?: Maybe<Array<Maybe<AdminUser>>>;
-  name?: Maybe<Scalars['String']>;
-};
-
 /** An organization within the Niftory ecosystem. Organization manages [App]({{Types.App}})s. Read more [here](https://docs.niftory.com/home/v/admin/explore/org-and-apps). */
 export type Organization = Identifiable & {
   __typename?: 'Organization';
@@ -937,7 +963,7 @@ export type Pageable = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Gets an [AdminUser]({{Types.AdminUser}}) by ID. */
+  /** Gets the currently signed in [AdminUser]({{Types.AdminUser}}). */
   adminUser?: Maybe<AdminUser>;
   /** Gets the [App]({{Types.App}}) for the current application context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   app?: Maybe<App>;
@@ -975,12 +1001,6 @@ export type Query = {
   nfts?: Maybe<NftList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current wallet, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nftsByWallet?: Maybe<NftList>;
-  /** Gets the [Org]({{Types.Org}}) corresponding to the current [App]({{Types.App}}) context. */
-  org?: Maybe<Org>;
-  /** Gets an [Org]({{Types.Org}}) by ID. */
-  orgById?: Maybe<Org>;
-  /** Gets an [Org]({{Types.Org}}) by Org Name. */
-  orgByName?: Maybe<Org>;
   /** Gets a [Organization]({{Types.Organization}}) by ID. */
   organization?: Maybe<Organization>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
@@ -1001,7 +1021,7 @@ export type Query = {
 
 
 export type QueryAdminUserArgs = {
-  id: Scalars['ID'];
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -1099,16 +1119,6 @@ export type QueryNftsByWalletArgs = {
 };
 
 
-export type QueryOrgByIdArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryOrgByNameArgs = {
-  name: Scalars['String'];
-};
-
-
 export type QueryOrganizationArgs = {
   id: Scalars['ID'];
 };
@@ -1120,6 +1130,7 @@ export type QuerySetArgs = {
 
 
 export type QuerySetsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   filter?: InputMaybe<NftSetFilterInput>;
 };
 
@@ -1296,17 +1307,6 @@ export type UserData = {
   name?: Maybe<Scalars['String']>;
 };
 
-/** Maps a user to a role in an org */
-export type UserRoleMapping = {
-  __typename?: 'UserRoleMapping';
-  /** The org this mapping refers to. */
-  org?: Maybe<Org>;
-  /** The AdminUser's role in this org. */
-  role?: Maybe<Role>;
-  /** The ID of the AdminUser this mapping refers to. */
-  userId: Scalars['ID'];
-};
-
 /** Represents a blockchain wallet scoped to a particular [App]({{Types.App}}) and [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets). */
 export type Wallet = Attributable & HasTimes & Identifiable & {
   __typename?: 'Wallet';
@@ -1328,6 +1328,8 @@ export type Wallet = Attributable & HasTimes & Identifiable & {
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** The verification code that can be used to verify this wallet for this user. */
   verificationCode?: Maybe<Scalars['String']>;
+  /** The type of wallet. This represents if the wallet was linked externally or created by Niftory */
+  walletType?: Maybe<WalletType>;
 };
 
 /** A list of Wallets. */
@@ -1353,6 +1355,14 @@ export enum WalletState {
   Verified = 'VERIFIED'
 }
 
+/** The type of wallet. */
+export enum WalletType {
+  /** A custodial wallet created by the niftory API. */
+  Custodial = 'CUSTODIAL',
+  /** An external wallet linked by the user. */
+  External = 'EXTERNAL'
+}
+
 export type ReadyWalletMutationVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1374,6 +1384,14 @@ export type TransferNftToWalletMutationVariables = Exact<{
 
 
 export type TransferNftToWalletMutation = { __typename?: 'Mutation', transfer?: { __typename?: 'NFT', id: string } | null };
+
+export type UpdateNftModelMutationVariables = Exact<{
+  data?: InputMaybe<NftModelUpdateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type UpdateNftModelMutation = { __typename?: 'Mutation', updateNFTModel?: { __typename?: 'NFTModel', attributes?: any | null, blockchainId?: string | null, createdAt: any, description: string, id: string, metadata?: any | null, rarity?: SimpleRarityLevel | null, quantityMinted?: any | null, quantity?: any | null, updatedAt?: any | null, title: string, status?: Status | null, state: NftModelBlockchainState } | null };
 
 export type VerifyWalletMutationVariables = Exact<{
   address: Scalars['String'];
@@ -1411,6 +1429,10 @@ export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 
 
 export type NftsByWalletQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+  walletId?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<NftFilterInput>;
 }>;
 
 
@@ -1486,6 +1508,29 @@ export const TransferNftToWalletDocument = gql`
 
 export function useTransferNftToWalletMutation() {
   return Urql.useMutation<TransferNftToWalletMutation, TransferNftToWalletMutationVariables>(TransferNftToWalletDocument);
+};
+export const UpdateNftModelDocument = gql`
+    mutation UpdateNFTModel($data: NFTModelUpdateInput = {}, $id: ID = "") {
+  updateNFTModel(data: $data, id: $id) {
+    attributes
+    blockchainId
+    createdAt
+    description
+    id
+    metadata
+    rarity
+    quantityMinted
+    quantity
+    updatedAt
+    title
+    status
+    state
+  }
+}
+    `;
+
+export function useUpdateNftModelMutation() {
+  return Urql.useMutation<UpdateNftModelMutation, UpdateNftModelMutationVariables>(UpdateNftModelDocument);
 };
 export const VerifyWalletDocument = gql`
     mutation verifyWallet($address: String!, $signedVerificationCode: JSON!) {
@@ -1635,8 +1680,14 @@ export function useNftModelsQuery(options?: Omit<Urql.UseQueryArgs<NftModelsQuer
   return Urql.useQuery<NftModelsQuery, NftModelsQueryVariables>({ query: NftModelsDocument, ...options });
 };
 export const NftsByWalletDocument = gql`
-    query nftsByWallet($address: String) {
-  nftsByWallet(address: $address) {
+    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
+  nftsByWallet(
+    address: $address
+    cursor: $cursor
+    maxResults: $maxResults
+    walletId: $walletId
+    filter: $filter
+  ) {
     items {
       id
       blockchainId

@@ -18,6 +18,18 @@ stop-staging: ## Stop the staging docker container.
 build-production: ## Build the production docker image.
 	docker compose -f docker/production/docker-compose.yml build
 
+.PHONY: start-preprod
+start-staging: ## Start the preprod docker container.
+	docker compose -f docker/preprod/docker-compose.yml up -d
+
+.PHONY: stop-preprod
+stop-staging: ## Stop the preprod docker container.
+	docker compose -f docker/preprod/docker-compose.yml down
+  
+.PHONY: build-preprod
+build-production: ## Build the production docker image.
+	docker compose -f docker/preprod/docker-compose.yml build
+
 .PHONY: start-production
 start-production: ## Start the production docker container.
 	docker compose -f docker/production/docker-compose.yml up -d
