@@ -58,8 +58,6 @@ function NavbarBase({
 }: // additionalLinks,
 Props) {
   const [isOpen, setOpen] = useState(false)
-  console.log(process.env.NODE_ENV);
-  
 
   const onClick = useCallback(() => {
     setOpen((prev) => !prev)
