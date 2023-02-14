@@ -8,30 +8,12 @@ export const Navbar = () => {
         return [
           [
             {
-              title: "Store",
-              href: "https://gamisodes.com/collections",
+              title: 'Sign in / Sign up',
+              href: '/app/account'
             },
             {
-              title: "Collections",
-              href: "https://gamisodes.com/pages/collections",
-            },
-            {
-              title: "About",
-              href: "/",
-              submenu: [
-                {
-                  title: 'Team',
-                  href: 'https://gamisodes.com/pages/team-1'
-                },
-                {
-                  title: 'FAQ',
-                  href: 'https://gamisodes.com/pages/faqs'
-                },
-                {
-                  title: 'Blog',
-                  href: 'https://gamisodes.com/blogs/news'
-                },
-              ]
+              title: 'My collection',
+              href: '/app/collection'
             },
             {
               title: "My Account",
