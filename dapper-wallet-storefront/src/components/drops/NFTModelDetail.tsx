@@ -2,10 +2,7 @@ import { Text } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
 import axios from "axios"
 import { EModelTypes } from "consts/const"
-<<<<<<< HEAD
-=======
 import { convertNumber } from "consts/helpers"
->>>>>>> main
 import { useNftModelQuery } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -255,15 +252,11 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const NFT_READY_TO_BUY =
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
-<<<<<<< HEAD
-    `${NFT_READY_TO_BUY < metadata.amount ? `${NFT_READY_TO_BUY} /` : ""}` +
-=======
     `${
       metadata?.editionSize !== "Open" && NFT_READY_TO_BUY < metadata.amount
         ? `${NFT_READY_TO_BUY} /`
         : ""
     }` +
->>>>>>> main
     ` ${
       metadata?.editionSize && metadata?.editionSize === "Open"
         ? `Open Edition`
