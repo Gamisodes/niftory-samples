@@ -1,16 +1,22 @@
-import { NextApiHandler } from "next"
-import { gql } from "graphql-request"
-import { getBackendGraphQLClient } from "../../../../lib/BackendGraphQLClient"
-import { getAddressFromCookie } from "../../../../lib/cookieUtils"
+import { convertNumber } from "consts/helpers"
 import {
   CheckoutWithDapperWalletMutation,
   CheckoutWithDapperWalletMutationVariables,
   NftModelDocument,
   NftModelQuery,
   NftModelQueryVariables,
-  NftModelsDocument,
+  NftsByWalletDocument,
+  NftsByWalletQuery,
+  NftsByWalletQueryVariables,
+  TransferNftToWalletDocument,
+  TransferNftToWalletMutation,
+  TransferNftToWalletMutationVariables,
 } from "generated/graphql"
+import { gql } from "graphql-request"
+import { NextApiHandler } from "next"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
+import { getBackendGraphQLClient } from "../../../../lib/BackendGraphQLClient"
+import { getAddressFromCookie } from "../../../../lib/cookieUtils"
 
 const CheckoutWithDapperWallet = gql`
   mutation CheckoutWithDapperWallet(
@@ -41,6 +47,11 @@ const CheckoutWithDapperWallet = gql`
   }
 `
 
+export enum EErrorIdentity {
+  NO_PRICE = "NO_PRICE",
+  NFT_LIMIT_REACHED = "NFT_LIMIT_REACHED",
+}
+
 const handler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed, this endpoint only supports POST")
@@ -53,7 +64,7 @@ const handler: NextApiHandler = async (req, res) => {
     return
   }
 
-  const { nftModelId } = req.query
+  const { nftModelId } = req.query as { nftModelId: string }
   if (!nftModelId) {
     res.status(400).send("nftModelId is required")
     return
@@ -68,20 +79,53 @@ const handler: NextApiHandler = async (req, res) => {
         id: nftModelId as string,
       }
     )
-    const price = +nftModelResponse?.nftModel?.attributes?.price
-    const checkoutResponse = await backendGQLClient.request<
-      CheckoutWithDapperWalletMutation,
-      CheckoutWithDapperWalletMutationVariables
-    >(CheckoutWithDapperWallet, {
-      nftModelId: nftModelId as string,
-      address,
-      price: Number.isInteger(price) ? +price : DEFAULT_NFT_PRICE,
-      expiry: Number.MAX_SAFE_INTEGER,
-    })
-    res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+    const price = convertNumber(nftModelResponse?.nftModel?.attributes?.price, DEFAULT_NFT_PRICE)
+    if (price > 0) {
+      const checkoutResponse = await backendGQLClient.request<
+        CheckoutWithDapperWalletMutation,
+        CheckoutWithDapperWalletMutationVariables
+      >(CheckoutWithDapperWallet, {
+        nftModelId: nftModelId as string,
+        address,
+        price: convertNumber(+price, DEFAULT_NFT_PRICE),
+        expiry: Number.MAX_SAFE_INTEGER,
+      })
+      res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+    } else if (price === 0) {
+      const maxNftForUser = convertNumber(nftModelResponse?.nftModel?.attributes?.maxNftForUser)
+      if (maxNftForUser === 0) {
+        const transferToUser = await backendGQLClient.request<
+          TransferNftToWalletMutation,
+          TransferNftToWalletMutationVariables
+        >(TransferNftToWalletDocument, { address, nftModelId })
+        res.status(200).json({ data: transferToUser.transfer, success: true })
+        return
+      }
+      let cursor = ""
+      const nftsItems: NftsByWalletQuery["nftsByWallet"]["items"] = []
+      do {
+        const nfts = await backendGQLClient.request<NftsByWalletQuery, NftsByWalletQueryVariables>(
+          NftsByWalletDocument,
+          { address, filter: { nftModelIds: [nftModelId] }, cursor }
+        )
+        nftsItems.push(...nfts.nftsByWallet.items)
+        cursor = nfts.nftsByWallet.cursor
+      } while (typeof cursor === "string")
+      if (nftsItems.length < maxNftForUser) {
+        const transferToUser = await backendGQLClient.request<
+          TransferNftToWalletMutation,
+          TransferNftToWalletMutationVariables
+        >(TransferNftToWalletDocument, { address, nftModelId })
+        res.status(200).json({ data: transferToUser.transfer, success: true })
+      } else {
+        throw new Error(EErrorIdentity.NFT_LIMIT_REACHED)
+      }
+    } else {
+      throw new Error(EErrorIdentity.NO_PRICE)
+    }
   } catch (error) {
     res.status(500).json({
-      error: [error],
+      error: [error?.message ? `${error?.message ?? ""}` : error],
       success: false,
     })
   }

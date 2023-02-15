@@ -13,9 +13,9 @@ import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 interface IFilterState {
   label: string
   options: { selected: boolean; value: string }[]
-  // optionsHash: { [key: string]: number }
 }
 interface CollectionProps {
+  // allNfts:Subset<Nft>[]
   isLoading: boolean
   allCollections: {[key: string]: Subset<Nft>[]}
   // filter: {
@@ -40,7 +40,7 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
     )
   }
 
-  if (hasNfts || (!!filter.length && !hasNfts))
+  if (selectedCollection)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
@@ -70,7 +70,7 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
                 <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
               ))
             ) : (
-              <div className="col-span-full text-2xl">There is no NFTs to shown</div>
+              <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
         </div>
@@ -80,7 +80,11 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
     <section className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-4">
         <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link href={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
+        <Link 
+          href={ process.env.NODE_ENV === 'development'
+            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+            : `https://gamisodes.com/pages/collections`}
+        >
           <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
             Go to Drops
           </button>
