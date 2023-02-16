@@ -11,6 +11,10 @@ import {
   TransferNftToWalletDocument,
   TransferNftToWalletMutation,
   TransferNftToWalletMutationVariables,
+  WalletByAddressDocument,
+  WalletByAddressQuery,
+  WalletByAddressQueryVariables,
+  WalletState,
 } from "generated/graphql"
 import { gql } from "graphql-request"
 import { NextApiHandler } from "next"
@@ -72,7 +76,16 @@ const handler: NextApiHandler = async (req, res) => {
 
   try {
     const backendGQLClient = await getBackendGraphQLClient()
-
+    const walletByAddressQuery = await backendGQLClient.request<
+      WalletByAddressQuery,
+      WalletByAddressQueryVariables
+    >(WalletByAddressDocument, { address })
+    const state = walletByAddressQuery?.walletByAddress?.state
+    if (state !== WalletState.Ready) {
+      throw new Error(
+        "To complete checkout, please visit My Account and connect a Dapper digital collectibles wallet."
+      )
+    }
     const nftModelResponse = await backendGQLClient.request<NftModelQuery, NftModelQueryVariables>(
       NftModelDocument,
       {
