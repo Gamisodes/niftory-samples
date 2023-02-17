@@ -43,7 +43,7 @@ export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
                   <span className="font-bold">Serial: </span>
                   {stats?.editionSize && stats?.editionSize === "Open"
                     ? `Open Edition`
-                    : `${nft?.serialNumber ?? "~"} / ${nftModel.quantity}`}
+                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
                 </p>
               </div>
             </div>
