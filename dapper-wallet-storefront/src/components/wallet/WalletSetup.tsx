@@ -34,10 +34,6 @@ export function WalletSetup() {
     reExecuteQuery({ requestPolicy: "network-only" })
   }, [])
 
-  // const wallet = useMemo(
-  //   () => currentUser?.addr && walletData?.walletByAddress,
-  //   [currentUser?.addr, walletFetching, walletData?.walletByAddress.state]
-  // )
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
   if (!error && !walletFetching) {
@@ -62,10 +58,13 @@ export function WalletSetup() {
       buttonText="Go to Drops"
       error={error as Error}
       isLoading={walletFetching}
-      onClick={() => router.push(
-        process.env.NODE_ENV === 'development'
-        ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-        : `https://gamisodes.com/pages/collections`)}
+      onClick={() =>
+        router.push(
+          process.env.NODE_ENV === "development"
+            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+            : `https://gamisodes.com/pages/collections`
+        )
+      }
     />
   )
 }

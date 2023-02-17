@@ -3,7 +3,7 @@ import * as fcl from "@onflow/fcl"
 import axios from "axios"
 import { EModelTypes } from "consts/const"
 import { convertNumber } from "consts/helpers"
-import { useNftModelQuery } from "generated/graphql"
+import { useNftModelQuery, useWalletByAddressQuery, WalletState } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
@@ -247,8 +247,18 @@ const brain_train_links = [
 
 function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const { currentUser } = useWalletContext()
+  const [{ data: walletData }] = useWalletByAddressQuery({
+    variables: { address: currentUser?.addr },
+    pause: !currentUser?.addr,
+    requestPolicy: "cache-and-network",
+  })
+
   const { data: authedUser } = useSession()
+
+  const wallet = currentUser?.addr && walletData?.walletByAddress
+
   const { handleCheckout, errorState, checkoutProgress } = useCheckout(id)
+
   const NFT_READY_TO_BUY =
     metadata.amount - metadata.quantityMinted > 0 ? metadata.amount - metadata.quantityMinted : 0
   const TOTAL_AVAILABLE =
@@ -260,7 +270,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
     ` ${
       metadata?.editionSize && metadata?.editionSize === "Open"
         ? `Open Edition`
-        : `${metadata.amount} Remaining`
+        : `${metadata?.amount} Remaining`
     }`
 
   const mainImage = metadata.content[0]
@@ -295,7 +305,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
               </p>
             </>
           )}
-          {authedUser?.user && currentUser?.addr ? (
+          {authedUser?.user && currentUser?.addr && wallet?.state === WalletState.Ready ? (
             NFT_READY_TO_BUY > 0 ? (
               <>
                 <p className="font-dosis text-lg mb-3">
@@ -316,7 +326,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
                 </Button>
               </>
             )
-          ) : authedUser?.user && !currentUser?.addr ? (
+          ) : (authedUser?.user && !currentUser?.addr) || wallet?.state !== WalletState.Ready ? (
             <>
               <p className="font-dosis text-lg mb-3">
                 To proceed with checkout, please connect your Dapper Wallet. If you've already
