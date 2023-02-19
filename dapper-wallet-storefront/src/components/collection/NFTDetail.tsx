@@ -1,4 +1,6 @@
+import { convertNumber } from "consts/helpers"
 import { useMemo } from "react"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { ESetAttribute } from "src/typings/SetAttribute"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
@@ -93,17 +95,24 @@ export const NFTDetail = (props: Props) => {
   const nftModel = nft?.model
   const poster = nftModel?.content?.poster?.url
 
-  const product = {
-    title: nftModel?.title,
-    description: nftModel?.description || "",
-    content: nftModel?.content?.files?.map((file) => ({
-      contentType: file.contentType || "image",
-      contentUrl: file.url,
-      thumbnailUrl: poster,
-      alt: nftModel?.title,
-    })),
-    attributes: { ...nftModel.metadata, ...nftModel.attributes },
-  }
+  const product = useMemo(
+    () => ({
+      title: nftModel?.title,
+      description: nftModel?.description || "",
+      price: convertNumber(+nftModel?.attributes?.price, DEFAULT_NFT_PRICE),
+      editionSize: ((nftModel?.metadata?.editionSize as string) ??
+        (nftModel?.attributes?.editionSize as string) ??
+        null) as string | null,
+      content: nftModel?.content?.files?.map((file) => ({
+        contentType: file.contentType || "image",
+        contentUrl: file.url,
+        thumbnailUrl: poster,
+        alt: nftModel?.title,
+      })),
+      attributes: { ...nftModel.metadata, ...nftModel.attributes },
+    }),
+    [nftModel?.id]
+  )
 
   const traits: ITraits | undefined = useMemo(() => {
     const setAttributes = nftModel?.set?.attributes ?? {}
@@ -114,7 +123,8 @@ export const NFTDetail = (props: Props) => {
         }, {} as ITraits) ?? undefined
       )
     return undefined
-  }, [])
+  }, [nftModel?.id])
+
   return (
     <section className="h-auto sm:h-full py-4 lg:py-24">
       <div className="flex h-auto sm:h-full flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
@@ -130,7 +140,9 @@ export const NFTDetail = (props: Props) => {
               <div className="flex w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-6">
                 <p>
                   <span className="font-bold">Edition: </span>
-                  {nft && nft.serialNumber} / {nftModel.quantity}
+                  {product?.editionSize && product?.editionSize === "Open"
+                    ? `Open Edition`
+                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
                 </p>
               </div>
             </div>

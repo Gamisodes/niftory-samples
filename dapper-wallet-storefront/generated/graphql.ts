@@ -1422,6 +1422,14 @@ export type TransferNftToWalletMutationVariables = Exact<{
 
 export type TransferNftToWalletMutation = { __typename?: 'Mutation', transfer?: { __typename?: 'NFT', id: string } | null };
 
+export type UpdateNftModelMutationVariables = Exact<{
+  data?: InputMaybe<NftModelUpdateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type UpdateNftModelMutation = { __typename?: 'Mutation', updateNFTModel?: { __typename?: 'NFTModel', attributes?: any | null, blockchainId?: string | null, createdAt: any, description: string, id: string, metadata?: any | null, rarity?: SimpleRarityLevel | null, quantityMinted?: any | null, quantity?: any | null, updatedAt?: any | null, title: string, status?: Status | null, state: NftModelBlockchainState } | null };
+
 export type VerifyWalletMutationVariables = Exact<{
   address: Scalars['String'];
   signedVerificationCode: Scalars['JSON'];
@@ -1458,6 +1466,10 @@ export type NftModelsQuery = { __typename?: 'Query', nftModels?: { __typename?: 
 
 export type NftsByWalletQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+  walletId?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<NftFilterInput>;
 }>;
 
 
@@ -1494,13 +1506,6 @@ export type SignTransactionForDapperWalletMutationVariables = Exact<{
 
 
 export type SignTransactionForDapperWalletMutation = { __typename?: 'Mutation', signTransactionForDapperWallet?: string | null };
-
-export type GetModelsIdsQueryVariables = Exact<{
-  cursor?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetModelsIdsQuery = { __typename?: 'Query', nftModels?: { __typename?: 'NFTModelList', cursor?: string | null, items?: Array<{ __typename?: 'NFTModel', id: string } | null> | null } | null };
 
 
 export const ReadyWalletDocument = gql`
@@ -1540,6 +1545,29 @@ export const TransferNftToWalletDocument = gql`
 
 export function useTransferNftToWalletMutation() {
   return Urql.useMutation<TransferNftToWalletMutation, TransferNftToWalletMutationVariables>(TransferNftToWalletDocument);
+};
+export const UpdateNftModelDocument = gql`
+    mutation UpdateNFTModel($data: NFTModelUpdateInput = {}, $id: ID = "") {
+  updateNFTModel(data: $data, id: $id) {
+    attributes
+    blockchainId
+    createdAt
+    description
+    id
+    metadata
+    rarity
+    quantityMinted
+    quantity
+    updatedAt
+    title
+    status
+    state
+  }
+}
+    `;
+
+export function useUpdateNftModelMutation() {
+  return Urql.useMutation<UpdateNftModelMutation, UpdateNftModelMutationVariables>(UpdateNftModelDocument);
 };
 export const VerifyWalletDocument = gql`
     mutation verifyWallet($address: String!, $signedVerificationCode: JSON!) {
@@ -1689,8 +1717,14 @@ export function useNftModelsQuery(options?: Omit<Urql.UseQueryArgs<NftModelsQuer
   return Urql.useQuery<NftModelsQuery, NftModelsQueryVariables>({ query: NftModelsDocument, ...options });
 };
 export const NftsByWalletDocument = gql`
-    query nftsByWallet($address: String) {
-  nftsByWallet(address: $address) {
+    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
+  nftsByWallet(
+    address: $address
+    cursor: $cursor
+    maxResults: $maxResults
+    walletId: $walletId
+    filter: $filter
+  ) {
     items {
       id
       blockchainId
@@ -1797,18 +1831,4 @@ export const SignTransactionForDapperWalletDocument = gql`
 
 export function useSignTransactionForDapperWalletMutation() {
   return Urql.useMutation<SignTransactionForDapperWalletMutation, SignTransactionForDapperWalletMutationVariables>(SignTransactionForDapperWalletDocument);
-};
-export const GetModelsIdsDocument = gql`
-    query GetModelsIds($cursor: String) {
-  nftModels(cursor: $cursor) {
-    cursor
-    items {
-      id
-    }
-  }
-}
-    `;
-
-export function useGetModelsIdsQuery(options?: Omit<Urql.UseQueryArgs<GetModelsIdsQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetModelsIdsQuery, GetModelsIdsQueryVariables>({ query: GetModelsIdsDocument, ...options });
 };

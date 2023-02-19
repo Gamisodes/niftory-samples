@@ -1,34 +1,21 @@
 import { Skeleton } from "@chakra-ui/react"
-import { GetServerSidePropsContext, GetStaticPathsContext, GetStaticPathsResult } from "next"
-import { withUrqlClient } from "next-urql"
+import { EModelTypes } from "consts/const"
+import { convertNumber } from "consts/helpers"
+import { GetServerSidePropsContext } from "next"
 import Head from "next/head"
 import { useRouter } from "next/router"
+import { useMemo } from "react"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
-import { getGraphQLClient, GraphQLClientOptions } from "src/lib/GraphQLClientProvider"
-import { gql } from "urql"
+import { getGraphQLClient } from "src/lib/GraphQLClientProvider"
 import {
-  GetModelsIdsDocument,
-  GetModelsIdsQuery,
-  GetModelsIdsQueryVariables,
   NftModelDocument,
   NftModelQuery,
   NftModelQueryVariables,
   useNftModelQuery,
 } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
-
-const GetModelsIds = gql`
-  query GetModelsIds($cursor: String) {
-    nftModels(cursor: $cursor) {
-      cursor
-      items {
-        id
-      }
-    }
-  }
-`
 
 const NFTModelDetailPage = (props) => {
   const router = useRouter()
@@ -41,23 +28,34 @@ const NFTModelDetailPage = (props) => {
   })
 
   const nftModel = nftModelResponse?.data?.nftModel
-  const metadata = {
-    title: nftModel?.title,
-    description: nftModel?.description,
-    amount: nftModel?.quantity,
-    quantityMinted: +nftModel?.quantityMinted,
-    price: nftModel?.attributes?.price
-      ? nftModel?.attributes?.price ?? DEFAULT_NFT_PRICE
-      : DEFAULT_NFT_PRICE,
-    content: [
-      {
-        contentType: nftModel?.content?.files[0]?.contentType,
-        contentUrl: nftModel?.content?.files[0]?.url,
-        thumbnailUrl: nftModel?.content?.poster?.url,
-        alt: nftModel?.title,
-      },
-    ],
-  }
+  const metadata = useMemo(
+    () => ({
+      title: nftModel?.title,
+      description: nftModel?.description,
+      amount: nftModel?.quantity,
+      quantityMinted: +nftModel?.quantityMinted,
+      price: convertNumber(
+        nftModel?.attributes?.price,
+        convertNumber(nftModel?.metadata?.price, DEFAULT_NFT_PRICE)
+      ),
+      type: (nftModel?.metadata?.type ??
+        nftModel?.attributes?.type ??
+        EModelTypes.GENERAL) as EModelTypes,
+      editionSize: ((nftModel?.metadata?.editionSize as string) ??
+        (nftModel?.attributes?.editionSize as string) ??
+        null) as string | null,
+      content: [
+        {
+          contentType: nftModel?.content?.files[0]?.contentType,
+          contentUrl: nftModel?.content?.files[0]?.url,
+          thumbnailUrl: nftModel?.content?.poster?.url,
+          alt: nftModel?.title,
+        },
+      ],
+    }),
+    [nftModel?.id]
+  )
+
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   console.log(nftModel)
   return (
@@ -85,7 +83,6 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext) 
       id: urlParam as string,
     })
     .toPromise()
-  console.log("url:", client, ssrCache.extractData())
 
   return {
     props: {

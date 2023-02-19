@@ -1,0 +1,17 @@
+mutation UpdateNFTModel($data: NFTModelUpdateInput = {}, $id: ID = "") {
+  updateNFTModel(data: $data, id: $id) {
+    attributes
+    blockchainId
+    createdAt
+    description
+    id
+    metadata
+    rarity
+    quantityMinted
+    quantity
+    updatedAt
+    title
+    status
+    state
+  }
+}
