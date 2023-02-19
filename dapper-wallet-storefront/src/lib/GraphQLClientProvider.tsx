@@ -5,10 +5,9 @@ import {
   Client,
   createClient,
   dedupExchange,
-  Exchange,
   fetchExchange,
-  ssrExchange,
   Provider,
+  ssrExchange,
 } from "urql"
 
 let urqlClient: Client | null = null

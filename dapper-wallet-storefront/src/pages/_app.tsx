@@ -8,7 +8,7 @@ import "../styles/global.css"
 
 import { Session } from "next-auth"
 import { GoogleAnalytics } from "nextjs-google-analytics"
-import { useState } from "react"
+import { PropsWithChildren, useState } from "react"
 import RouterHistory from "src/components/RouterHistory"
 import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
@@ -19,12 +19,16 @@ type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProp
   Component: ComponentWithWallet
 }
 
+const ReactQueryProvider = ({ children }: PropsWithChildren) => {
+  const [queryClient] = useState(() => new QueryClient())
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+}
+
 const App = ({
   Component,
   pageProps: { session, dehydratedState, ...pageProps },
 }: AppProps): JSX.Element => {
-  const [queryClient] = useState(() => new QueryClient())
-
   const isWalletAndAuth =
     (Component.requireAuth && Component.requireWallet && (
       <AuthGuard>
@@ -53,7 +57,7 @@ const App = ({
     <RouterHistory>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
-          <QueryClientProvider client={queryClient}>
+          <ReactQueryProvider>
             <Hydrate state={dehydratedState}>
               <WalletProvider requireWallet={Component.requireWallet}>
                 <GraphQLClientProvider {...pageProps}>
@@ -61,7 +65,7 @@ const App = ({
                 </GraphQLClientProvider>
               </WalletProvider>
             </Hydrate>
-          </QueryClientProvider>
+          </ReactQueryProvider>
         </ChakraProvider>
       </SessionProvider>
       <GoogleAnalytics trackPageViews />
