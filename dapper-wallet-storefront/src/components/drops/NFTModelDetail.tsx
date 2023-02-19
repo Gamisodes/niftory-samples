@@ -51,7 +51,7 @@ const ERROR_MESSAGES = {
 }
 
 function useCheckout(id: string) {
-  const [nftModelResponse] = useNftModelQuery({ variables: { id } })
+  const { data: nftModelResponse } = useNftModelQuery({ id })
 
   const { currentUser } = useWalletContext()
   const router = useRouter()
@@ -216,10 +216,7 @@ function useCheckout(id: string) {
 
   const handleCheckout = useCallback(async () => {
     // router.push("/app/collection/d4548186-78b3-4cb8-bd33-7fee34a38c5c")
-    const price = convertNumber(
-      nftModelResponse?.data?.nftModel?.attributes?.price,
-      DEFAULT_NFT_PRICE
-    )
+    const price = convertNumber(nftModelResponse?.nftModel?.attributes?.price, DEFAULT_NFT_PRICE)
     console.log(price)
     setErrorState(null)
 
@@ -247,11 +244,10 @@ const brain_train_links = [
 
 function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
   const { currentUser } = useWalletContext()
-  const [{ data: walletData }] = useWalletByAddressQuery({
-    variables: { address: currentUser?.addr },
-    pause: !currentUser?.addr,
-    requestPolicy: "cache-and-network",
-  })
+  const { data: walletData } = useWalletByAddressQuery(
+    { address: currentUser?.addr },
+    { enabled: !!currentUser?.addr }
+  )
 
   const { data: authedUser } = useSession()
 

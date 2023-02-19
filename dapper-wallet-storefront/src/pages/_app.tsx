@@ -12,7 +12,6 @@ import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
 import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
-import { GraphQLClientProvider } from "../lib/GraphQLClientProvider"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -45,16 +44,13 @@ const App = ({
       </AuthGuard>
     )) ||
     null
-
   return (
     <RouterHistory>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
           <ReactQueryProvider state={dehydratedState}>
             <WalletProvider requireWallet={Component.requireWallet}>
-              <GraphQLClientProvider {...pageProps}>
-                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-              </GraphQLClientProvider>
+              {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
             </WalletProvider>
           </ReactQueryProvider>
         </ChakraProvider>

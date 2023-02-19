@@ -1,6 +1,8 @@
 import { Skeleton } from "@chakra-ui/react"
+import { dehydrate, QueryClient } from "@tanstack/react-query"
 import { EModelTypes } from "consts/const"
 import { convertNumber } from "consts/helpers"
+import { fetchData } from "fetcher"
 import { GetServerSidePropsContext } from "next"
 import Head from "next/head"
 import { useRouter } from "next/router"
@@ -8,7 +10,6 @@ import { useMemo } from "react"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
-import { getGraphQLClient } from "src/lib/GraphQLClientProvider"
 import {
   NftModelDocument,
   NftModelQuery,
@@ -20,14 +21,10 @@ import AppLayout from "../../../components/AppLayout"
 const NFTModelDetailPage = (props) => {
   const router = useRouter()
   const nftModelId = router.query["nftModelId"]?.toString()
-
-  const [nftModelResponse] = useNftModelQuery({
-    variables: { id: nftModelId },
-    // requestPolicy: "cache-only",
-    requestPolicy: "cache-first",
+  const { data, isSuccess } = useNftModelQuery({
+    id: nftModelId,
   })
-
-  const nftModel = nftModelResponse?.data?.nftModel
+  const nftModel = data?.nftModel
   const metadata = useMemo(
     () => ({
       title: nftModel?.title,
@@ -57,7 +54,6 @@ const NFTModelDetailPage = (props) => {
   )
 
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
-  console.log(nftModel)
   return (
     <>
       <Head>
@@ -67,7 +63,7 @@ const NFTModelDetailPage = (props) => {
         <meta property="og:image" content={metadata.content[0].contentUrl ?? ""} key="image" />
       </Head>
       <AppLayout>
-        <Skeleton className="mx-auto w-full" isLoaded={!nftModelResponse.fetching}>
+        <Skeleton className="mx-auto w-full" isLoaded={isSuccess}>
           <NFTModelDetail id={nftModelId} metadata={metadata} />
         </Skeleton>
       </AppLayout>
@@ -76,17 +72,17 @@ const NFTModelDetailPage = (props) => {
 }
 
 export async function getServerSideProps({ params }: GetServerSidePropsContext) {
-  const urlParam = params.nftModelId
-  const [client, ssrCache] = getGraphQLClient()
-  await client
-    .query<NftModelQuery, NftModelQueryVariables>(NftModelDocument, {
-      id: urlParam as string,
-    })
-    .toPromise()
+  const urlParam = params.nftModelId as string
+  const queryClient = new QueryClient()
+  const variables = { id: urlParam }
+  await queryClient.prefetchQuery(
+    ["nftModel", variables],
+    fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, variables)
+  )
 
   return {
     props: {
-      urqlState: ssrCache.extractData(),
+      dehydratedState: dehydrate(queryClient),
     },
   }
 }

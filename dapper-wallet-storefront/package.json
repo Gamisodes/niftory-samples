@@ -57,6 +57,7 @@
     "@graphql-codegen/typed-document-node": "^2.3.7",
     "@graphql-codegen/typescript": "^2.8.2",
     "@graphql-codegen/typescript-operations": "^2.5.7",
+    "@graphql-codegen/typescript-react-query": "^4.1.0",
     "@graphql-codegen/typescript-urql": "^3.7.3",
     "@svgr/webpack": "^6.5.1",
     "@types/node": "18.11.9",
