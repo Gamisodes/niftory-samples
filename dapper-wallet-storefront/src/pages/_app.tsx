@@ -1,5 +1,4 @@
 import { ChakraProvider } from "@chakra-ui/react"
-import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { SessionProvider } from "next-auth/react"
 import { AppProps as NextAppProps } from "next/app"
 import { WalletProvider } from "../components/wallet/WalletProvider"
@@ -8,21 +7,15 @@ import "../styles/global.css"
 
 import { Session } from "next-auth"
 import { GoogleAnalytics } from "nextjs-google-analytics"
-import { PropsWithChildren, useState } from "react"
 import RouterHistory from "src/components/RouterHistory"
 import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
+import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
 import { GraphQLClientProvider } from "../lib/GraphQLClientProvider"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
-}
-
-const ReactQueryProvider = ({ children }: PropsWithChildren) => {
-  const [queryClient] = useState(() => new QueryClient())
-
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }
 
 const App = ({
@@ -57,14 +50,12 @@ const App = ({
     <RouterHistory>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
-          <ReactQueryProvider>
-            <Hydrate state={dehydratedState}>
-              <WalletProvider requireWallet={Component.requireWallet}>
-                <GraphQLClientProvider {...pageProps}>
-                  {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-                </GraphQLClientProvider>
-              </WalletProvider>
-            </Hydrate>
+          <ReactQueryProvider state={dehydratedState}>
+            <WalletProvider requireWallet={Component.requireWallet}>
+              <GraphQLClientProvider {...pageProps}>
+                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+              </GraphQLClientProvider>
+            </WalletProvider>
           </ReactQueryProvider>
         </ChakraProvider>
       </SessionProvider>
