@@ -329,8 +329,8 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
           ) : (authedUser?.user && !currentUser?.addr) || wallet?.state !== WalletState.Ready ? (
             <>
               <p className="font-dosis text-lg mb-3">
-                To proceed with checkout, please connect your Dapper Wallet. If you've already
-                connected your Dapper Wallet, please refresh this page.
+                To proceed with checkout, please connect your Dapper digital collectibles wallet. If
+                you’ve already connected your wallet, please refresh this page.
               </p>
               <Link href={"/app/account"}>
                 <Button>Connect Wallet</Button>
