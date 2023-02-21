@@ -2,6 +2,8 @@ import { Exact, NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo } from "react"
 import { UseQueryState } from "urql"
 
+
+
 export function useCollectionMainInterface(
   gamisodesCollections,
   nftsByWalletResponse: UseQueryState<
@@ -127,8 +129,12 @@ export function useCollectionMainInterface(
       return true
     })
 
+    console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter });
+    
+
     return { collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter }
   }, [gamisodesCollections])
+
 
   return {
     allCollections: {
