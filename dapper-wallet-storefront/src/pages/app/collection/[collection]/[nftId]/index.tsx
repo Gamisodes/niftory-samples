@@ -9,7 +9,7 @@ import { NFTDetail } from "src/components/collection/NFTDetail"
 import { Subset } from "src/lib/types"
 import { LoginSkeleton } from "src/ui/Skeleton"
 import { useNftsStore } from "src/store/nfts"
-import { collectionNames } from "src/const/enum"
+import { ECollectionNames } from "src/const/enum"
 import shallow from "zustand/shallow"
 
 const getCollections = ({allCollections}) => allCollections
@@ -23,7 +23,7 @@ export const NFTDetailPage = () => {
 
   const [nftResponse] = useNftQuery({ variables: { id: nftId } })
 
-  const nft: Subset<Nft> = selectedCollection === collectionNames.brainTrain 
+  const nft: Subset<Nft> = selectedCollection === ECollectionNames.BrainTrain 
     ? nftResponse.data?.nft 
     : allCollections[selectedCollection]?.find(({id}) => id === nftId)
   
@@ -32,14 +32,14 @@ export const NFTDetailPage = () => {
   }
 
   const nftModel = nft?.model
-  const title = `${nft?.title ?? "Your's idea with"} | Gamisodes`
+  const title = `${nftModel?.title ?? "Your's idea with"} | Gamisodes`
 
   return (
     <>
       <Head>
-        <title>{nft?.title ?? ""}</title>
+        <title>{nftModel?.title ?? ""}</title>
         <meta property="og:title" content={title} key="title" />
-        <meta property="og:description" content={nft?.description ?? ""} key="description" />
+        <meta property="og:description" content={nftModel?.description ?? ""} key="description" />
         <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
       </Head>
       <AppLayout>
