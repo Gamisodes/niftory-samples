@@ -7,12 +7,10 @@ import { Subset } from "../../lib/types"
 
 type NFTCard = { nft: Subset<Nft>; clickUrl: string, counter: number }
 
-
-
 export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
   const nftModel = nft?.model
-  const imageUrl = nft?.imageUrl
-  const title = nft?.title
+  const imageUrl = nftModel?.content.poster.url
+  const title = nftModel?.title
 
 
   const stats = {

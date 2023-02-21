@@ -1,6 +1,5 @@
-import { NftsByWalletQuery, Exact, NftBlockchainState } from "generated/graphql"
+import { Exact, NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo } from "react"
-import { useNftsStore } from "src/store/nfts"
 import { UseQueryState } from "urql"
 
 
@@ -27,7 +26,6 @@ export function useCollectionMainInterface(
           imageUrl: nft.model.content.poster.url,
           title: nft.model.title,
           description: nft.model.description,
-          rarity: nft.model.rarity,
           quantity: nft.model.quantity,
           filters: nft.model.metadata.traits?.reduce((accum, trait) => {
             return {
@@ -61,8 +59,11 @@ export function useCollectionMainInterface(
         title: nft.display.name,
         description: nft.display.description,
         quantity: nft.editions.infoList[0].max,
+        imageUrl: nft.display.thumbnail.url,
         content: {
-          poster: nft.display.thumbnail.url,
+          poster: {
+            url: nft.display.thumbnail.url
+          },
           files: [ {
             url:  nft.display.thumbnail.url,
             contentType: "image"

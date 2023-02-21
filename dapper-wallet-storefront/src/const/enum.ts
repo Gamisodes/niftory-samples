@@ -1,6 +1,6 @@
-export enum collectionNames {
-  brainTrain = "brainTrainCollection",
-  gadgets = "gadgetsCollection",
+export enum ECollectionNames {
+  BrainTrain = "brainTrainCollection",
+  Gadgets = "gadgetsCollection",
   VIP = "VIPCollection",
-  missions = "missionsCollection",
+  Missions = "missionsCollection",
 }
