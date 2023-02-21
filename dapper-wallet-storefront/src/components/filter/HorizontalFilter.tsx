@@ -1,13 +1,13 @@
 import cn from "classnames"
 import { useCallback, useState } from "react"
 import { RadioGroup } from "@headlessui/react"
-import { collectionNames } from "src/const/enum"
+import { ECollectionNames } from "src/const/enum"
 
 const collections = [
-  { label: "VIP", value: collectionNames.VIP, checked: false },
-  { label: "Gadgets", value: collectionNames.gadgets, checked: false },
-  { label: "Missions", value: collectionNames.missions, checked: false },
-  { label: "Brain Train", value: collectionNames.brainTrain, checked: false },
+  { label: "VIP", value: ECollectionNames.VIP, checked: false },
+  { label: "Gadgets", value: ECollectionNames.Gadgets, checked: false },
+  { label: "Missions", value: ECollectionNames.Missions, checked: false },
+  { label: "Brain Train", value: ECollectionNames.BrainTrain, checked: false },
 ]
 
 export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection, setCollection }) => {

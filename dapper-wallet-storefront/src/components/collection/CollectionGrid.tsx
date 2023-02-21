@@ -3,13 +3,13 @@ import Link from "next/link"
 import { Loading } from "src/icon/Loading"
 
 import { useCallback, useState } from "react"
+import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { useNftsStore } from "src/store/nfts"
+import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
-import shallow from "zustand/shallow"
-import { collectionNames } from "src/const/enum"
 
 const selector = ({ allCollections, counter, isLoading }) => ({
   allCollections,
@@ -19,16 +19,16 @@ const selector = ({ allCollections, counter, isLoading }) => ({
 
 export const CollectionGrid = () => {
   const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
-  const [selectedCollection, setCollection] = useState(collectionNames.brainTrain)
+  const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
   
   const counterKey = useCallback(
     (nft) => {
-      if (selectedCollection === collectionNames.brainTrain) return null
+      if (selectedCollection === ECollectionNames.BrainTrain) return null
       const key = JSON.stringify({
         title: nft?.title,
-        ...(selectedCollection === collectionNames.gadgets && { level: nft?.filters?.level }),
+        ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
       })
 
       return counter[selectedCollection][key]
@@ -44,6 +44,7 @@ export const CollectionGrid = () => {
     )
   }
 
+  if (selectedCollection)
   if (selectedCollection)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
