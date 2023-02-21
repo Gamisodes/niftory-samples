@@ -14,7 +14,7 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
 
 
   const stats = {
-    rarity: nft?.rarity,
+    rarity: nftModel?.rarity,
     serial: nft?.serialNumber?.toString(),
     price: convertNumber(+nft?.model?.attributes?.price, DEFAULT_NFT_PRICE),
     editionSize: ((nftModel?.metadata?.editionSize as string) ??
@@ -47,7 +47,7 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
                   <span className="font-bold">Serial: </span>
                   {stats?.editionSize && stats?.editionSize === "Open"
                     ? `Open Edition`
-                    : `${nft?.serialNumber ?? "~"} / ${nft?.quantity}`}
+                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
                 </p>
               </div>
             </div>
