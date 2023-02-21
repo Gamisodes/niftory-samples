@@ -5,20 +5,21 @@ import { Loading } from "src/icon/Loading"
 import { useCallback, useState } from "react"
 import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
-import { useNftsStore } from "src/store/nfts"
+import { INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
 
-const selector = ({ allCollections, counter, isLoading }) => ({
+const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
   counter,
   isLoading,
+  totalAmount,
 })
 
 export const CollectionGrid = () => {
-  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
+  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
   const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
@@ -34,15 +35,6 @@ export const CollectionGrid = () => {
     },
     [selectedCollection]
   )
-  console.log(allCollections, counter, allCollections[selectedCollection])
-
-  // if (isLoading) {
-  //   return (
-  //     <section>
-  //       <Loading />
-  //     </section>
-  //   )
-  // }
 
   if (allCollections[selectedCollection])
     return (
@@ -86,27 +78,30 @@ export const CollectionGrid = () => {
       </section>
     )
 
+  if (totalAmount === 0) {
+    return (
+      <section className="flex flex-col gap-4">
+        <section className="flex flex-col items-center gap-4">
+          <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
+          <Link
+            href={
+              process.env.NODE_ENV === "development"
+                ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+                : `https://gamisodes.com/pages/collections`
+            }
+          >
+            <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
+              Go to Drops
+            </button>
+          </Link>
+        </section>
+      </section>
+    )
+  }
+
   return (
     <section>
       <Loading />
     </section>
   )
-  // return (
-  //   <section className="flex flex-col gap-4">
-  //     <section className="flex flex-col items-center gap-4">
-  //       <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-  //       <Link
-  //         href={
-  //           process.env.NODE_ENV === "development"
-  //             ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-  //             : `https://gamisodes.com/pages/collections`
-  //         }
-  //       >
-  //         <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
-  //           Go to Drops
-  //         </button>
-  //       </Link>
-  //     </section>
-  //   </section>
-  // )
 }

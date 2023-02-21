@@ -128,7 +128,11 @@ export function useCollectionMainInterface(
 
     console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter })
 
-    return { collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter }
+    return {
+      collections: { gadgetsCollection, missionsCollection, VIPCollection },
+      counter,
+      gamisodesAmount: collectionWithInterface.length,
+    }
   }, [gamisodesCollections])
 
   return {
@@ -136,6 +140,8 @@ export function useCollectionMainInterface(
       brainTrainCollection,
       ...gamisodesCollectionsFiltered.collections,
     },
+    brainTrainAmount: brainTrainCollection.length,
+    gamisodesAmount: gamisodesCollectionsFiltered.gamisodesAmount,
     counter: gamisodesCollectionsFiltered.counter,
   }
 }
