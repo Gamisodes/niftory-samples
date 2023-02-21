@@ -68,6 +68,7 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       .put("fcl.storage", fclCookieStorage)
       // use pop instead of default IFRAME/RPC option for security enforcement
       .put("discovery.wallet.method", "POP/RPC")
+      .put("0xMetadataViews", process.env.NEXT_PUBLIC_METADATA_VIEWS_ADDRESS)
       console.log(fcl.currentUser)
     fcl.currentUser.subscribe((walletUser) => {
       const walletFromUser = user?.user?.walletAddress

@@ -1,17 +1,16 @@
 import cn from "classnames"
 import { useCallback, useState } from "react"
 import { RadioGroup } from "@headlessui/react"
+import { collectionNames } from "src/const/enum"
 
 const collections = [
-  { label: "VIP", checked: false },
-  { label: "Gadgets", checked: false },
-  { label: "Missions", checked: false },
-  { label: "Brain Train", checked: false },
+  { label: "VIP", value: collectionNames.VIP, checked: false },
+  { label: "Gadgets", value: collectionNames.gadgets, checked: false },
+  { label: "Missions", value: collectionNames.missions, checked: false },
+  { label: "Brain Train", value: collectionNames.brainTrain, checked: false },
 ]
 
-export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
-  let [collection, setCollection] = useState(collections[0])
-
+export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection, setCollection }) => {
   const openFilter = useCallback(() => setShowFilter((prev) => !prev), [])
 
   return (
@@ -36,7 +35,7 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
             ></path>
           </svg>
         </div>
-        {/* <div>
+        <div>
           <label className="relative block text-black">
             <span className="sr-only">Search</span>
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -55,19 +54,19 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
               name="search"
             />
           </label>
-        </div> */}
+        </div>
       </div>
-      {/* <div className="col-span-9">
+      <div className="col-span-9">
         <RadioGroup
-          value={collection}
+          value={selectedCollection}
           onChange={setCollection}
           className="flex relative w-full bg-white rounded-md text-header"
         >
-          {collections.map(({ label }, index) => (
+          {collections.map(({ label, value }, index) => (
             <RadioGroup.Option
               key={index + label}
               className="cursor-pointer w-1/4 flex items-center justify-center truncate uppercase select-none font-semibold text-lg rounded-md"
-              value={label}
+              value={value}
             >
               {({ checked }) => (
                 <span
@@ -81,7 +80,7 @@ export const HorizontalFilter = ({ setShowFilter, showFilter }) => {
             </RadioGroup.Option>
           ))}
         </RadioGroup>
-      </div> */}
+      </div>
     </div>
   )
 }
