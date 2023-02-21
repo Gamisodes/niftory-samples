@@ -45,7 +45,6 @@ export const CollectionGrid = () => {
   }
 
   if (selectedCollection)
-  if (selectedCollection)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
