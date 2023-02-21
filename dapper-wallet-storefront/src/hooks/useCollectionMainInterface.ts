@@ -126,6 +126,8 @@ export function useCollectionMainInterface(
       return true
     })
 
+    console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter })
+
     return { collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter }
   }, [gamisodesCollections])
 
