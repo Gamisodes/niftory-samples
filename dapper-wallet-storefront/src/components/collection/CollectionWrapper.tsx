@@ -8,7 +8,7 @@ function CollectionWrapper({ children, paddingBottom = true }: ICollectionWrappe
   return (
     <section
       className={classNames(
-        "flex flex-col justify-between min-w-screen w-full min-h-screen h-full bg-header.opacity bg-[url('/collection_BG.jpg')] bg-cover relative -top-16 p-7 pb-6 py-16",
+        "flex flex-col justify-between min-w-screen w-full min-h-screen h-full bg-header.opacity bg-[url('/collection_BG.webp')] bg-cover relative -top-16 p-7 pb-6 py-16",
         {
           "pb-0": !paddingBottom,
         }
