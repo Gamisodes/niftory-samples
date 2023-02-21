@@ -22,7 +22,7 @@ export const CollectionGrid = () => {
   const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-  
+
   const counterKey = useCallback(
     (nft) => {
       if (selectedCollection === ECollectionNames.BrainTrain) return null
@@ -44,7 +44,6 @@ export const CollectionGrid = () => {
     )
   }
 
-  if (selectedCollection)
   if (selectedCollection)
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
