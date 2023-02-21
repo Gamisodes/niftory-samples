@@ -619,6 +619,11 @@ export type Nft = BlockchainEntity & Identifiable & SellableEntity & {
   transactions?: Maybe<Array<Maybe<BlockchainTransaction>>>;
   /** The wallet containing this NFT, if it is owned by a user. */
   wallet?: Maybe<Wallet>;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  rarity?: string;
+  quantity?: number;
 };
 
 /** The state of an NFT on the blockchain. */

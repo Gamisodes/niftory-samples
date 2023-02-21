@@ -1,0 +1,54 @@
+import { Box } from "@chakra-ui/react"
+import Head from "next/head"
+import { useRouter } from "next/router"
+import CollectionWrapper from "src/components/collection/CollectionWrapper"
+
+import { Nft, useNftQuery } from "../../../../../../generated/graphql"
+import AppLayout from "src/components/AppLayout"
+import { NFTDetail } from "src/components/collection/NFTDetail"
+import { Subset } from "src/lib/types"
+import { LoginSkeleton } from "src/ui/Skeleton"
+import { useNftsStore } from "src/store/nfts"
+import { collectionNames } from "src/const/enum"
+import shallow from "zustand/shallow"
+
+const getCollections = ({allCollections}) => allCollections
+
+export const NFTDetailPage = () => {
+  const router = useRouter()
+  const allCollections = useNftsStore(getCollections, shallow)
+  
+  const nftId: string = router.query["nftId"]?.toString()
+  const selectedCollection: string  = router.query["collection"]?.toString()
+
+  const [nftResponse] = useNftQuery({ variables: { id: nftId } })
+
+  const nft: Subset<Nft> = selectedCollection === collectionNames.brainTrain 
+    ? nftResponse.data?.nft 
+    : allCollections[selectedCollection]?.find(({id}) => id === nftId)
+  
+  if (!nftId || nftResponse.fetching) {
+    return <LoginSkeleton />
+  }
+
+  const nftModel = nft?.model
+  const title = `${nft?.title ?? "Your's idea with"} | Gamisodes`
+
+  return (
+    <>
+      <Head>
+        <title>{nft?.title ?? ""}</title>
+        <meta property="og:title" content={title} key="title" />
+        <meta property="og:description" content={nft?.description ?? ""} key="description" />
+        <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
+      </Head>
+      <AppLayout>
+        <CollectionWrapper paddingBottom={false}>
+          <NFTDetail nft={nft} />
+        </CollectionWrapper>
+      </AppLayout>
+    </>
+  )
+}
+
+export default NFTDetailPage
