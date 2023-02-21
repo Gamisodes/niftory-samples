@@ -7,8 +7,6 @@ import { Subset } from "../../lib/types"
 
 type NFTCard = { nft: Subset<Nft>; clickUrl: string, counter: number }
 
-
-
 export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
   const nftModel = nft?.model
   const imageUrl = nftModel?.content.poster.url
@@ -16,7 +14,7 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
 
 
   const stats = {
-    rarity: nftModel?.rarity,
+    rarity: nft?.rarity,
     serial: nft?.serialNumber?.toString(),
     price: convertNumber(+nft?.model?.attributes?.price, DEFAULT_NFT_PRICE),
     editionSize: ((nftModel?.metadata?.editionSize as string) ??
@@ -49,7 +47,7 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
                   <span className="font-bold">Serial: </span>
                   {stats?.editionSize && stats?.editionSize === "Open"
                     ? `Open Edition`
-                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
+                    : `${nft?.serialNumber ?? "~"} / ${nft?.quantity}`}
                 </p>
               </div>
             </div>

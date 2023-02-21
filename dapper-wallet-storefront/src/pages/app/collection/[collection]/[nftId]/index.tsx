@@ -1,16 +1,15 @@
-import { Box } from "@chakra-ui/react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 
-import { Nft, useNftQuery } from "../../../../../../generated/graphql"
 import AppLayout from "src/components/AppLayout"
 import { NFTDetail } from "src/components/collection/NFTDetail"
-import { Subset } from "src/lib/types"
-import { LoginSkeleton } from "src/ui/Skeleton"
-import { useNftsStore } from "src/store/nfts"
 import { ECollectionNames } from "src/const/enum"
+import { Subset } from "src/lib/types"
+import { useNftsStore } from "src/store/nfts"
+import { LoginSkeleton } from "src/ui/Skeleton"
 import shallow from "zustand/shallow"
+import { Nft, useNftQuery } from "../../../../../../generated/graphql"
 
 const getCollections = ({allCollections}) => allCollections
 
