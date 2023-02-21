@@ -50,6 +50,8 @@ const ERROR_MESSAGES = {
   [EErrorIdentity.NO_PRICE]: "You should contact our administrator if you have this error",
 }
 
+const SUCCESS_DROP_URL = "/app/collection/brainTrainCollection/"
+
 function useCheckout(id: string) {
   const { data: nftModelResponse } = useNftModelQuery({ id })
 
@@ -89,7 +91,7 @@ function useCheckout(id: string) {
       const nftId = initiateCheckoutResponse?.data?.data?.id ?? ""
 
       updateCheckoutProgress(0)
-      await router.push(`/app/collection/${nftId}`)
+      await router.push(`${SUCCESS_DROP_URL}${nftId}`)
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)
@@ -191,7 +193,7 @@ function useCheckout(id: string) {
 
       const nft = completeCheckoutResponse.data.data
       updateCheckoutProgress(0)
-      await router.push(`/app/collection/${nft.id}`)
+      await router.push(`${SUCCESS_DROP_URL}${nft.id}`)
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)

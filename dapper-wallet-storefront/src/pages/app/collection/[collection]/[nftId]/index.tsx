@@ -20,7 +20,10 @@ export const NFTDetailPage = () => {
   const nftId: string = router.query["nftId"]?.toString()
   const selectedCollection: string = router.query["collection"]?.toString()
 
-  const { data: nftResponse, isLoading } = useNftQuery({ id: nftId })
+  const { data: nftResponse, isLoading } = useNftQuery(
+    { id: nftId },
+    { refetchInterval: 10 * 1000 }
+  )
 
   const nft: Subset<Nft> =
     selectedCollection === ECollectionNames.BrainTrain
