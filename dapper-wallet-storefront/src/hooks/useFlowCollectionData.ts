@@ -13,9 +13,9 @@ const flow = FlowCollections.create()
 export function useFlowCollectionData(wallet: string) {
   const [gamisodesCollections, setCollections] = useState(undefined)
   const [loading, setLoading] = useState(false)
+  console.log("gamisodesCollections", gamisodesCollections);
 
   useEffect(() => {
-
     const getCollections = async () => {
       try {
         setLoading(true)
@@ -27,6 +27,7 @@ export function useFlowCollectionData(wallet: string) {
             wallet,
             process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
           )
+          console.log('FlowResponse', response);
           setCollections(response["GamisodesCollection"]?.items)
         }
       } catch {
