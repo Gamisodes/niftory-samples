@@ -36,6 +36,6 @@ export function useFlowCollectionData(wallet: string) {
       }
     }
     getCollections()
-  }, [])
+  }, [wallet])
   return { gamisodesCollections, loading }
 }
