@@ -8,6 +8,7 @@ import ConfigureWallet from "./ConfigureWallet"
 import RegisterWallet from "./RegisterWallet"
 import VerifyWallet from "./VerifyWallet"
 import { WalletSetupBox } from "./WalletSetupBox"
+import { Loading } from "src/icon/Loading"
 
 export type WalletSetupStepProps = {
   setIsLoading: (isLoading: boolean) => void
@@ -26,7 +27,6 @@ export function WalletSetup() {
 
   const {
     data: walletData,
-    isLoading: walletFetching,
     refetch: reExecuteQuery,
     error,
   } = useWalletByAddressQuery(
@@ -34,46 +34,47 @@ export function WalletSetup() {
     {
       enabled: !!currentUser?.addr,
       networkMode: "offlineFirst",
-      refetchInterval: 5000,
-      refetchIntervalInBackground: true,
+      // refetchInterval: 5000,
+      // refetchIntervalInBackground: true,
     }
   )
-
   const mutateCache = useCallback(() => {
     reExecuteQuery({})
   }, [])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
-  if (!error && !walletFetching) {
-    // No Wallet for this address
-    if (!wallet || !wallet?.address) {
-      return <RegisterWallet mutateCache={mutateCache} />
-    }
-
-    switch (wallet.state) {
-      case WalletState.Unverified:
-        // User has a wallet but it's not verified yet
-        return <VerifyWallet verificationCode={wallet.verificationCode} mutateCache={mutateCache} />
-
-      case WalletState.Verified:
-        // The user has verified their wallet, but hasn't configured it yet
-        return <ConfigureWallet address={wallet.address} mutateCache={mutateCache} />
-    }
+  if (currentUser?.addr === null) {
+    return <RegisterWallet mutateCache={mutateCache} />
   }
-  return (
-    <WalletSetupBox
-      text={`You're all set up! Your wallet address is ${wallet?.address}`}
-      buttonText="Go to Drops"
-      error={error as Error}
-      isLoading={walletFetching}
-      onClick={() =>
-        router.push(
-          process.env.NODE_ENV === "development"
-            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-            : `https://gamisodes.com/pages/collections`
-        )
-      }
-    />
-  )
+
+  switch (wallet?.state) {
+    case WalletState.Unverified:
+      // User has a wallet but it's not verified yet
+      return <VerifyWallet verificationCode={wallet.verificationCode} mutateCache={mutateCache} />
+
+    case WalletState.Verified:
+      // The user has verified their wallet, but hasn't configured it yet
+      return <ConfigureWallet address={wallet.address} mutateCache={mutateCache} />
+
+    case WalletState.Ready:
+      // The user has verified their wallet, and finally configured it
+      return (
+        <WalletSetupBox
+          text={`You're all set up! Your wallet address is ${wallet?.address}`}
+          buttonText="Go to Drops"
+          error={error as Error}
+          isLoading={false}
+          onClick={() =>
+            router.push(
+              process.env.NODE_ENV === "development"
+                ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+                : `https://gamisodes.com/pages/collections`
+            )
+          }
+        />
+      )
+  }
+
+  return <Loading />
 }
