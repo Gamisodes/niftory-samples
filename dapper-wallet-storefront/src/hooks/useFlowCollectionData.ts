@@ -19,12 +19,16 @@ export function useFlowCollectionData(wallet: string) {
     const getCollections = async () => {
       try {
         setLoading(true)
-        await waitforme(3000)
-        // const response = await flow.getCollectionsData(
-        //   wallet,
-        //   process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
-        // )
-        setCollections(DavisCollection)
+        if (process.env.NODE_ENV === "development") {
+          await waitforme(3000)
+          setCollections(DavisCollection)
+        } else {
+          const response = await flow.getCollectionsData(
+            wallet,
+            process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
+          )
+          setCollections(response)
+        }
       } catch {
       } finally {
         setLoading(false)

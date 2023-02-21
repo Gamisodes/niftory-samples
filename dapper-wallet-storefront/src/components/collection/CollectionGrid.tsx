@@ -8,25 +8,29 @@ import { useNftsStore } from "src/store/nfts"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
+import shallow from "zustand/shallow"
+import { collectionNames } from "src/const/enum"
 
+const selector = ({ allCollections, counter, isLoading }) => ({
+  allCollections,
+  counter,
+  isLoading,
+})
 
 export const CollectionGrid = () => {
-  const {allCollections, counter, isLoading} = useNftsStore(
-    ({allCollections, counter, isLoading}) => ({allCollections, counter, isLoading})
-  )
-  
-  const [selectedCollection, setCollection] = useState("brainTrainCollection")
+  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
+  const [selectedCollection, setCollection] = useState(collectionNames.brainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
   
   const counterKey = useCallback(
     (nft) => {
-      if (selectedCollection === 'brainTrainCollection') return null
+      if (selectedCollection === collectionNames.brainTrain) return null
       const key = JSON.stringify({
         title: nft?.title,
-        ...(selectedCollection === "gadgetsCollection" && { level: nft?.filters?.level }),
+        ...(selectedCollection === collectionNames.gadgets && { level: nft?.filters?.level }),
       })
-            
+
       return counter[selectedCollection][key]
     },
     [selectedCollection]
@@ -67,7 +71,12 @@ export const CollectionGrid = () => {
           >
             {!!nfts?.length ? (
               nfts.map((nft) => (
-                <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${selectedCollection}/${nft.id}`} counter={counterKey(nft)} />
+                <NFTCard
+                  key={nft.id}
+                  nft={nft}
+                  clickUrl={`/app/collection/${selectedCollection}/${nft.id}`}
+                  counter={counterKey(nft)}
+                />
               ))
             ) : (
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>

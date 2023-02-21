@@ -3,6 +3,9 @@ import { useEffect } from "react"
 import { useNftsStore } from "src/store/nfts"
 import { useCollectionMainInterface } from "./useCollectionMainInterface"
 import { useFlowCollectionData } from "./useFlowCollectionData"
+import shallow from "zustand/shallow"
+
+const setNftState = (state) => state.setNfts
 
 export function useGetFlowAndNiftoryData(currentUser) {
   const [nftsByWalletResponse] = useNftsByWalletQuery({
@@ -17,7 +20,7 @@ export function useGetFlowAndNiftoryData(currentUser) {
     nftsByWalletResponse
   )
 
-  const setNfts = useNftsStore((state) => state.setNfts)
+  const setNfts = useNftsStore(setNftState, shallow)
   
   useEffect(() => {
     setNfts({ allCollections, counter, isLoading: loading || nftsByWalletResponse?.fetching })

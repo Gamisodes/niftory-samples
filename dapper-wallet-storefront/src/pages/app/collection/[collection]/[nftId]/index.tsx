@@ -9,17 +9,21 @@ import { NFTDetail } from "src/components/collection/NFTDetail"
 import { Subset } from "src/lib/types"
 import { LoginSkeleton } from "src/ui/Skeleton"
 import { useNftsStore } from "src/store/nfts"
+import { collectionNames } from "src/const/enum"
+import shallow from "zustand/shallow"
+
+const getCollections = ({allCollections}) => allCollections
 
 export const NFTDetailPage = () => {
   const router = useRouter()
-  const allCollections = useNftsStore(({allCollections}) => allCollections)
+  const allCollections = useNftsStore(getCollections, shallow)
   
   const nftId: string = router.query["nftId"]?.toString()
   const selectedCollection: string  = router.query["collection"]?.toString()
 
   const [nftResponse] = useNftQuery({ variables: { id: nftId } })
 
-  const nft: Subset<Nft> = selectedCollection === 'brainTrainCollection' 
+  const nft: Subset<Nft> = selectedCollection === collectionNames.brainTrain 
     ? nftResponse.data?.nft 
     : allCollections[selectedCollection]?.find(({id}) => id === nftId)
   

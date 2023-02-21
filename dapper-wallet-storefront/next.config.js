@@ -19,6 +19,11 @@ const nextConfig = {
         hostname: "storage.googleapis.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "dkuxa1i6sgo8h.cloudfront.net",
+        pathname: "/**",
+      },
     ],
   },
   webpack(config) {
