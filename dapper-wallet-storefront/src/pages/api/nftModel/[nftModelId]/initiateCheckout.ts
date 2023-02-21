@@ -11,6 +11,10 @@ import {
   TransferNftToWalletDocument,
   TransferNftToWalletMutation,
   TransferNftToWalletMutationVariables,
+  WalletByAddressDocument,
+  WalletByAddressQuery,
+  WalletByAddressQueryVariables,
+  WalletState,
 } from "generated/graphql"
 import { gql } from "graphql-request"
 import { NextApiHandler } from "next"
@@ -72,7 +76,14 @@ const handler: NextApiHandler = async (req, res) => {
 
   try {
     const backendGQLClient = await getBackendGraphQLClient()
-
+    const walletByAddressQuery = await backendGQLClient.request<
+      WalletByAddressQuery,
+      WalletByAddressQueryVariables
+    >(WalletByAddressDocument, { address })
+    const state = walletByAddressQuery.walletByAddress.state
+    if (state !== WalletState.Ready) {
+      throw new Error("You should configure you wallet before making any transaction")
+    }
     const nftModelResponse = await backendGQLClient.request<NftModelQuery, NftModelQueryVariables>(
       NftModelDocument,
       {
