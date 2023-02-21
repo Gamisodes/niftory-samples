@@ -3,33 +3,39 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 
-import { Nft, useNftQuery } from "../../../../generated/graphql"
-import AppLayout from "../../../components/AppLayout"
-import { NFTDetail } from "../../../components/collection/NFTDetail"
-import { Subset } from "../../../lib/types"
-import { LoginSkeleton } from "../../../ui/Skeleton"
+import { Nft, useNftQuery } from "../../../../../../generated/graphql"
+import AppLayout from "src/components/AppLayout"
+import { NFTDetail } from "src/components/collection/NFTDetail"
+import { Subset } from "src/lib/types"
+import { LoginSkeleton } from "src/ui/Skeleton"
+import { useNftsStore } from "src/store/nfts"
 
 export const NFTDetailPage = () => {
   const router = useRouter()
+  const allCollections = useNftsStore(({allCollections}) => allCollections)
+  
   const nftId: string = router.query["nftId"]?.toString()
+  const selectedCollection: string  = router.query["collection"]?.toString()
 
   const [nftResponse] = useNftQuery({ variables: { id: nftId } })
 
-  const nft: Subset<Nft> = nftResponse.data?.nft
-
+  const nft: Subset<Nft> = selectedCollection === 'brainTrainCollection' 
+    ? nftResponse.data?.nft 
+    : allCollections[selectedCollection]?.find(({id}) => id === nftId)
+  
   if (!nftId || nftResponse.fetching) {
     return <LoginSkeleton />
   }
 
   const nftModel = nft?.model
-  const title = `${nftModel?.title ?? "Your's idea with"} | Gamisodes`
+  const title = `${nft?.title ?? "Your's idea with"} | Gamisodes`
 
   return (
     <>
       <Head>
-        <title>{nftModel?.title ?? ""}</title>
+        <title>{nft?.title ?? ""}</title>
         <meta property="og:title" content={title} key="title" />
-        <meta property="og:description" content={nftModel?.description ?? ""} key="description" />
+        <meta property="og:description" content={nft?.description ?? ""} key="description" />
         <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
       </Head>
       <AppLayout>

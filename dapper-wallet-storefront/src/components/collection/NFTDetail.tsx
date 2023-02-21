@@ -109,7 +109,7 @@ export const NFTDetail = (props: Props) => {
         thumbnailUrl: poster,
         alt: nftModel?.title,
       })),
-      attributes: { ...nftModel.metadata, ...nftModel.attributes },
+      attributes: { ...nftModel?.metadata, ...nftModel?.attributes },
     }),
     [nftModel?.id]
   )
@@ -142,7 +142,7 @@ export const NFTDetail = (props: Props) => {
                   <span className="font-bold">Edition: </span>
                   {product?.editionSize && product?.editionSize === "Open"
                     ? `Open Edition`
-                    : `${nft?.serialNumber ?? "~"} / ${nftModel.quantity}`}
+                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
                 </p>
               </div>
             </div>

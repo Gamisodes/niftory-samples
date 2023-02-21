@@ -87,7 +87,7 @@ function useCheckout(id: string) {
       })
       const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
       const nftId = initiateCheckoutResponse?.data?.data?.id ?? ""
-      console.log(nftId)
+      
       updateCheckoutProgress(0)
       await router.push(`/app/collection/${nftId}`)
     } catch (error) {
@@ -220,7 +220,6 @@ function useCheckout(id: string) {
       nftModelResponse?.data?.nftModel?.attributes?.price,
       DEFAULT_NFT_PRICE
     )
-    console.log(price)
     setErrorState(null)
 
     if (price > 0) {
@@ -265,7 +264,7 @@ function NFTModelDrop({ id, metadata }: NFTModelDetailProps) {
 
   const mainImage = metadata.content[0]
   return (
-    <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.jpg')] bg-cover relative -top-16 py-16">
+    <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.webp')] bg-cover relative -top-16 py-16">
       <div className="flex justify-center gap-5 items-center h-full flex-col lg:flex-row">
         <div className="z-10">
           {metadata.type === EModelTypes.WRAPPER ? (

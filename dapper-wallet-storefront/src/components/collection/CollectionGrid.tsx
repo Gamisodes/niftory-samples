@@ -1,37 +1,37 @@
+import cn from "classnames"
 import Link from "next/link"
 import { Loading } from "src/icon/Loading"
-import cn from "classnames"
 
-import { Nft, NftBlockchainState } from "../../../generated/graphql"
-import { Subset } from "../../lib/types"
-import { NFTCard } from "./NFTCard"
+import { useCallback, useState } from "react"
+import { useCollectionFilter } from "src/hooks/useCollectionFilter"
+import { useNftsStore } from "src/store/nfts"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
-import { useState } from "react"
-import { useCollectionFilter } from "src/hooks/useCollectionFilter"
+import { NFTCard } from "./NFTCard"
 
-interface IFilterState {
-  label: string
-  options: { selected: boolean; value: string }[]
-}
-interface CollectionProps {
-  // allNfts:Subset<Nft>[]
-  isLoading: boolean
-  allCollections: {[key: string]: Subset<Nft>[]}
-  // filter: {
-  //   label: string
-  //   options: { selected: boolean; value: string }[]
-  //   // optionsHash: { [key: string]: number }
-  // }[]
-  // setFilter: (value: SetStateAction<IFilterState[]>) => void
-}
-export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) => {
-  const [selectedCollection, setCollection] = useState('brainTrainCollection')
-  const [showFilter, setShowFilter] = useState(true)
 
-  const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-  const hasNfts = !!nfts?.length
+export const CollectionGrid = () => {
+  const {allCollections, counter, isLoading} = useNftsStore(
+    ({allCollections, counter, isLoading}) => ({allCollections, counter, isLoading})
+  )
   
+  const [selectedCollection, setCollection] = useState("brainTrainCollection")
+  const [showFilter, setShowFilter] = useState(true)
+  const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
+  
+  const counterKey = useCallback(
+    (nft) => {
+      if (selectedCollection === 'brainTrainCollection') return null
+      const key = JSON.stringify({
+        title: nft?.title,
+        ...(selectedCollection === "gadgetsCollection" && { level: nft?.filters?.level }),
+      })
+            
+      return counter[selectedCollection][key]
+    },
+    [selectedCollection]
+  )
+
   if (isLoading) {
     return (
       <section>
@@ -44,8 +44,8 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
-          <HorizontalFilter 
-            setShowFilter={setShowFilter} 
+          <HorizontalFilter
+            setShowFilter={setShowFilter}
             showFilter={showFilter}
             selectedCollection={selectedCollection}
             setCollection={setCollection}
@@ -67,7 +67,7 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
           >
             {!!nfts?.length ? (
               nfts.map((nft) => (
-                <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
+                <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${selectedCollection}/${nft.id}`} counter={counterKey(nft)} />
               ))
             ) : (
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
@@ -80,10 +80,12 @@ export const CollectionGrid = ({ isLoading, allCollections }: CollectionProps) =
     <section className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-4">
         <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link 
-          href={ process.env.NODE_ENV === 'development'
-            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-            : `https://gamisodes.com/pages/collections`}
+        <Link
+          href={
+            process.env.NODE_ENV === "development"
+              ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+              : `https://gamisodes.com/pages/collections`
+          }
         >
           <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
             Go to Drops

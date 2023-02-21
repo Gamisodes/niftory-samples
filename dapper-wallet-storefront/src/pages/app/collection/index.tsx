@@ -6,9 +6,10 @@ import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 import { useGetFlowAndNiftoryData } from "src/hooks/useGetFlowAndNiftoryData"
 
+
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
-  const { isLoading, allCollections } = useGetFlowAndNiftoryData(currentUser)
+  useGetFlowAndNiftoryData(currentUser)
   
   const title = `My Collection | Gamisodes`
   return (
@@ -22,10 +23,7 @@ const CollectionPage = () => {
           <section className="pt-10">
             <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
-          <CollectionGrid
-            allCollections={allCollections}
-            isLoading={isLoading}
-          />
+          <CollectionGrid />
         </CollectionWrapper>
       </AppLayout>
     </>

@@ -26,7 +26,6 @@ export const Gallery = ({ content }: GalleryProps) => {
     },
     slideChanged: (slider) => setCurrentSlide(slider.track.details.rel),
   })
-  console.log(content)
 
   return (
     <div className="flex w-full flex-col gap-3 ">
