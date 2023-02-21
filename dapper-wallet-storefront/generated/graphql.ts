@@ -53,6 +53,17 @@ export type App = Identifiable & {
   name?: Maybe<Scalars['String']>;
 };
 
+export type AppCreateInput = {
+  /** The blockchain in which this app is deployed. */
+  blockchain?: InputMaybe<Blockchain>;
+  /** Name of the app */
+  name?: InputMaybe<Scalars['String']>;
+  /** The id of the organization to create app in */
+  organizationId?: InputMaybe<Scalars['String']>;
+  /** The URIs to redirect to after signin. Only required if using oauth */
+  redirectUris?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
 export type AppUser = HasTimes & Identifiable & UserData & {
   __typename?: 'AppUser';
@@ -377,12 +388,15 @@ export type Mutation = {
   createNFTSet?: Maybe<NftSet>;
   /** Provisions a custodial Niftory [Wallet]({{Types.Wallet}}) and, if specified, associates it with the given [AppUser]({{Types.AppUser}}). Note: The call fails if the user already has a wallet. */
   createNiftoryWallet?: Maybe<Wallet>;
+  createOrganization: Organization;
   /** Deletes the specified file from cloud storage (but not IPFS). */
   deleteFile?: Maybe<File>;
   /** Deletes an existing [NFTListing]({{Types.NFTListing}}). */
   deleteNFTListing?: Maybe<NftListing>;
   /** Deletes an existing [NFTModel]({{Types.NFTModel}}). This operation will only be perfomed if no NFTs have been minted from this NFTModel */
   deleteNFTModel?: Maybe<NftModel>;
+  /** Deploys the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
+  deployContract?: Maybe<Contract>;
   /** Initiates minting for a given [NFT]({{Types.NFT}}). */
   mintNFT?: Maybe<Nft>;
   /** Initiates minting for a given [NFTModel]({{Types.NFTmodel}}). */
@@ -474,6 +488,11 @@ export type MutationCreateNiftoryWalletArgs = {
 };
 
 
+export type MutationCreateOrganizationArgs = {
+  data: OrganizationCreateInput;
+};
+
+
 export type MutationDeleteFileArgs = {
   id?: InputMaybe<Scalars['ID']>;
   url?: InputMaybe<Scalars['String']>;
@@ -487,6 +506,13 @@ export type MutationDeleteNftListingArgs = {
 
 export type MutationDeleteNftModelArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeployContractArgs = {
+  appId: Scalars['String'];
+  blockchain: Blockchain;
+  name: Scalars['String'];
 };
 
 
@@ -955,6 +981,10 @@ export type Organization = Identifiable & {
   name?: Maybe<Scalars['String']>;
 };
 
+export type OrganizationCreateInput = {
+  name: Scalars['String'];
+};
+
 /** An interface representing lists that can be paginated with a cursor. */
 export type Pageable = {
   /** The cursor to use to fetch the next page of results, if any. */
@@ -977,6 +1007,8 @@ export type Query = {
   appUsers?: Maybe<AppUserList>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
+  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
+  createApp?: Maybe<App>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<SimpleFile>;
   /** Gets a [Invoice]({{Types.Invoice}}) by ID. */
@@ -1039,6 +1071,11 @@ export type QueryAppUserByIdArgs = {
 export type QueryAppUsersArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type QueryCreateAppArgs = {
+  data: AppCreateInput;
 };
 
 
