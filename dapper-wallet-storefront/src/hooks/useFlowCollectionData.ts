@@ -27,8 +27,7 @@ export function useFlowCollectionData(wallet: string) {
             wallet,
             process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
           )
-          console.log(response)
-          setCollections(response)
+          setCollections(response["GamisodesCollection"]?.items)
         }
       } catch {
       } finally {
