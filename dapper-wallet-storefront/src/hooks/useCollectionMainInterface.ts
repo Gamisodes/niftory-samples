@@ -37,7 +37,7 @@ export function useCollectionMainInterface(
       })
     return nftsList
   }, [nftsByWalletResponse.fetching, nftsByWalletResponse.stale])
-
+  
   const gamisodesCollectionsFiltered = useMemo(() => {
     const gadgetsCollectionUnseries = []
     const missionsCollectionUnseries = []
@@ -75,7 +75,7 @@ export function useCollectionMainInterface(
         return { ...accum, [trait.name]: trait.value, name: nft.display.name }
       }, {}),
     }))
-
+    
     collectionWithInterface?.forEach((nft) => {
       if (nft.filters.series === "Gadgets") {
         gadgetsCollectionUnseries.push(nft)
