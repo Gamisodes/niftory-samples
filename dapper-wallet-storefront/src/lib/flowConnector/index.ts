@@ -31,7 +31,7 @@ export class FlowCollections {
     address: string,
     collections: string[]
   ): Promise<ICollectionsData> {
-    if (!address || !!collections.length) return {}
+    if (!address || !collections.length) return {}
     const result: ICollectionsData = await fcl.query({
       cadence: this.script,
       args: (arg, t) => [
@@ -61,6 +61,8 @@ export class FlowCollections {
   }
 
   static create() {
+    console.log('fcl.currentUser', fcl.currentUser.authorization);
+    
     return new FlowCollections(fcl, script);
   }
 }
