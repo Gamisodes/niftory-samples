@@ -22,7 +22,6 @@ export const CollectionGrid = () => {
   const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-  
   const counterKey = useCallback(
     (nft) => {
       if (selectedCollection === ECollectionNames.BrainTrain) return null
@@ -35,17 +34,17 @@ export const CollectionGrid = () => {
     },
     [selectedCollection]
   )
+  console.log(allCollections, counter, allCollections[selectedCollection])
 
-  if (isLoading) {
-    return (
-      <section>
-        <Loading />
-      </section>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <section>
+  //       <Loading />
+  //     </section>
+  //   )
+  // }
 
-  if (selectedCollection)
-  if (selectedCollection)
+  if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
@@ -86,22 +85,28 @@ export const CollectionGrid = () => {
         </div>
       </section>
     )
+
   return (
-    <section className="flex flex-col gap-4">
-      <section className="flex flex-col items-center gap-4">
-        <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link
-          href={
-            process.env.NODE_ENV === "development"
-              ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-              : `https://gamisodes.com/pages/collections`
-          }
-        >
-          <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
-            Go to Drops
-          </button>
-        </Link>
-      </section>
+    <section>
+      <Loading />
     </section>
   )
+  // return (
+  //   <section className="flex flex-col gap-4">
+  //     <section className="flex flex-col items-center gap-4">
+  //       <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
+  //       <Link
+  //         href={
+  //           process.env.NODE_ENV === "development"
+  //             ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+  //             : `https://gamisodes.com/pages/collections`
+  //         }
+  //       >
+  //         <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
+  //           Go to Drops
+  //         </button>
+  //       </Link>
+  //     </section>
+  //   </section>
+  // )
 }
