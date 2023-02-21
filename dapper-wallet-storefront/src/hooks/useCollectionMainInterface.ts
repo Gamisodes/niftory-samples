@@ -14,8 +14,7 @@ export function useCollectionMainInterface(
   >
 ) {
   const brainTrainCollection = useMemo(() => {
-    const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items
-      .filter((nft) =>
+    const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items?.filter((nft) =>
         [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
           nft.blockchainState
         )
@@ -50,7 +49,7 @@ export function useCollectionMainInterface(
       VIPCollection: {},
     }
 
-    const collectionWithInterface = gamisodesCollections?.items.map((nft) => ({
+    const collectionWithInterface = gamisodesCollections?.items?.map((nft) => ({
       ...nft,
       imageUrl: nft.display.thumbnail.url,
       title: nft.display.name,
@@ -129,6 +128,9 @@ export function useCollectionMainInterface(
       counter.VIPCollection[val] = 1
       return true
     })
+
+    console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter });
+    
 
     return { collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter }
   }, [gamisodesCollections])
