@@ -1051,11 +1051,6 @@ export type Query = {
 };
 
 
-export type QueryAdminUserArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
 export type QueryAppByIdArgs = {
   id?: InputMaybe<Scalars['ID']>;
   name?: InputMaybe<Scalars['String']>;
@@ -1173,6 +1168,7 @@ export type QuerySetsArgs = {
 
 export type QueryWalletByAddressArgs = {
   address: Scalars['String'];
+  appId?: InputMaybe<Scalars['ID']>;
 };
 
 
