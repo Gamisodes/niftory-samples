@@ -5,21 +5,24 @@ import create from "zustand"
 interface CollectionProps {
   isLoading: boolean
   allCollections: { [key: string]: Subset<Nft>[] }
-  counter: {[key: string]: {[key: string]: number}},
+  counter: { [key: string]: { [key: string]: number } }
+  totalAmount: number
 }
 
-interface INftStore extends CollectionProps {
-  setNfts: ( arg: CollectionProps) => void
+export interface INftStore extends CollectionProps {
+  setNfts: (arg: CollectionProps) => void
 }
 
 export const useNftsStore = create<INftStore>((set) => ({
   allCollections: {},
   counter: {},
   isLoading: false,
-  setNfts: ({ allCollections, counter, isLoading }) =>
+  totalAmount: 0,
+  setNfts: ({ allCollections, counter, isLoading, totalAmount }) =>
     set(() => ({
       allCollections,
       counter,
       isLoading,
+      totalAmount,
     })),
 }))

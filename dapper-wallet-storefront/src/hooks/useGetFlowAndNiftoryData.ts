@@ -1,28 +1,33 @@
 import { useNftsByWalletQuery } from "generated/graphql"
 import { useEffect } from "react"
-import { useNftsStore } from "src/store/nfts"
+import { INftStore, useNftsStore } from "src/store/nfts"
 import { useCollectionMainInterface } from "./useCollectionMainInterface"
 import { useFlowCollectionData } from "./useFlowCollectionData"
 import shallow from "zustand/shallow"
 
-const setNftState = (state) => state.setNfts
+const setNftState = (state: INftStore) => state.setNfts
 
 export function useGetFlowAndNiftoryData(currentUser) {
-  const [nftsByWalletResponse] = useNftsByWalletQuery({
-    variables: { address: currentUser?.addr },
-    pause: !currentUser?.addr,
-    requestPolicy: "cache-and-network",
-  })
+  const query = useNftsByWalletQuery(
+    { address: currentUser?.addr },
+    { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
+  )
+
   const { gamisodesCollections, loading } = useFlowCollectionData(currentUser?.addr)
 
-  const { allCollections, counter } = useCollectionMainInterface(
+  const { allCollections, counter, gamisodesAmount, brainTrainAmount } = useCollectionMainInterface(
     gamisodesCollections,
-    nftsByWalletResponse
+    query
   )
 
   const setNfts = useNftsStore(setNftState, shallow)
-  
+
   useEffect(() => {
-    setNfts({ allCollections, counter, isLoading: loading || nftsByWalletResponse?.fetching })
-  }, [allCollections, counter, loading, nftsByWalletResponse?.fetching])
+    setNfts({
+      allCollections,
+      counter,
+      isLoading: loading || query.isLoading,
+      totalAmount: gamisodesAmount + brainTrainAmount,
+    })
+  }, [counter, loading, query?.isLoading, query?.isSuccess, gamisodesAmount, brainTrainAmount])
 }
