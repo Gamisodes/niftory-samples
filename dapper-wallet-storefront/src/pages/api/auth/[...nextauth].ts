@@ -33,7 +33,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session: async ({ session, token, user }) => {
-      console.log("session: ", session, token, user)
       const userFromDB = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: { wallet: true },

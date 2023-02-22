@@ -5,24 +5,24 @@ import { Loading } from "src/icon/Loading"
 import { useCallback, useState } from "react"
 import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
-import { useNftsStore } from "src/store/nfts"
+import { INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
 
-const selector = ({ allCollections, counter, isLoading }) => ({
+const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
   counter,
   isLoading,
+  totalAmount,
 })
 
 export const CollectionGrid = () => {
-  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
+  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
   const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-
   const counterKey = useCallback(
     (nft) => {
       if (selectedCollection === ECollectionNames.BrainTrain) return null
@@ -36,15 +36,7 @@ export const CollectionGrid = () => {
     [selectedCollection]
   )
 
-  if (isLoading) {
-    return (
-      <section>
-        <Loading />
-      </section>
-    )
-  }
-
-  if (selectedCollection)
+  if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
@@ -85,22 +77,31 @@ export const CollectionGrid = () => {
         </div>
       </section>
     )
-  return (
-    <section className="flex flex-col gap-4">
-      <section className="flex flex-col items-center gap-4">
-        <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link
-          href={
-            process.env.NODE_ENV === "development"
-              ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-              : `https://gamisodes.com/pages/collections`
-          }
-        >
-          <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
-            Go to Drops
-          </button>
-        </Link>
+
+  if (totalAmount === 0) {
+    return (
+      <section className="flex flex-col gap-4">
+        <section className="flex flex-col items-center gap-4">
+          <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
+          <Link
+            href={
+              process.env.NODE_ENV === "development"
+                ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+                : `https://gamisodes.com/pages/collections`
+            }
+          >
+            <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
+              Go to Drops
+            </button>
+          </Link>
+        </section>
       </section>
+    )
+  }
+
+  return (
+    <section>
+      <Loading />
     </section>
   )
 }

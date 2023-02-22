@@ -1,18 +1,15 @@
-import { Exact, NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
+import { UseQueryResult } from "@tanstack/react-query"
+import { NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo } from "react"
-import { UseQueryState } from "urql"
 
 export function useCollectionMainInterface(
   gamisodesCollections,
-  nftsByWalletResponse: UseQueryState<
-    NftsByWalletQuery,
-    Exact<{
-      address?: string
-    }>
-  >
+  nftsByWalletResponse: UseQueryResult<NftsByWalletQuery, unknown>
 ) {
   const brainTrainCollection = useMemo(() => {
-    const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items?.filter((nft) =>
+    const items = nftsByWalletResponse?.data?.nftsByWallet?.items ?? []
+    const nftsList = items
+      .filter((nft) =>
         [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
           nft.blockchainState
         )
@@ -34,8 +31,8 @@ export function useCollectionMainInterface(
         }
       })
     return nftsList
-  }, [nftsByWalletResponse.fetching, nftsByWalletResponse.stale])
-  
+  }, [nftsByWalletResponse?.data?.nftsByWallet?.items, nftsByWalletResponse?.isSuccess])
+
   const gamisodesCollectionsFiltered = useMemo(() => {
     const gadgetsCollectionUnseries = []
     const missionsCollectionUnseries = []
@@ -46,8 +43,8 @@ export function useCollectionMainInterface(
       missionsCollection: {},
       VIPCollection: {},
     }
-
-    const collectionWithInterface = gamisodesCollections?.items?.map((nft) => ({
+    const items = gamisodesCollections?.items ?? []
+    const collectionWithInterface = items.map((nft) => ({
       ...nft,
       imageUrl: nft.display.thumbnail.url,
       title: nft.display.name,
@@ -59,13 +56,15 @@ export function useCollectionMainInterface(
         imageUrl: nft.display.thumbnail.url,
         content: {
           poster: {
-            url: nft.display.thumbnail.url
+            url: nft.display.thumbnail.url,
           },
-          files: [ {
-            url:  nft.display.thumbnail.url,
-            contentType: "image"
-          }]
-        }
+          files: [
+            {
+              url: nft.display.thumbnail.url,
+              contentType: "image",
+            },
+          ],
+        },
       },
       serialNumber: nft.editions.infoList[0].number,
       quantity: nft.editions.infoList[0].max,
@@ -73,7 +72,7 @@ export function useCollectionMainInterface(
         return { ...accum, [trait.name]: trait.value, name: nft.display.name }
       }, {}),
     }))
-    
+
     collectionWithInterface?.forEach((nft) => {
       if (nft.filters.series === "Gadgets") {
         gadgetsCollectionUnseries.push(nft)
@@ -127,10 +126,13 @@ export function useCollectionMainInterface(
       return true
     })
 
-    console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter });
-    
+    console.log({ collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter })
 
-    return { collections: { gadgetsCollection, missionsCollection, VIPCollection }, counter }
+    return {
+      collections: { gadgetsCollection, missionsCollection, VIPCollection },
+      counter,
+      gamisodesAmount: collectionWithInterface.length,
+    }
   }, [gamisodesCollections])
 
   return {
@@ -138,6 +140,8 @@ export function useCollectionMainInterface(
       brainTrainCollection,
       ...gamisodesCollectionsFiltered.collections,
     },
+    brainTrainAmount: brainTrainCollection.length,
+    gamisodesAmount: gamisodesCollectionsFiltered.gamisodesAmount,
     counter: gamisodesCollectionsFiltered.counter,
   }
 }
