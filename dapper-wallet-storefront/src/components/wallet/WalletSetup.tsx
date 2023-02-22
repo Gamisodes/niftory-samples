@@ -34,8 +34,6 @@ export function WalletSetup() {
     {
       enabled: !!currentUser?.addr,
       networkMode: "offlineFirst",
-      // refetchInterval: 5000,
-      // refetchIntervalInBackground: true,
     }
   )
   const mutateCache = useCallback(() => {
@@ -44,7 +42,7 @@ export function WalletSetup() {
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
-  if (currentUser?.addr === null) {
+  if (currentUser?.addr === null || wallet === null) {
     return <RegisterWallet mutateCache={mutateCache} />
   }
 
