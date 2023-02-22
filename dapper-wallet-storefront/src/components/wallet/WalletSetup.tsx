@@ -1,14 +1,13 @@
 import * as fcl from "@onflow/fcl"
 import { useRouter } from "next/router"
-import { useCallback } from "react"
 
+import { Loading } from "src/icon/Loading"
 import { useWalletByAddressQuery, Wallet, WalletState } from "../../../generated/graphql"
 import { useWalletContext } from "../../hooks/useWalletContext"
 import ConfigureWallet from "./ConfigureWallet"
 import RegisterWallet from "./RegisterWallet"
 import VerifyWallet from "./VerifyWallet"
 import { WalletSetupBox } from "./WalletSetupBox"
-import { Loading } from "src/icon/Loading"
 
 export type WalletSetupStepProps = {
   setIsLoading: (isLoading: boolean) => void
@@ -25,35 +24,28 @@ export function WalletSetup() {
   const router = useRouter()
   const { currentUser } = useWalletContext()
 
-  const {
-    data: walletData,
-    refetch: reExecuteQuery,
-    error,
-  } = useWalletByAddressQuery(
+  const { data: walletData, error } = useWalletByAddressQuery(
     { address: currentUser?.addr },
     {
       enabled: !!currentUser?.addr,
       networkMode: "offlineFirst",
     }
   )
-  const mutateCache = useCallback(() => {
-    reExecuteQuery({})
-  }, [])
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
   if (currentUser?.addr === null || wallet === null) {
-    return <RegisterWallet mutateCache={mutateCache} />
+    return <RegisterWallet />
   }
 
   switch (wallet?.state) {
     case WalletState.Unverified:
       // User has a wallet but it's not verified yet
-      return <VerifyWallet verificationCode={wallet.verificationCode} mutateCache={mutateCache} />
+      return <VerifyWallet verificationCode={wallet.verificationCode} />
 
     case WalletState.Verified:
       // The user has verified their wallet, but hasn't configured it yet
-      return <ConfigureWallet address={wallet.address} mutateCache={mutateCache} />
+      return <ConfigureWallet />
 
     case WalletState.Ready:
       // The user has verified their wallet, and finally configured it
