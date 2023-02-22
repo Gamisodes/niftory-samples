@@ -7,6 +7,7 @@ import { GetServerSidePropsContext } from "next"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { useMemo } from "react"
+import { CheckoutProvider } from "src/components/drops/checkout/CheckoutProvider"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 
@@ -64,7 +65,9 @@ const NFTModelDetailPage = (props) => {
       </Head>
       <AppLayout>
         <Skeleton className="mx-auto w-full" isLoaded={isSuccess}>
-          <NFTModelDetail id={nftModelId} metadata={metadata} />
+          <CheckoutProvider id={nftModelId}>
+            <NFTModelDetail metadata={metadata} />
+          </CheckoutProvider>
         </Skeleton>
       </AppLayout>
     </>
