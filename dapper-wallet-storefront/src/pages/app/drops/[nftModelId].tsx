@@ -10,12 +10,16 @@ import { useMemo } from "react"
 import { CheckoutProvider } from "src/components/drops/checkout/CheckoutProvider"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
+import { getAddressFromCookie } from "src/lib/cookieUtils"
 
 import {
   NftModelDocument,
   NftModelQuery,
   NftModelQueryVariables,
   useNftModelQuery,
+  WalletByAddressDocument,
+  WalletByAddressQuery,
+  WalletByAddressQueryVariables,
 } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 
@@ -74,14 +78,27 @@ const NFTModelDetailPage = (props) => {
   )
 }
 
-export async function getServerSideProps({ params }: GetServerSidePropsContext) {
+export async function getServerSideProps({ params, req, res }: GetServerSidePropsContext) {
   const urlParam = params.nftModelId as string
   const queryClient = new QueryClient()
-  const variables = { id: urlParam }
+  const nftModelsVariables = { id: urlParam }
   await queryClient.prefetchQuery(
-    ["nftModel", variables],
-    fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, variables)
+    ["nftModel", nftModelsVariables],
+    fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, nftModelsVariables)
   )
+
+  const address: string = getAddressFromCookie(req, res)
+
+  if (address) {
+    const walletByAddressVariables = { address }
+    await queryClient.prefetchQuery(
+      ["walletByAddress", walletByAddressVariables],
+      fetchData<WalletByAddressQuery, WalletByAddressQueryVariables>(
+        WalletByAddressDocument,
+        walletByAddressVariables
+      )
+    )
+  }
 
   return {
     props: {

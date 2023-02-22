@@ -63,7 +63,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
   const { currentUser } = useWalletContext()
   const { data: walletData } = useWalletByAddressQuery(
     { address: currentUser?.addr },
-    { enabled: !!currentUser?.addr }
+    { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
   )
   const { status } = useSession()
   const { checkout, error, checkoutProgress } = useCheckout()
