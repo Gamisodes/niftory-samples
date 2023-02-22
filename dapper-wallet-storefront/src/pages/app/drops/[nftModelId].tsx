@@ -23,7 +23,7 @@ import {
 } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 
-const NFTModelDetailPage = (props) => {
+const NFTModelDetailPage = () => {
   const router = useRouter()
   const nftModelId = router.query["nftModelId"]?.toString()
   const { data, isSuccess } = useNftModelQuery({
@@ -86,6 +86,17 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
     ["nftModel", nftModelsVariables],
     fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, nftModelsVariables)
   )
+
+  const data: NftModelQuery = await queryClient.getQueryData(["nftModel", nftModelsVariables])
+
+  if (!data?.nftModel || data?.nftModel?.attributes?.isBlocked) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
+  }
 
   const address: string = getAddressFromCookie(req, res)
 
