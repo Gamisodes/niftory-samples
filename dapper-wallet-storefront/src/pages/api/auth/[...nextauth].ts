@@ -10,6 +10,7 @@ const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions
 
 export default authHandler
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     EmailProvider({
       server: {
