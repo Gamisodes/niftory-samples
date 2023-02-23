@@ -1,7 +1,11 @@
+const withPWA = require("next-pwa")({
+  dest: "public",
+  // skipWaiting: false,
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -37,4 +41,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withPWA(nextConfig)
