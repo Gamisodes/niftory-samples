@@ -44,15 +44,15 @@ const ERROR_MESSAGES = {
 }
 
 const brain_train_links = [
-  "/brain_train/Detective.jpg",
-  "/brain_train/Frenchman.jpg",
-  "/brain_train/Goat.jpg",
-  "/brain_train/Hotel Waiter.jpg",
-  "/brain_train/Mechanic.jpg",
-  "/brain_train/Ninja.jpg",
-  "/brain_train/Pirate.jpg",
-  "/brain_train/Police Officer.jpg",
-  "/brain_train/Scarecrow.jpg",
+  "/brain_train/Detective.webp",
+  "/brain_train/Frenchman.webp",
+  "/brain_train/Goat.webp",
+  "/brain_train/Hotel-Waiter.webp",
+  "/brain_train/Mechanic.webp",
+  "/brain_train/Ninja.webp",
+  "/brain_train/Pirate.webp",
+  "/brain_train/Police-Officer.webp",
+  "/brain_train/Scarecrow.webp",
 ]
 
 interface IBuyButton {
@@ -158,7 +158,7 @@ function NFTModelDrop({ metadata }: NFTModelDetailProps) {
         </div>
         <div className="text-white font-bangers max-w-md flex flex-col justify-center">
           <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
-            {metadata.type === EModelTypes.WRAPPER &&
+            {
               brain_train_links.map((val) => (
                 <Image key={val} src={val} alt="nft element" width={70} height={80} />
               ))}
