@@ -24,8 +24,8 @@ COPY . .
 COPY .env.staging .env
 RUN apk add  --update --no-cache libc6-compat openssl
 
-# RUN npx prisma db push
-# RUN npx prisma generate
+RUN npx prisma db push
+RUN npx prisma generate
 RUN npm run generate
 RUN npm run build
 
