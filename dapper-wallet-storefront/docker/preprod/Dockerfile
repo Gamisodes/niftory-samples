@@ -42,11 +42,12 @@ RUN adduser -S nextjs -u 1001
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/.next ./.next
 
 
 USER nextjs
@@ -55,4 +56,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD [ "npm run", "start" ]
+CMD [ "npm","run", "start" ]
