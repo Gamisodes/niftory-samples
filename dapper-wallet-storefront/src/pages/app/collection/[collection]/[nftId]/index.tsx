@@ -1,9 +1,9 @@
-import Head from "next/head"
 import { useRouter } from "next/router"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 
 import AppLayout from "src/components/AppLayout"
 import { NFTDetail } from "src/components/collection/NFTDetail"
+import { MetaTags } from "src/components/general/MetaTags"
 import { ECollectionNames } from "src/const/enum"
 import { Subset } from "src/lib/types"
 import { useNftsStore } from "src/store/nfts"
@@ -39,12 +39,9 @@ export const NFTDetailPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{nftModel?.title ?? ""}</title>
-        <meta property="og:title" content={title} key="title" />
-        <meta property="og:description" content={nftModel?.description ?? ""} key="description" />
+      <MetaTags title={title} description={nftModel?.description ?? ""}>
         <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
-      </Head>
+      </MetaTags>
       <AppLayout>
         <CollectionWrapper paddingBottom={false}>
           <NFTDetail nft={nft} />

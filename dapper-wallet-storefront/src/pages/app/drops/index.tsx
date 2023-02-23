@@ -1,5 +1,5 @@
-import Head from "next/head"
 import { useMemo } from "react"
+import { MetaTags } from "src/components/general/MetaTags"
 
 import { useNftModelsQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
@@ -18,10 +18,7 @@ export const NFTModelsPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta property="og:title" content={title} key="title" />
-      </Head>
+      <MetaTags title={title} />
       <AppLayout>
         <section className="text-black mx-auto">
           <SectionHeader text="Get A Drop: TBD" />

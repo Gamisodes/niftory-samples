@@ -4,11 +4,11 @@ import { EModelTypes } from "consts/const"
 import { convertNumber } from "consts/helpers"
 import { fetchData } from "fetcher"
 import { GetServerSidePropsContext } from "next"
-import Head from "next/head"
 import { useRouter } from "next/router"
 import { useMemo } from "react"
 import { CheckoutProvider } from "src/components/drops/checkout/CheckoutProvider"
 import NFTModelDetail from "src/components/drops/NFTModelDetail"
+import { MetaTags } from "src/components/general/MetaTags"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { getAddressFromCookie } from "src/lib/cookieUtils"
 
@@ -61,12 +61,10 @@ const NFTModelDetailPage = () => {
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta property="og:title" content={title} key="title" />
-        <meta property="og:description" content={metadata.description} key="description" />
+      <MetaTags title={title} description={metadata?.description ?? ""}>
         <meta property="og:image" content={metadata.content[0].contentUrl ?? ""} key="image" />
-      </Head>
+      </MetaTags>
+
       <AppLayout>
         <Skeleton className="mx-auto w-full" isLoaded={isSuccess}>
           <CheckoutProvider id={nftModelId}>
