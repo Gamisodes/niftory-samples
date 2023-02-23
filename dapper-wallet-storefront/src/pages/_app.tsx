@@ -12,6 +12,7 @@ import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
 import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
+import usePWA from "src/hooks/usePWA"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -21,6 +22,7 @@ const App = ({
   Component,
   pageProps: { session, dehydratedState, ...pageProps },
 }: AppProps): JSX.Element => {
+  usePWA()
   const isWalletAndAuth =
     (Component.requireAuth && Component.requireWallet && (
       <AuthGuard>
