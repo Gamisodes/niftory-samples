@@ -1,0 +1,770 @@
+[
+  {
+    "display": {
+      "name": "Commemorative Card 1 - 100% Remastered",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this 100% remastered, colorful NFT.  We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon.",
+      "thumbnail": {
+        "url": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-1-THUMBNAIL.png"
+      }
+    },
+    "traits": {
+      "traits": [
+        {
+          "name": "mimetype",
+          "value": "image/png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "mediaURL",
+          "value": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-1.png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "nftType",
+          "value": "Type A",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "platform",
+          "value": "Gamisodes",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "remasterPercent",
+          "value": "100",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "property",
+          "value": "Inspector Gadget",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "type",
+          "value": "1",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "decentralizedMediaFiles",
+          "value": "https://ipfs.io/ipfs/QmSbzqNxN4tc6vKHtqngq1Thsu32VQvt4zfYpmxZZsDS4s",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "gamisodesName",
+          "value": "Commemorative Card",
+          "displayType": null,
+          "rarity": null
+        }
+      ]
+    },
+    "rarity": null,
+    "editions": {
+      "infoList": [
+        {
+          "name": "Commemorative Card 1 - 100% Remastered",
+          "number": "28893",
+          "max": "38514"
+        }
+      ]
+    },
+    "serial": {
+      "number": "28893"
+    },
+    "royalties": {
+      "cutInfos": [
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xb780208cb751b1ae",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "MINT"
+        },
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xa83a288bd044926e",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "Gamisodes"
+        }
+      ]
+    },
+    "license": null,
+    "medias": null,
+    "externalURL": {
+      "url": "https://gamisodes.com"
+    },
+    "collectionDisplay": {
+      "name": "Gamisodes",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this 100% remastered, colorful NFT.  We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon.",
+      "externalURL": {
+        "url": "https://gamisodes.com"
+      },
+      "squareImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "bannerImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "socials": {}
+    },
+    "id": "46393"
+  },
+  {
+    "display": {
+      "name": "Commemorative Card 3 - 50% Remastered",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 3 is the 50% remastered Gamisodes Inspector Gadget.",
+      "thumbnail": {
+        "url": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-3-THUMBNAIL.png"
+      }
+    },
+    "traits": {
+      "traits": [
+        {
+          "name": "mimetype",
+          "value": "image/png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "mediaURL",
+          "value": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-3.png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "nftType",
+          "value": "Type A",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "platform",
+          "value": "Gamisodes",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "remasterPercent",
+          "value": "50",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "property",
+          "value": "Inspector Gadget",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "type",
+          "value": "3",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "decentralizedMediaFiles",
+          "value": "https://ipfs.io/ipfs/QmRa3tiKJibZjW7stwUcdE4NE8twNv5DiKEoZxLcrVJtGK",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "gamisodesName",
+          "value": "Commemorative Card",
+          "displayType": null,
+          "rarity": null
+        }
+      ]
+    },
+    "rarity": null,
+    "editions": {
+      "infoList": [
+        {
+          "name": "Commemorative Card 3 - 50% Remastered",
+          "number": "315",
+          "max": "5000"
+        }
+      ]
+    },
+    "serial": {
+      "number": "315"
+    },
+    "royalties": {
+      "cutInfos": [
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xb780208cb751b1ae",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "MINT"
+        },
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xa83a288bd044926e",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "Gamisodes"
+        }
+      ]
+    },
+    "license": null,
+    "medias": null,
+    "externalURL": {
+      "url": "https://gamisodes.com"
+    },
+    "collectionDisplay": {
+      "name": "Gamisodes",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 3 is the 50% remastered Gamisodes Inspector Gadget.",
+      "externalURL": {
+        "url": "https://gamisodes.com"
+      },
+      "squareImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "bannerImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "socials": {}
+    },
+    "id": "10315"
+  },
+  {
+    "display": {
+      "name": "Commemorative Card 4 - 25% Remastered",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 4 is the 25% remastered Gamisodes Inspector Gadget.",
+      "thumbnail": {
+        "url": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-4-THUMBNAIL.png"
+      }
+    },
+    "traits": {
+      "traits": [
+        {
+          "name": "mimetype",
+          "value": "image/png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "mediaURL",
+          "value": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-4.png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "nftType",
+          "value": "Type A",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "platform",
+          "value": "Gamisodes",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "remasterPercent",
+          "value": "25",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "property",
+          "value": "Inspector Gadget",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "type",
+          "value": "4",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "decentralizedMediaFiles",
+          "value": "https://ipfs.io/ipfs/QmTujBD2xTbT1tD1xZ9TkYreudx9LfBgjgv5am7FgxuJyz",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "gamisodesName",
+          "value": "Commemorative Card",
+          "displayType": null,
+          "rarity": null
+        }
+      ]
+    },
+    "rarity": null,
+    "editions": {
+      "infoList": [
+        {
+          "name": "Commemorative Card 4 - 25% Remastered",
+          "number": "297",
+          "max": "2500"
+        }
+      ]
+    },
+    "serial": {
+      "number": "297"
+    },
+    "royalties": {
+      "cutInfos": [
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xb780208cb751b1ae",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "MINT"
+        },
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xa83a288bd044926e",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "Gamisodes"
+        }
+      ]
+    },
+    "license": null,
+    "medias": null,
+    "externalURL": {
+      "url": "https://gamisodes.com"
+    },
+    "collectionDisplay": {
+      "name": "Gamisodes",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 4 is the 25% remastered Gamisodes Inspector Gadget.",
+      "externalURL": {
+        "url": "https://gamisodes.com"
+      },
+      "squareImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "bannerImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "socials": {}
+    },
+    "id": "15297"
+  },
+  {
+    "display": {
+      "name": "Commemorative Card 2 - 75% Remastered",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 2 is the 75% remastered Gamisodes Inspector Gadget.",
+      "thumbnail": {
+        "url": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-2-THUMBNAIL.png"
+      }
+    },
+    "traits": {
+      "traits": [
+        {
+          "name": "mimetype",
+          "value": "image/png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "mediaURL",
+          "value": "https://dkuxa1i6sgo8h.cloudfront.net/gamisodes/Commemorative-Card-2.png",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "nftType",
+          "value": "Type A",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "platform",
+          "value": "Gamisodes",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "remasterPercent",
+          "value": "75",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "property",
+          "value": "Inspector Gadget",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "type",
+          "value": "2",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "decentralizedMediaFiles",
+          "value": "https://ipfs.io/ipfs/QmcFmRsNyJwKsXTDwnzn4excPBa8tFBtkYDwAXuZkoGVic",
+          "displayType": null,
+          "rarity": null
+        },
+        {
+          "name": "gamisodesName",
+          "value": "Commemorative Card",
+          "displayType": null,
+          "rarity": null
+        }
+      ]
+    },
+    "rarity": null,
+    "editions": {
+      "infoList": [
+        {
+          "name": "Commemorative Card 2 - 75% Remastered",
+          "number": "340",
+          "max": "10000"
+        }
+      ]
+    },
+    "serial": {
+      "number": "340"
+    },
+    "royalties": {
+      "cutInfos": [
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xb780208cb751b1ae",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "MINT"
+        },
+        {
+          "receiver": {
+            "path": {
+              "value": {
+                "domain": "public",
+                "identifier": "dapperUtilityCoinReceiver"
+              },
+              "type": "Path"
+            },
+            "address": "0xa83a288bd044926e",
+            "borrowType": {
+              "type": {
+                "kind": "Restriction",
+                "typeID": "AnyResource{A.f233dcee88fe0abe.FungibleToken.Receiver}",
+                "type": {
+                  "kind": "AnyResource"
+                },
+                "restrictions": [
+                  {
+                    "type": "",
+                    "kind": "ResourceInterface",
+                    "typeID": "A.f233dcee88fe0abe.FungibleToken.Receiver",
+                    "fields": [
+                      {
+                        "type": {
+                          "kind": "UInt64"
+                        },
+                        "id": "uuid"
+                      }
+                    ],
+                    "initializers": []
+                  }
+                ]
+              },
+              "kind": "Reference",
+              "authorized": false
+            }
+          },
+          "cut": "0.02500000",
+          "description": "Gamisodes"
+        }
+      ]
+    },
+    "license": null,
+    "medias": null,
+    "externalURL": {
+      "url": "https://gamisodes.com"
+    },
+    "collectionDisplay": {
+      "name": "Gamisodes",
+      "description": "Classic Inspector Gadget gets a Web3 makeover with this collectible NFT card. We're commemorating the first-ever digital remaster of the original 1980s Inspector Gadget cartoon. Card 2 is the 75% remastered Gamisodes Inspector Gadget.",
+      "externalURL": {
+        "url": "https://gamisodes.com"
+      },
+      "squareImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "bannerImage": {
+        "file": {
+          "url": ""
+        },
+        "mediaType": ""
+      },
+      "socials": {}
+    },
+    "id": "340"
+  }
+]
