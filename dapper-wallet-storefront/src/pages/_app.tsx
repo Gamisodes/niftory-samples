@@ -48,21 +48,18 @@ const App = ({
     )) ||
     null
   return (
-    <>
-      <MetaTags />
-      <RouterHistory>
-        <SessionProvider session={session}>
-          <ChakraProvider theme={theme}>
-            <ReactQueryProvider state={dehydratedState}>
-              <WalletProvider requireWallet={Component.requireWallet}>
-                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-              </WalletProvider>
-            </ReactQueryProvider>
-          </ChakraProvider>
-        </SessionProvider>
-        <GoogleAnalytics trackPageViews />
-      </RouterHistory>
-    </>
+    <RouterHistory>
+      <SessionProvider session={session}>
+        <ChakraProvider theme={theme}>
+          <ReactQueryProvider state={dehydratedState}>
+            <WalletProvider requireWallet={Component.requireWallet}>
+              {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+            </WalletProvider>
+          </ReactQueryProvider>
+        </ChakraProvider>
+      </SessionProvider>
+      <GoogleAnalytics trackPageViews />
+    </RouterHistory>
   )
 }
 
