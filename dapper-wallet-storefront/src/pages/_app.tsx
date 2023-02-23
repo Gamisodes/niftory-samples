@@ -13,7 +13,6 @@ import WalletGuard from "src/guard/WalletGuard"
 import usePWA from "src/hooks/usePWA"
 import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
-import { MetaTags } from "src/components/general/MetaTags"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet

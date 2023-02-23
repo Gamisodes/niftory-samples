@@ -158,7 +158,7 @@ function NFTModelDrop({ metadata }: NFTModelDetailProps) {
         </div>
         <div className="text-white font-bangers max-w-md flex flex-col justify-center">
           <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
-            {
+            {metadata.type === EModelTypes.WRAPPER &&
               brain_train_links.map((val) => (
                 <Image key={val} src={val} alt="nft element" width={70} height={80} />
               ))}
