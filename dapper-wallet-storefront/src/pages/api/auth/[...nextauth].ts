@@ -7,7 +7,6 @@ import prisma from "src/lib/prisma"
 import { NextApiHandler } from "next"
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     EmailProvider({
       server: {
@@ -48,6 +47,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions)
