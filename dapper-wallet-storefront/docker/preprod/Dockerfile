@@ -48,7 +48,8 @@ COPY --from=builder /app/node_modules ./node_modules
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 
 COPY --from=builder /app/.next ./.next
-
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/.env ./
 
 USER nextjs
 
