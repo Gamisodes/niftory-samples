@@ -6,15 +6,8 @@ import { SectionHeader } from "src/ui/SectionHeader"
 
 function AuthGuard({ children }: PropsWithChildren) {
   const { status } = useSession()
-
-  if (status === "loading") {
-    return (
-      <AppLayout>
-        <section className="mx-auto text-black">
-          <SectionHeader text="Loading..." />
-        </section>
-      </AppLayout>
-    )
+  if (status === "authenticated") {
+    return <>{children}</>
   }
 
   if (status === "unauthenticated") {
@@ -43,7 +36,13 @@ function AuthGuard({ children }: PropsWithChildren) {
     )
   }
 
-  return <>{children}</>
+  return (
+    <AppLayout>
+      <section className="mx-auto text-black">
+        <SectionHeader text="Loading..." />
+      </section>
+    </AppLayout>
+  )
 }
 
 export default AuthGuard

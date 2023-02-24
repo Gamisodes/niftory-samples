@@ -27,4 +27,5 @@ const CollectionPage = () => {
 }
 
 CollectionPage.requireWallet = true
+CollectionPage.requireAuth = true
 export default CollectionPage
