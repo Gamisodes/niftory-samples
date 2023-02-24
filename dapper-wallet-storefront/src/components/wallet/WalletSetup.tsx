@@ -52,14 +52,14 @@ export function WalletSetup() {
       return (
         <WalletSetupBox
           text={`You're all set up! Your wallet address is ${wallet?.address}`}
-          buttonText="Go to Drops"
+          buttonText="View My Collection"
           error={error as Error}
           isLoading={false}
           onClick={() =>
             router.push(
               process.env.NODE_ENV === "development"
                 ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-                : `https://gamisodes.com/pages/collections`
+                : `/app/collection`
             )
           }
         />

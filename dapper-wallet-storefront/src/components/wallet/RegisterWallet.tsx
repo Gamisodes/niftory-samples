@@ -36,7 +36,7 @@ function RegisterWallet() {
     <WalletSetupBox
       text={
         <p className="flex flex-col">
-          <span>First, we need to create or connect to a Flow wallet.</span>
+          <span>First, you need to create or connect your Dapper digital collectibles wallet.</span>
           <span>Hit the button below and follow the prompts.</span>
         </p>
       }
