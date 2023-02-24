@@ -11,9 +11,9 @@ export function useCollectionFilter(allCollections, selectedCollection) {
   const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
 
-  useEffect(() => {
-    if (allCollections.brainTrainCollection && !initialSet) {
-      setNfts(allCollections?.brainTrainCollection)
+  useEffect(() => {   
+    if ( allCollections[selectedCollection]?.length > 0 && !initialSet) {
+      setNfts(allCollections[selectedCollection])
       setInitial(true)
     }
   }, [allCollections, initialSet])
