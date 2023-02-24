@@ -7,7 +7,11 @@ import { useSendRegisterWalletQuery } from "src/services/wallet/hooks"
 import { useWalletContext } from "../../hooks/useWalletContext"
 import { WalletSetupBox } from "./WalletSetupBox"
 
-function RegisterWallet() {
+type RegisterWalletProps = {
+  mutateCache: () => void
+}
+
+function RegisterWallet({ mutateCache }: RegisterWalletProps) {
   const { data: User } = useSession()
   const { currentUser, signIn, isLoading: walletContextLoading } = useWalletContext()
   const { mutateAsync, error, isLoading, data } = useSendRegisterWalletQuery()
@@ -21,6 +25,7 @@ function RegisterWallet() {
     if (ref.current === true) return
     ref.current = currentUser.loggedIn
     mutateAsync().then(() => {
+      mutateCache()
       gaAPI.connect_dapper_wallet({
         email: User?.user?.email ?? "",
         wallet: data?.data?.registerWallet?.address ?? currentUser?.addr ?? "",
@@ -36,7 +41,7 @@ function RegisterWallet() {
     <WalletSetupBox
       text={
         <p className="flex flex-col">
-          <span>First, you need to create or connect your Dapper digital collectibles wallet.</span>
+          <span>First, we need to create or connect to a Flow wallet.</span>
           <span>Hit the button below and follow the prompts.</span>
         </p>
       }

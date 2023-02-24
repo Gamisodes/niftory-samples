@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react"
+import Head from "next/head"
 import AppLayout from "src/components/AppLayout"
-import { MetaTags } from "src/components/general/MetaTags"
 import { WalletSetup } from "src/components/wallet/WalletSetup"
 import { SectionHeader } from "src/ui/SectionHeader"
 
@@ -9,7 +9,10 @@ const AccountPage = () => {
   const title = `${session.user.name}'s account | Gamisodes`
   return (
     <>
-      <MetaTags title={title} />
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
       <AppLayout>
         <section className="mx-auto text-black flex flex-col items-center">
           <SectionHeader

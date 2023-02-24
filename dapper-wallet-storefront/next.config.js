@@ -1,13 +1,7 @@
-const withPWA = require("next-pwa")({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-
-  // skipWaiting: false,
-})
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -18,16 +12,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "niftory-assets-staging.s3.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "storage.googleapis.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "dkuxa1i6sgo8h.cloudfront.net",
         pathname: "/**",
       },
     ],
@@ -43,4 +27,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withPWA(nextConfig)
+module.exports = nextConfig

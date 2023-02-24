@@ -1,4 +1,5 @@
 import { getProviders, signIn } from "next-auth/react"
+import Head from "next/head"
 
 import EmailOAuth from "src/icon/EmailOAuth.svg"
 import GoogleIcon from "src/icon/GoogleOAuth.svg"
@@ -6,7 +7,6 @@ import GoogleIcon from "src/icon/GoogleOAuth.svg"
 import { InferGetServerSidePropsType } from "next"
 import { useMemo } from "react"
 import EmailSignIn from "src/components/auth/email/EmailSignIn"
-import { MetaTags } from "src/components/general/MetaTags"
 import AppLayout from "../../components/AppLayout"
 import { SectionHeader } from "../../ui/SectionHeader"
 
@@ -28,7 +28,10 @@ const SignInPage = ({ providers }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <>
-      <MetaTags title={title} />
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
       <AppLayout>
         <section className="mx-auto container flex flex-col items-center text-black">
           <SectionHeader text="Sign-in to our app" />

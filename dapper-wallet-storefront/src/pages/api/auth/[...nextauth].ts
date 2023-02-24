@@ -6,6 +6,9 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "src/lib/prisma"
 import { NextApiHandler } from "next"
 
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions)
+
+export default authHandler
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
@@ -30,6 +33,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session: async ({ session, token, user }) => {
+      console.log("session: ", session, token, user)
       const userFromDB = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: { wallet: true },
@@ -48,7 +52,3 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(prisma),
 }
-
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions)
-
-export default authHandler

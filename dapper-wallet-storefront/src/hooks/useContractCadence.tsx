@@ -76,11 +76,14 @@ function prepareCadence(script: string, contractName: string, address: string) {
 }
 
 export function useContractCadence() {
-  const { data, isLoading, isSuccess } = useContractQuery()
+  const [contractResponse] = useContractQuery()
+
+  const { data, fetching: isFetching, error } = contractResponse
+  const isFetched = !isFetching && !error
 
   let isAccountConfigured_script: string
   let configureAccount_transaction: string
-  if (isSuccess) {
+  if (isFetched) {
     const { name, address } = data?.contract
 
     isAccountConfigured_script = prepareCadence(IS_ACCOUNT_CONFIGURED_SCRIPT, name, address)
@@ -91,6 +94,6 @@ export function useContractCadence() {
   return {
     isAccountConfigured_script,
     configureAccount_transaction,
-    isLoading,
+    isLoading: !isFetched,
   }
 }

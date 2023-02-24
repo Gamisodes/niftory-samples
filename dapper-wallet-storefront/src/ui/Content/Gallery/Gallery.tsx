@@ -26,6 +26,7 @@ export const Gallery = ({ content }: GalleryProps) => {
     },
     slideChanged: (slider) => setCurrentSlide(slider.track.details.rel),
   })
+  console.log(content)
 
   return (
     <div className="flex w-full flex-col gap-3 ">
@@ -51,7 +52,7 @@ export const Gallery = ({ content }: GalleryProps) => {
             width={300}
             height={300}
             placeholder="blur"
-            blurDataURL="/braintrain.webp"
+            blurDataURL="/braintrain.png"
             priority
             alt={content[index].alt}
           />

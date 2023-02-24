@@ -5,7 +5,16 @@ import { useWalletContext } from "src/hooks/useWalletContext"
 import { SectionHeader } from "src/ui/SectionHeader"
 
 function WalletGuard({ children }: PropsWithChildren) {
-  const { currentUser } = useWalletContext()
+  const { currentUser, isLoading } = useWalletContext()
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <section className="mx-auto text-black">
+          <SectionHeader text="Loading..." />
+        </section>
+      </AppLayout>
+    )
+  }
 
   if (currentUser && !currentUser.loggedIn) {
     return (
@@ -27,17 +36,7 @@ function WalletGuard({ children }: PropsWithChildren) {
     )
   }
 
-  if (currentUser && currentUser.loggedIn) {
-    return <>{children}</>
-  }
-
-  return (
-    <AppLayout>
-      <section className="mx-auto text-black">
-        <SectionHeader text="Loading..." />
-      </section>
-    </AppLayout>
-  )
+  return <>{children}</>
 }
 
 export default WalletGuard

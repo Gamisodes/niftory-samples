@@ -1,18 +1,19 @@
 import { ChakraProvider } from "@chakra-ui/react"
-import { SessionProvider } from "next-auth/react"
 import { AppProps as NextAppProps } from "next/app"
+import { SessionProvider } from "next-auth/react"
 import { WalletProvider } from "../components/wallet/WalletProvider"
 import { ComponentWithWallet } from "../lib/types"
 import "../styles/global.css"
+import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
+import theme from "../lib/chakra-theme"
+import { GraphQLClientProvider } from "../lib/GraphQLClientProvider"
 import { Session } from "next-auth"
-import { GoogleAnalytics } from "nextjs-google-analytics"
-import RouterHistory from "src/components/RouterHistory"
 import AuthGuard from "src/guard/AuthGuard"
 import WalletGuard from "src/guard/WalletGuard"
-import usePWA from "src/hooks/usePWA"
-import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
-import theme from "../lib/chakra-theme"
+import { useState } from "react"
+import { GoogleAnalytics } from "nextjs-google-analytics"
+import RouterHistory from "src/components/RouterHistory"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -22,7 +23,8 @@ const App = ({
   Component,
   pageProps: { session, dehydratedState, ...pageProps },
 }: AppProps): JSX.Element => {
-  usePWA()
+  const [queryClient] = useState(() => new QueryClient())
+
   const isWalletAndAuth =
     (Component.requireAuth && Component.requireWallet && (
       <AuthGuard>
@@ -46,15 +48,20 @@ const App = ({
       </AuthGuard>
     )) ||
     null
+
   return (
     <RouterHistory>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
-          <ReactQueryProvider state={dehydratedState}>
-            <WalletProvider requireWallet={Component.requireWallet}>
-              {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
-            </WalletProvider>
-          </ReactQueryProvider>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={dehydratedState}>
+              <WalletProvider requireWallet={Component.requireWallet}>
+                <GraphQLClientProvider>
+                  {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+                </GraphQLClientProvider>
+              </WalletProvider>
+            </Hydrate>
+          </QueryClientProvider>
         </ChakraProvider>
       </SessionProvider>
       <GoogleAnalytics trackPageViews />

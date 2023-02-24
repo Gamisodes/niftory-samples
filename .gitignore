@@ -24,9 +24,3 @@ yarn-error.log*
 
 .vercel
 node_modules
-
-public/sw.js
-public/sw.js.map
-public/text.txt
-
-public/workbox-*

@@ -1,13 +1,16 @@
 import { memo } from "react"
 import AppLayout from "src/components/AppLayout"
-import { MetaTags } from "src/components/general/MetaTags"
+import Head from "next/head"
 
 function Terms() {
   const title = `Terms | Gamisodes`
 
   return (
     <>
-      <MetaTags title={title} />
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
       <AppLayout>
         <section className="mx-auto text-black container pb-5">
           <div className="page-width  section-template--16282241106138__main-padding text-xl">

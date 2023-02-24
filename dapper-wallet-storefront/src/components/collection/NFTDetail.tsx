@@ -109,7 +109,7 @@ export const NFTDetail = (props: Props) => {
         thumbnailUrl: poster,
         alt: nftModel?.title,
       })),
-      attributes: { ...nftModel?.metadata, ...nftModel?.attributes },
+      attributes: { ...nftModel.metadata, ...nftModel.attributes },
     }),
     [nftModel?.id]
   )
