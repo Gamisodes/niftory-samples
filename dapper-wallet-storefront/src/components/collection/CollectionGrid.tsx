@@ -39,8 +39,10 @@ export const CollectionGrid = () => {
 
   if (isLoading) {
     return (
-      <section>
+      <section className="flex flex-col items-center gap-2">
         <Loading />
+        <div className="col-span-full text-2xl">Your collection is loading.</div>
+        <div className="col-span-full text-2xl">Large collections could take up to a few minutes.</div>
       </section>
     )
   }
