@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react"
-import { allFilters } from 'src/const/allFilters'
+import { allFilters } from "src/const/allFilters"
 interface IFilterState {
-  label: string,
-  key?: string,
-  options: { selected: boolean; value: string, keyValue: string}[]
+  label: string
+  key?: string
+  options: { selected: boolean; value: string; keyValue: string }[]
 }
 
 export function useCollectionFilter(allCollections, selectedCollection) {
-  const [filter, setFilter] = useState<IFilterState[]>(allFilters[selectedCollection]);
-  const [initialSet, setInitial] = useState(false);
+  const [filter, setFilter] = useState<IFilterState[]>(allFilters[selectedCollection])
+  const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
-  
 
-  useEffect(() => {
-    if (allCollections.brainTrainCollection && !initialSet) {
-      setNfts(allCollections?.brainTrainCollection)
+  useEffect(() => {   
+    if ( allCollections[selectedCollection]?.length > 0 && !initialSet) {
+      setNfts(allCollections[selectedCollection])
       setInitial(true)
     }
   }, [allCollections, initialSet])
@@ -24,7 +23,7 @@ export function useCollectionFilter(allCollections, selectedCollection) {
     setNfts(allCollections[selectedCollection])
   }, [selectedCollection])
 
-  useEffect(() => {    
+  useEffect(() => {
     const selectedFilters = filter.reduce((accum, { options, label, key }) => {
       const optionTrue = options
         .filter((option) => option.selected === true)
@@ -32,7 +31,7 @@ export function useCollectionFilter(allCollections, selectedCollection) {
       if (optionTrue.length > 0) return [...accum, { label: key || label, options: optionTrue }]
       return accum
     }, [])
-    
+
     if (selectedFilters.length > 0) {
       const filteredNfts = allCollections[selectedCollection].filter(({ filters }) => {
         let counter = 0

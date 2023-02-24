@@ -5,24 +5,25 @@ import { Loading } from "src/icon/Loading"
 import { useCallback, useState } from "react"
 import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
-import { useNftsStore } from "src/store/nfts"
+import { INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
 
-const selector = ({ allCollections, counter, isLoading }) => ({
+const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
   counter,
   isLoading,
+  totalAmount,
 })
 
 export const CollectionGrid = () => {
-  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
-  const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
+  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
+  
+  const [selectedCollection, setCollection] = useState(ECollectionNames.VIP)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-  
   const counterKey = useCallback(
     (nft) => {
       if (selectedCollection === ECollectionNames.BrainTrain) return null
@@ -30,22 +31,23 @@ export const CollectionGrid = () => {
         title: nft?.title,
         ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
       })
-
+      
       return counter[selectedCollection][key]
     },
-    [selectedCollection]
-  )
+    [selectedCollection, counter]
+  ) 
 
   if (isLoading) {
     return (
-      <section>
+      <section className="flex flex-col items-center gap-2">
         <Loading />
+        <div className="col-span-full text-2xl">Your collection is loading.</div>
+        <div className="col-span-full text-2xl">Large collections could take up to a few minutes.</div>
       </section>
     )
   }
 
-  if (selectedCollection)
-  if (selectedCollection)
+  if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         <div className="col-span-12">
@@ -86,6 +88,9 @@ export const CollectionGrid = () => {
         </div>
       </section>
     )
+
+
+
   return (
     <section className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-4">
@@ -104,4 +109,5 @@ export const CollectionGrid = () => {
       </section>
     </section>
   )
+  
 }
