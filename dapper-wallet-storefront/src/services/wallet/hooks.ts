@@ -1,48 +1,74 @@
 import { CompositeSignature } from "@onflow/fcl"
-import { useMutation } from "@tanstack/react-query"
-import {
-  ReadyWalletMutation,
-  RegisterWalletMutation,
-  VerifyWalletMutation,
-} from "generated/graphql"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { WalletByAddressQuery } from "generated/graphql"
 import { WalletRequest } from "./request"
 
 export const walletKeys = {
   all: ["wallet"] as const,
   lists: (userId: number) => [...walletKeys.all, "list", userId] as const,
 }
-interface ISuccessResponseFromReadyWallet {
-  data: ReadyWalletMutation
-  success: boolean
-}
+
+type ISuccessResponseSendReady = Awaited<ReturnType<typeof WalletRequest.postReadyWallet>>
 interface IErrorsResponseFromReadyWallet {
   errors: string[]
   success: boolean
 }
 export function useSendReadyWalletQuery() {
-  return useMutation<ISuccessResponseFromReadyWallet, IErrorsResponseFromReadyWallet, void>(() =>
-    WalletRequest.postReadyWallet()
+  const queryClient = useQueryClient()
+
+  return useMutation<ISuccessResponseSendReady, IErrorsResponseFromReadyWallet>(
+    () => WalletRequest.postReadyWallet(),
+    {
+      onSuccess(data) {
+        queryClient.setQueriesData<WalletByAddressQuery>(
+          ["walletByAddress", { address: data?.data?.readyWallet?.address ?? "" }],
+          (oldData) => {
+            return {
+              ...oldData,
+              walletByAddress: {
+                ...oldData.walletByAddress,
+                ...data.data.readyWallet,
+              },
+            } as WalletByAddressQuery
+          }
+        )
+      },
+    }
   )
 }
-interface ISuccessResponseFromRegisterWallet<T = unknown> {
-  data: T
-  success: boolean
-}
+type ISuccessResponseFromRegisterWallet = Awaited<
+  ReturnType<typeof WalletRequest.postRegisterWallet>
+>
+
 interface IErrorsResponseFromRegisterWallet {
   errors: string[]
   success: boolean
 }
 export function useSendRegisterWalletQuery() {
-  return useMutation<
-    ISuccessResponseFromRegisterWallet<RegisterWalletMutation>,
-    IErrorsResponseFromRegisterWallet,
-    void
-  >(() => WalletRequest.postRegisterWallet())
+  const queryClient = useQueryClient()
+
+  return useMutation<ISuccessResponseFromRegisterWallet, IErrorsResponseFromRegisterWallet, void>(
+    () => WalletRequest.postRegisterWallet(),
+    {
+      onSuccess(data) {
+        queryClient.setQueriesData<WalletByAddressQuery>(
+          ["walletByAddress", { address: data?.data?.registerWallet?.address ?? "" }],
+          (oldData) => {
+            return {
+              ...oldData,
+              walletByAddress: {
+                ...oldData.walletByAddress,
+                ...data.data.registerWallet,
+              },
+            } as WalletByAddressQuery
+          }
+        )
+      },
+    }
+  )
 }
-interface ISuccessResponseFromVerifyWallet {
-  data: VerifyWalletMutation
-  success: boolean
-}
+
+type ISuccessResponseFromVerifyWallet = Awaited<ReturnType<typeof WalletRequest.postVerifyWallet>>
 interface IErrorsResponseFromVerifyWallet {
   errors: string[]
   success: boolean
@@ -51,11 +77,28 @@ interface IVerifyWalletData {
   signature: CompositeSignature[]
 }
 export function useSendVerifyWalletQuery() {
+  const queryClient = useQueryClient()
+
   return useMutation<
     ISuccessResponseFromVerifyWallet,
     IErrorsResponseFromVerifyWallet,
     IVerifyWalletData
-  >((props) => WalletRequest.postVerifyWallet(props))
+  >((props) => WalletRequest.postVerifyWallet(props), {
+    onSuccess(data) {
+      queryClient.setQueriesData<WalletByAddressQuery>(
+        ["walletByAddress", { address: data?.data?.verifyWallet?.address ?? "" }],
+        (oldData) => {
+          return {
+            ...oldData,
+            walletByAddress: {
+              ...oldData.walletByAddress,
+              ...data.data.verifyWallet,
+            },
+          } as WalletByAddressQuery
+        }
+      )
+    },
+  })
 }
 
 interface ISuccessResponseCheckWalletOwner {
