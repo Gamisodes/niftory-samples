@@ -1,11 +1,10 @@
-import gql from 'graphql-tag';
-import * as Urql from 'urql';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
+import { fetchData } from '../fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -51,6 +50,19 @@ export type App = Identifiable & {
   id: Scalars['ID'];
   /** The name for this app. */
   name?: Maybe<Scalars['String']>;
+};
+
+export type AppCreateInput = {
+  /** A user to add to the organization. Required if using backend credentials. */
+  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
+  /** The blockchain in which this app is deployed. */
+  blockchain?: InputMaybe<Blockchain>;
+  /** Name of the app */
+  name?: InputMaybe<Scalars['String']>;
+  /** The id of the organization to create app in */
+  organizationId?: InputMaybe<Scalars['String']>;
+  /** The URIs to redirect to after signin. Only required if using oauth */
+  redirectUris?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -220,6 +232,17 @@ export enum Currency {
   Usd = 'USD'
 }
 
+/** Transactions that need to be given to Dapper Wallet for use with their platform. */
+export type DapperTransactions = {
+  __typename?: 'DapperTransactions';
+  /** The metadata script for the purchase transaction. */
+  metadata?: Maybe<Scalars['String']>;
+  /** The purchase transaction. */
+  purchase?: Maybe<Scalars['String']>;
+  /** The setup script for wallets. */
+  setup?: Maybe<Scalars['String']>;
+};
+
 /** An interface containing common data about files. */
 export type File = {
   /** The MIME content type for this file. */
@@ -367,6 +390,8 @@ export type Mutation = {
   checkoutWithDapperWallet?: Maybe<CheckoutWithDapperWalletResponse>;
   /** Marks the checkout with Dapper Wallet as complete, and updates the [NFT]({{Types.NFT}}) as belonging to specified wallet. Called after [checkoutWithDapperWallet]({{Mutations.checkoutWithDapperWallet}}) once purchase is completed. */
   completeCheckoutWithDapperWallet?: Maybe<Nft>;
+  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
+  createApp?: Maybe<App>;
   /** Generates a pre-signed URL that can then be used to upload a file. Once the file has been uploaded to the URL, it will automatically be uploaded to IPFS (if desired). Use the returned [File]({{Types.SimpleFile}}).state to track the upload. */
   createFileUploadUrl?: Maybe<File>;
   /** Creates a new [NFTListing]({{Types.NFTListing}}). */
@@ -377,12 +402,15 @@ export type Mutation = {
   createNFTSet?: Maybe<NftSet>;
   /** Provisions a custodial Niftory [Wallet]({{Types.Wallet}}) and, if specified, associates it with the given [AppUser]({{Types.AppUser}}). Note: The call fails if the user already has a wallet. */
   createNiftoryWallet?: Maybe<Wallet>;
+  createOrganization: Organization;
   /** Deletes the specified file from cloud storage (but not IPFS). */
   deleteFile?: Maybe<File>;
   /** Deletes an existing [NFTListing]({{Types.NFTListing}}). */
   deleteNFTListing?: Maybe<NftListing>;
   /** Deletes an existing [NFTModel]({{Types.NFTModel}}). This operation will only be perfomed if no NFTs have been minted from this NFTModel */
   deleteNFTModel?: Maybe<NftModel>;
+  /** Deploys the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
+  deployContract?: Maybe<Contract>;
   /** Initiates minting for a given [NFT]({{Types.NFT}}). */
   mintNFT?: Maybe<Nft>;
   /** Initiates minting for a given [NFTModel]({{Types.NFTmodel}}). */
@@ -441,6 +469,11 @@ export type MutationCompleteCheckoutWithDapperWalletArgs = {
 };
 
 
+export type MutationCreateAppArgs = {
+  data: AppCreateInput;
+};
+
+
 export type MutationCreateFileUploadUrlArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
@@ -474,6 +507,11 @@ export type MutationCreateNiftoryWalletArgs = {
 };
 
 
+export type MutationCreateOrganizationArgs = {
+  data: OrganizationCreateInput;
+};
+
+
 export type MutationDeleteFileArgs = {
   id?: InputMaybe<Scalars['ID']>;
   url?: InputMaybe<Scalars['String']>;
@@ -487,6 +525,13 @@ export type MutationDeleteNftListingArgs = {
 
 export type MutationDeleteNftModelArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeployContractArgs = {
+  appId: Scalars['String'];
+  blockchain: Blockchain;
+  name: Scalars['String'];
 };
 
 
@@ -955,6 +1000,12 @@ export type Organization = Identifiable & {
   name?: Maybe<Scalars['String']>;
 };
 
+export type OrganizationCreateInput = {
+  /** A user to add to the organization. Required if using backend credentials. */
+  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
+  name: Scalars['String'];
+};
+
 /** An interface representing lists that can be paginated with a cursor. */
 export type Pageable = {
   /** The cursor to use to fetch the next page of results, if any. */
@@ -977,6 +1028,8 @@ export type Query = {
   appUsers?: Maybe<AppUserList>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
+  /** Gets transactions that need to be sent to Dapper for use with Dapper Wallet. */
+  dapperTransactions?: Maybe<DapperTransactions>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<SimpleFile>;
   /** Gets a [Invoice]({{Types.Invoice}}) by ID. */
@@ -1020,11 +1073,6 @@ export type Query = {
 };
 
 
-export type QueryAdminUserArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
 export type QueryAppByIdArgs = {
   id?: InputMaybe<Scalars['ID']>;
   name?: InputMaybe<Scalars['String']>;
@@ -1039,6 +1087,11 @@ export type QueryAppUserByIdArgs = {
 export type QueryAppUsersArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type QueryDapperTransactionsArgs = {
+  appId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1137,6 +1190,7 @@ export type QuerySetsArgs = {
 
 export type QueryWalletByAddressArgs = {
   address: Scalars['String'];
+  appId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -1471,7 +1525,7 @@ export type SignTransactionForDapperWalletMutationVariables = Exact<{
 export type SignTransactionForDapperWalletMutation = { __typename?: 'Mutation', signTransactionForDapperWallet?: string | null };
 
 
-export const ReadyWalletDocument = gql`
+export const ReadyWalletDocument = `
     mutation readyWallet($address: String!) {
   readyWallet(address: $address) {
     id
@@ -1480,11 +1534,16 @@ export const ReadyWalletDocument = gql`
   }
 }
     `;
-
-export function useReadyWalletMutation() {
-  return Urql.useMutation<ReadyWalletMutation, ReadyWalletMutationVariables>(ReadyWalletDocument);
-};
-export const RegisterWalletDocument = gql`
+export const useReadyWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<ReadyWalletMutation, TError, ReadyWalletMutationVariables, TContext>) =>
+    useMutation<ReadyWalletMutation, TError, ReadyWalletMutationVariables, TContext>(
+      ['readyWallet'],
+      (variables?: ReadyWalletMutationVariables) => fetchData<ReadyWalletMutation, ReadyWalletMutationVariables>(ReadyWalletDocument, variables)(),
+      options
+    );
+export const RegisterWalletDocument = `
     mutation registerWallet($address: String!) {
   registerWallet(address: $address) {
     id
@@ -1494,22 +1553,32 @@ export const RegisterWalletDocument = gql`
   }
 }
     `;
-
-export function useRegisterWalletMutation() {
-  return Urql.useMutation<RegisterWalletMutation, RegisterWalletMutationVariables>(RegisterWalletDocument);
-};
-export const TransferNftToWalletDocument = gql`
+export const useRegisterWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RegisterWalletMutation, TError, RegisterWalletMutationVariables, TContext>) =>
+    useMutation<RegisterWalletMutation, TError, RegisterWalletMutationVariables, TContext>(
+      ['registerWallet'],
+      (variables?: RegisterWalletMutationVariables) => fetchData<RegisterWalletMutation, RegisterWalletMutationVariables>(RegisterWalletDocument, variables)(),
+      options
+    );
+export const TransferNftToWalletDocument = `
     mutation transferNFTToWallet($nftModelId: ID!, $address: String!) {
   transfer(nftModelId: $nftModelId, address: $address) {
     id
   }
 }
     `;
-
-export function useTransferNftToWalletMutation() {
-  return Urql.useMutation<TransferNftToWalletMutation, TransferNftToWalletMutationVariables>(TransferNftToWalletDocument);
-};
-export const UpdateNftModelDocument = gql`
+export const useTransferNftToWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<TransferNftToWalletMutation, TError, TransferNftToWalletMutationVariables, TContext>) =>
+    useMutation<TransferNftToWalletMutation, TError, TransferNftToWalletMutationVariables, TContext>(
+      ['transferNFTToWallet'],
+      (variables?: TransferNftToWalletMutationVariables) => fetchData<TransferNftToWalletMutation, TransferNftToWalletMutationVariables>(TransferNftToWalletDocument, variables)(),
+      options
+    );
+export const UpdateNftModelDocument = `
     mutation UpdateNFTModel($data: NFTModelUpdateInput = {}, $id: ID = "") {
   updateNFTModel(data: $data, id: $id) {
     attributes
@@ -1528,11 +1597,16 @@ export const UpdateNftModelDocument = gql`
   }
 }
     `;
-
-export function useUpdateNftModelMutation() {
-  return Urql.useMutation<UpdateNftModelMutation, UpdateNftModelMutationVariables>(UpdateNftModelDocument);
-};
-export const VerifyWalletDocument = gql`
+export const useUpdateNftModelMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateNftModelMutation, TError, UpdateNftModelMutationVariables, TContext>) =>
+    useMutation<UpdateNftModelMutation, TError, UpdateNftModelMutationVariables, TContext>(
+      ['UpdateNFTModel'],
+      (variables?: UpdateNftModelMutationVariables) => fetchData<UpdateNftModelMutation, UpdateNftModelMutationVariables>(UpdateNftModelDocument, variables)(),
+      options
+    );
+export const VerifyWalletDocument = `
     mutation verifyWallet($address: String!, $signedVerificationCode: JSON!) {
   verifyWallet(address: $address, signedVerificationCode: $signedVerificationCode) {
     id
@@ -1541,11 +1615,16 @@ export const VerifyWalletDocument = gql`
   }
 }
     `;
-
-export function useVerifyWalletMutation() {
-  return Urql.useMutation<VerifyWalletMutation, VerifyWalletMutationVariables>(VerifyWalletDocument);
-};
-export const ContractDocument = gql`
+export const useVerifyWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<VerifyWalletMutation, TError, VerifyWalletMutationVariables, TContext>) =>
+    useMutation<VerifyWalletMutation, TError, VerifyWalletMutationVariables, TContext>(
+      ['verifyWallet'],
+      (variables?: VerifyWalletMutationVariables) => fetchData<VerifyWalletMutation, VerifyWalletMutationVariables>(VerifyWalletDocument, variables)(),
+      options
+    );
+export const ContractDocument = `
     query contract {
   contract {
     name
@@ -1553,11 +1632,19 @@ export const ContractDocument = gql`
   }
 }
     `;
-
-export function useContractQuery(options?: Omit<Urql.UseQueryArgs<ContractQueryVariables>, 'query'>) {
-  return Urql.useQuery<ContractQuery, ContractQueryVariables>({ query: ContractDocument, ...options });
-};
-export const NftDocument = gql`
+export const useContractQuery = <
+      TData = ContractQuery,
+      TError = unknown
+    >(
+      variables?: ContractQueryVariables,
+      options?: UseQueryOptions<ContractQuery, TError, TData>
+    ) =>
+    useQuery<ContractQuery, TError, TData>(
+      variables === undefined ? ['contract'] : ['contract', variables],
+      fetchData<ContractQuery, ContractQueryVariables>(ContractDocument, variables),
+      options
+    );
+export const NftDocument = `
     query nft($id: ID!) {
   nft(id: $id) {
     blockchainId
@@ -1606,11 +1693,19 @@ export const NftDocument = gql`
   }
 }
     `;
-
-export function useNftQuery(options: Omit<Urql.UseQueryArgs<NftQueryVariables>, 'query'>) {
-  return Urql.useQuery<NftQuery, NftQueryVariables>({ query: NftDocument, ...options });
-};
-export const NftModelDocument = gql`
+export const useNftQuery = <
+      TData = NftQuery,
+      TError = unknown
+    >(
+      variables: NftQueryVariables,
+      options?: UseQueryOptions<NftQuery, TError, TData>
+    ) =>
+    useQuery<NftQuery, TError, TData>(
+      ['nft', variables],
+      fetchData<NftQuery, NftQueryVariables>(NftDocument, variables),
+      options
+    );
+export const NftModelDocument = `
     query nftModel($id: ID!) {
   nftModel(id: $id) {
     id
@@ -1644,11 +1739,19 @@ export const NftModelDocument = gql`
   }
 }
     `;
-
-export function useNftModelQuery(options: Omit<Urql.UseQueryArgs<NftModelQueryVariables>, 'query'>) {
-  return Urql.useQuery<NftModelQuery, NftModelQueryVariables>({ query: NftModelDocument, ...options });
-};
-export const NftModelsDocument = gql`
+export const useNftModelQuery = <
+      TData = NftModelQuery,
+      TError = unknown
+    >(
+      variables: NftModelQueryVariables,
+      options?: UseQueryOptions<NftModelQuery, TError, TData>
+    ) =>
+    useQuery<NftModelQuery, TError, TData>(
+      ['nftModel', variables],
+      fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, variables),
+      options
+    );
+export const NftModelsDocument = `
     query nftModels($appId: ID) {
   nftModels(appId: $appId) {
     items {
@@ -1675,11 +1778,19 @@ export const NftModelsDocument = gql`
   }
 }
     `;
-
-export function useNftModelsQuery(options?: Omit<Urql.UseQueryArgs<NftModelsQueryVariables>, 'query'>) {
-  return Urql.useQuery<NftModelsQuery, NftModelsQueryVariables>({ query: NftModelsDocument, ...options });
-};
-export const NftsByWalletDocument = gql`
+export const useNftModelsQuery = <
+      TData = NftModelsQuery,
+      TError = unknown
+    >(
+      variables?: NftModelsQueryVariables,
+      options?: UseQueryOptions<NftModelsQuery, TError, TData>
+    ) =>
+    useQuery<NftModelsQuery, TError, TData>(
+      variables === undefined ? ['nftModels'] : ['nftModels', variables],
+      fetchData<NftModelsQuery, NftModelsQueryVariables>(NftModelsDocument, variables),
+      options
+    );
+export const NftsByWalletDocument = `
     query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
   nftsByWallet(
     address: $address
@@ -1723,11 +1834,19 @@ export const NftsByWalletDocument = gql`
   }
 }
     `;
-
-export function useNftsByWalletQuery(options?: Omit<Urql.UseQueryArgs<NftsByWalletQueryVariables>, 'query'>) {
-  return Urql.useQuery<NftsByWalletQuery, NftsByWalletQueryVariables>({ query: NftsByWalletDocument, ...options });
-};
-export const WalletByAddressDocument = gql`
+export const useNftsByWalletQuery = <
+      TData = NftsByWalletQuery,
+      TError = unknown
+    >(
+      variables?: NftsByWalletQueryVariables,
+      options?: UseQueryOptions<NftsByWalletQuery, TError, TData>
+    ) =>
+    useQuery<NftsByWalletQuery, TError, TData>(
+      variables === undefined ? ['nftsByWallet'] : ['nftsByWallet', variables],
+      fetchData<NftsByWalletQuery, NftsByWalletQueryVariables>(NftsByWalletDocument, variables),
+      options
+    );
+export const WalletByAddressDocument = `
     query walletByAddress($address: String!) {
   walletByAddress(address: $address) {
     id
@@ -1737,11 +1856,19 @@ export const WalletByAddressDocument = gql`
   }
 }
     `;
-
-export function useWalletByAddressQuery(options: Omit<Urql.UseQueryArgs<WalletByAddressQueryVariables>, 'query'>) {
-  return Urql.useQuery<WalletByAddressQuery, WalletByAddressQueryVariables>({ query: WalletByAddressDocument, ...options });
-};
-export const CompleteCheckoutWithDapperWalletDocument = gql`
+export const useWalletByAddressQuery = <
+      TData = WalletByAddressQuery,
+      TError = unknown
+    >(
+      variables: WalletByAddressQueryVariables,
+      options?: UseQueryOptions<WalletByAddressQuery, TError, TData>
+    ) =>
+    useQuery<WalletByAddressQuery, TError, TData>(
+      ['walletByAddress', variables],
+      fetchData<WalletByAddressQuery, WalletByAddressQueryVariables>(WalletByAddressDocument, variables),
+      options
+    );
+export const CompleteCheckoutWithDapperWalletDocument = `
     mutation CompleteCheckoutWithDapperWallet($transactionId: String!, $nftDatabaseId: String) {
   completeCheckoutWithDapperWallet(
     transactionId: $transactionId
@@ -1755,11 +1882,16 @@ export const CompleteCheckoutWithDapperWalletDocument = gql`
   }
 }
     `;
-
-export function useCompleteCheckoutWithDapperWalletMutation() {
-  return Urql.useMutation<CompleteCheckoutWithDapperWalletMutation, CompleteCheckoutWithDapperWalletMutationVariables>(CompleteCheckoutWithDapperWalletDocument);
-};
-export const CheckoutWithDapperWalletDocument = gql`
+export const useCompleteCheckoutWithDapperWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CompleteCheckoutWithDapperWalletMutation, TError, CompleteCheckoutWithDapperWalletMutationVariables, TContext>) =>
+    useMutation<CompleteCheckoutWithDapperWalletMutation, TError, CompleteCheckoutWithDapperWalletMutationVariables, TContext>(
+      ['CompleteCheckoutWithDapperWallet'],
+      (variables?: CompleteCheckoutWithDapperWalletMutationVariables) => fetchData<CompleteCheckoutWithDapperWalletMutation, CompleteCheckoutWithDapperWalletMutationVariables>(CompleteCheckoutWithDapperWalletDocument, variables)(),
+      options
+    );
+export const CheckoutWithDapperWalletDocument = `
     mutation CheckoutWithDapperWallet($nftModelId: ID!, $address: String!, $price: UnsignedFloat, $expiry: UnsignedInt) {
   checkoutWithDapperWallet(
     nftModelId: $nftModelId
@@ -1782,16 +1914,26 @@ export const CheckoutWithDapperWalletDocument = gql`
   }
 }
     `;
-
-export function useCheckoutWithDapperWalletMutation() {
-  return Urql.useMutation<CheckoutWithDapperWalletMutation, CheckoutWithDapperWalletMutationVariables>(CheckoutWithDapperWalletDocument);
-};
-export const SignTransactionForDapperWalletDocument = gql`
+export const useCheckoutWithDapperWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CheckoutWithDapperWalletMutation, TError, CheckoutWithDapperWalletMutationVariables, TContext>) =>
+    useMutation<CheckoutWithDapperWalletMutation, TError, CheckoutWithDapperWalletMutationVariables, TContext>(
+      ['CheckoutWithDapperWallet'],
+      (variables?: CheckoutWithDapperWalletMutationVariables) => fetchData<CheckoutWithDapperWalletMutation, CheckoutWithDapperWalletMutationVariables>(CheckoutWithDapperWalletDocument, variables)(),
+      options
+    );
+export const SignTransactionForDapperWalletDocument = `
     mutation SignTransactionForDapperWallet($transaction: String) {
   signTransactionForDapperWallet(transaction: $transaction)
 }
     `;
-
-export function useSignTransactionForDapperWalletMutation() {
-  return Urql.useMutation<SignTransactionForDapperWalletMutation, SignTransactionForDapperWalletMutationVariables>(SignTransactionForDapperWalletDocument);
-};
+export const useSignTransactionForDapperWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SignTransactionForDapperWalletMutation, TError, SignTransactionForDapperWalletMutationVariables, TContext>) =>
+    useMutation<SignTransactionForDapperWalletMutation, TError, SignTransactionForDapperWalletMutationVariables, TContext>(
+      ['SignTransactionForDapperWallet'],
+      (variables?: SignTransactionForDapperWalletMutationVariables) => fetchData<SignTransactionForDapperWalletMutation, SignTransactionForDapperWalletMutationVariables>(SignTransactionForDapperWalletDocument, variables)(),
+      options
+    );
