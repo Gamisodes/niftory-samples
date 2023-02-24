@@ -6,7 +6,6 @@ import { SectionHeader } from "src/ui/SectionHeader"
 
 function AuthGuard({ children }: PropsWithChildren) {
   const { status } = useSession()
-  console.log(status)
   if (status === "authenticated") {
     return <>{children}</>
   }
