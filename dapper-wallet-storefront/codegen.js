@@ -14,12 +14,9 @@ const settings = {
       presetConfig: {
         typesPath: "./schemas",
       },
-      plugins: ["typescript", "typescript-operations", "typescript-react-query"],
+      plugins: ["typescript", "typescript-operations", "typescript-urql"],
       config: {
         withHooks: true,
-        fetcher: {
-          func: "../fetcher#fetchData",
-        },
       },
     },
   },

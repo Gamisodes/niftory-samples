@@ -42,8 +42,4 @@ docker/local/data
 # Vercel
 .vercel
 
-public/sw.js
-public/sw.js.map
-public/workbox-*
-
 # End of https://www.toptal.com/developers/gitignore/api/nextjs

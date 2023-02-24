@@ -1,13 +1,16 @@
-import { MetaTags } from "src/components/general/MetaTags"
 import AppLayout from "../components/AppLayout"
 import Hero from "../ui/Hero"
+import Head from "next/head"
 
 const HomePage = () => {
   const title = `Gamisodes`
 
   return (
     <>
-      <MetaTags title={title} />
+      <Head>
+        <title>{title}</title>
+        <meta property="og:title" content={title} key="title" />
+      </Head>
       <AppLayout>
         <Hero />
       </AppLayout>
