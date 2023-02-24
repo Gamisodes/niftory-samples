@@ -35,7 +35,7 @@ function usePWA() {
         // `event.wasWaitingBeforeRegister` will be false if this is the first time the updated service worker is waiting.
         // When `event.wasWaitingBeforeRegister` is true, a previously updated service worker is still waiting.
         // You may want to customize the UI prompt accordingly.
-        if (confirm("A newer version of this web app is available, reload to update?")) {
+        if (confirm("A newer version of Gamisodes App is available, reload to update?")) {
           wb.addEventListener("controlling", (event) => {
             window.location.reload()
           })
@@ -49,7 +49,7 @@ function usePWA() {
         }
       }
 
-      wb.addEventListener("waiting", promptNewVersionAvailable)
+      // wb.addEventListener("waiting", promptNewVersionAvailable)
 
       // ISSUE - this is not working as expected, why?
       // I could only make message event listenser work when I manually add this listenser into sw.js file
