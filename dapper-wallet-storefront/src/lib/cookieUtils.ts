@@ -1,6 +1,5 @@
 import { getCookie, setCookie } from "cookies-next"
 import addDays from "date-fns/addDays"
-import { IncomingMessage, ServerResponse } from "http"
 import { NextApiRequest, NextApiResponse } from "next"
 
 const isServerSide = () => typeof window === "undefined"
@@ -12,10 +11,7 @@ export const fclCookieStorage = {
     setCookie(key, JSON.stringify(value ?? null), { path: "/", expires: addDays(new Date(), 14) }),
 }
 
-export function getAddressFromCookie(
-  req: NextApiRequest | IncomingMessage,
-  res: NextApiResponse | ServerResponse<IncomingMessage>
-) {
+export function getAddressFromCookie(req: NextApiRequest, res: NextApiResponse) {
   const cookieValue = getCookie("CURRENT_USER", { req, res })
   if (!cookieValue) {
     return null

@@ -58,10 +58,16 @@ function NavbarBase({
 }: // additionalLinks,
 Props) {
   const [isOpen, setOpen] = useState(false)
+  console.log(process.env.NODE_ENV);
+  
 
   const onClick = useCallback(() => {
     setOpen((prev) => !prev)
   }, [])
+
+  // const onSubClick = useCallback(() => {
+  //   setSubOpen((prev) => !prev)
+  // }, [])
 
   return (
     <header className="flex top-0 left-0 fixed w-full z-50  bg-header.opacity text-base font-dosis">

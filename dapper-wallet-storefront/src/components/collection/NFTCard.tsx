@@ -1,16 +1,13 @@
 import { convertNumber } from "consts/helpers"
 import Link from "next/link"
-import { useMemo } from "react"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import Ellipsis from "src/ui/Ellipsis"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
-
-type NFTCard = { nft: Subset<Nft>; clickUrl: string; counter: number }
-
-export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
+type NFTCard = { nft: Subset<Nft>; clickUrl: string }
+export const NFTCard = ({ clickUrl, nft }: NFTCard) => {
   const nftModel = nft?.model
-  const imageUrl = nftModel?.content.poster.url
+  const imageUrl = nftModel?.content?.poster?.url
   const title = nftModel?.title
 
   const stats = {
@@ -21,25 +18,6 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
       (nftModel?.attributes?.editionSize as string) ??
       null) as string | null,
   }
-
-  const renderEdition = useMemo(() => {
-    if (counter > 1) {
-      return (
-        <>
-          {stats?.editionSize && stats?.editionSize === "Open"
-            ? `${counter} Editions / Open`
-            : `${counter} Editions / ${nftModel?.quantity}`}
-        </>
-      )
-    } else
-      return (
-        <>
-          {stats?.editionSize && stats?.editionSize === "Open"
-            ? `Edition: ${nft?.serialNumber ?? "~"} / Open`
-            : `Edition: ${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
-        </>
-      )
-  }, [])
 
   return (
     <Link className="flex" href={clickUrl}>
@@ -60,8 +38,13 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
           </div>
           {stats && (
             <div className="flex justify-center mt-auto">
-              <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-1">
-                <p>{renderEdition}</p>
+              <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-2">
+                <p>
+                  <span className="font-bold">Serial: </span>
+                  {stats?.editionSize && stats?.editionSize === "Open"
+                    ? `Open Edition`
+                    : `${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
+                </p>
               </div>
             </div>
           )}

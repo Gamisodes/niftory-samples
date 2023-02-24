@@ -5,7 +5,12 @@ import { useSendReadyWalletQuery } from "src/services/wallet/hooks"
 import { useFlowAccountConfiguration } from "../../hooks/useFlowAccountConfiguration"
 import { WalletSetupBox } from "./WalletSetupBox"
 
-function ConfigureWallet() {
+export type ConfigureWalletProps = {
+  address: string
+  mutateCache: () => void
+}
+
+function ConfigureWallet({ mutateCache }: ConfigureWalletProps) {
   const { mutateAsync, isLoading: readying, error } = useSendReadyWalletQuery()
   const {
     configured,
@@ -19,7 +24,7 @@ function ConfigureWallet() {
     if (!configured || readying) {
       return
     }
-    mutateAsync()
+    mutateAsync().then(mutateCache)
   }, [configured])
   usePreventLeave(() => {
     return isLoading

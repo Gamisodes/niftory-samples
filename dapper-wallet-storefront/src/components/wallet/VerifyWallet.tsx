@@ -6,9 +6,10 @@ import { WalletSetupBox } from "./WalletSetupBox"
 
 export type VerifyWalletProps = {
   verificationCode: string
+  mutateCache: () => void
 }
 
-function VerifyWallet({ verificationCode }: VerifyWalletProps) {
+function VerifyWallet({ verificationCode, mutateCache }: VerifyWalletProps) {
   const { mutateAsync, error, isLoading } = useSendVerifyWalletQuery()
 
   // On click, prompt the user to sign the verification message
@@ -19,8 +20,8 @@ function VerifyWallet({ verificationCode }: VerifyWalletProps) {
     if (!signedVerificationCode || isLoading) {
       return
     }
-    mutateAsync({ signature: signedVerificationCode })
-  }, [verificationCode])
+    mutateAsync({ signature: signedVerificationCode }).then(mutateCache)
+  }, [mutateCache, verificationCode])
   usePreventLeave(() => {
     return isLoading
   }, [isLoading])
