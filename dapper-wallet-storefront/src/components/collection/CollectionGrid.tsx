@@ -10,6 +10,7 @@ import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
+import { EServerType, SERVER_TAG } from "src/lib/const"
 
 const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
@@ -17,11 +18,15 @@ const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore
   isLoading,
   totalAmount,
 })
+const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 
 export const CollectionGrid = () => {
   const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
-  
-  const [selectedCollection, setCollection] = useState(ECollectionNames.VIP)
+
+  const [selectedCollection, setCollection] = useState(() => {
+    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
+    return ECollectionNames.BrainTrain
+  })
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
   const counterKey = useCallback(
@@ -35,14 +40,16 @@ export const CollectionGrid = () => {
       return counter[selectedCollection][key]
     },
     [selectedCollection, counter]
-  ) 
+  )
 
   if (isLoading) {
     return (
       <section className="flex flex-col items-center gap-2">
         <Loading />
         <div className="col-span-full text-2xl">Your collection is loading.</div>
-        <div className="col-span-full text-2xl">Large collections could take up to a few minutes.</div>
+        <div className="col-span-full text-2xl">
+          Large collections could take up to a few minutes.
+        </div>
       </section>
     )
   }
@@ -50,14 +57,17 @@ export const CollectionGrid = () => {
   if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        <div className="col-span-12">
-          <HorizontalFilter
-            setShowFilter={setShowFilter}
-            showFilter={showFilter}
-            selectedCollection={selectedCollection}
-            setCollection={setCollection}
-          />
-        </div>
+        {AVAILABLE_LIST.includes(SERVER_TAG) && (
+          <div className="col-span-12">
+            <HorizontalFilter
+              setShowFilter={setShowFilter}
+              showFilter={showFilter}
+              selectedCollection={selectedCollection}
+              setCollection={setCollection}
+            />
+          </div>
+        )}
+
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />
@@ -88,8 +98,6 @@ export const CollectionGrid = () => {
         </div>
       </section>
     )
-
-
 
   return (
     <section className="flex flex-col gap-4">
