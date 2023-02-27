@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery, UseMutationOptions, UseQueryOptions, UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { fetchData } from '../fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -53,8 +53,6 @@ export type App = Identifiable & {
 };
 
 export type AppCreateInput = {
-  /** A user to add to the organization. Required if using backend credentials. */
-  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   /** The blockchain in which this app is deployed. */
   blockchain?: InputMaybe<Blockchain>;
   /** Name of the app */
@@ -232,17 +230,6 @@ export enum Currency {
   Usd = 'USD'
 }
 
-/** Transactions that need to be given to Dapper Wallet for use with their platform. */
-export type DapperTransactions = {
-  __typename?: 'DapperTransactions';
-  /** The metadata script for the purchase transaction. */
-  metadata?: Maybe<Scalars['String']>;
-  /** The purchase transaction. */
-  purchase?: Maybe<Scalars['String']>;
-  /** The setup script for wallets. */
-  setup?: Maybe<Scalars['String']>;
-};
-
 /** An interface containing common data about files. */
 export type File = {
   /** The MIME content type for this file. */
@@ -390,8 +377,6 @@ export type Mutation = {
   checkoutWithDapperWallet?: Maybe<CheckoutWithDapperWalletResponse>;
   /** Marks the checkout with Dapper Wallet as complete, and updates the [NFT]({{Types.NFT}}) as belonging to specified wallet. Called after [checkoutWithDapperWallet]({{Mutations.checkoutWithDapperWallet}}) once purchase is completed. */
   completeCheckoutWithDapperWallet?: Maybe<Nft>;
-  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
-  createApp?: Maybe<App>;
   /** Generates a pre-signed URL that can then be used to upload a file. Once the file has been uploaded to the URL, it will automatically be uploaded to IPFS (if desired). Use the returned [File]({{Types.SimpleFile}}).state to track the upload. */
   createFileUploadUrl?: Maybe<File>;
   /** Creates a new [NFTListing]({{Types.NFTListing}}). */
@@ -466,11 +451,6 @@ export type MutationCheckoutWithDapperWalletArgs = {
 export type MutationCompleteCheckoutWithDapperWalletArgs = {
   nftDatabaseId?: InputMaybe<Scalars['String']>;
   transactionId: Scalars['String'];
-};
-
-
-export type MutationCreateAppArgs = {
-  data: AppCreateInput;
 };
 
 
@@ -1001,8 +981,6 @@ export type Organization = Identifiable & {
 };
 
 export type OrganizationCreateInput = {
-  /** A user to add to the organization. Required if using backend credentials. */
-  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   name: Scalars['String'];
 };
 
@@ -1028,8 +1006,8 @@ export type Query = {
   appUsers?: Maybe<AppUserList>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
-  /** Gets transactions that need to be sent to Dapper for use with Dapper Wallet. */
-  dapperTransactions?: Maybe<DapperTransactions>;
+  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
+  createApp?: Maybe<App>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<SimpleFile>;
   /** Gets a [Invoice]({{Types.Invoice}}) by ID. */
@@ -1090,8 +1068,8 @@ export type QueryAppUsersArgs = {
 };
 
 
-export type QueryDapperTransactionsArgs = {
-  appId?: InputMaybe<Scalars['String']>;
+export type QueryCreateAppArgs = {
+  data: AppCreateInput;
 };
 
 
@@ -1644,6 +1622,21 @@ export const useContractQuery = <
       fetchData<ContractQuery, ContractQueryVariables>(ContractDocument, variables),
       options
     );
+export const useInfiniteContractQuery = <
+      TData = ContractQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof ContractQueryVariables,
+      variables?: ContractQueryVariables,
+      options?: UseInfiniteQueryOptions<ContractQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<ContractQuery, TError, TData>(
+      variables === undefined ? ['contract.infinite'] : ['contract.infinite', variables],
+      (metaData) => fetchData<ContractQuery, ContractQueryVariables>(ContractDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const NftDocument = `
     query nft($id: ID!) {
   nft(id: $id) {
@@ -1705,6 +1698,21 @@ export const useNftQuery = <
       fetchData<NftQuery, NftQueryVariables>(NftDocument, variables),
       options
     );
+export const useInfiniteNftQuery = <
+      TData = NftQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof NftQueryVariables,
+      variables: NftQueryVariables,
+      options?: UseInfiniteQueryOptions<NftQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<NftQuery, TError, TData>(
+      ['nft.infinite', variables],
+      (metaData) => fetchData<NftQuery, NftQueryVariables>(NftDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const NftModelDocument = `
     query nftModel($id: ID!) {
   nftModel(id: $id) {
@@ -1751,6 +1759,21 @@ export const useNftModelQuery = <
       fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, variables),
       options
     );
+export const useInfiniteNftModelQuery = <
+      TData = NftModelQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof NftModelQueryVariables,
+      variables: NftModelQueryVariables,
+      options?: UseInfiniteQueryOptions<NftModelQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<NftModelQuery, TError, TData>(
+      ['nftModel.infinite', variables],
+      (metaData) => fetchData<NftModelQuery, NftModelQueryVariables>(NftModelDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const NftModelsDocument = `
     query nftModels($appId: ID) {
   nftModels(appId: $appId) {
@@ -1790,6 +1813,21 @@ export const useNftModelsQuery = <
       fetchData<NftModelsQuery, NftModelsQueryVariables>(NftModelsDocument, variables),
       options
     );
+export const useInfiniteNftModelsQuery = <
+      TData = NftModelsQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof NftModelsQueryVariables,
+      variables?: NftModelsQueryVariables,
+      options?: UseInfiniteQueryOptions<NftModelsQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<NftModelsQuery, TError, TData>(
+      variables === undefined ? ['nftModels.infinite'] : ['nftModels.infinite', variables],
+      (metaData) => fetchData<NftModelsQuery, NftModelsQueryVariables>(NftModelsDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const NftsByWalletDocument = `
     query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
   nftsByWallet(
@@ -1846,6 +1884,21 @@ export const useNftsByWalletQuery = <
       fetchData<NftsByWalletQuery, NftsByWalletQueryVariables>(NftsByWalletDocument, variables),
       options
     );
+export const useInfiniteNftsByWalletQuery = <
+      TData = NftsByWalletQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof NftsByWalletQueryVariables,
+      variables?: NftsByWalletQueryVariables,
+      options?: UseInfiniteQueryOptions<NftsByWalletQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<NftsByWalletQuery, TError, TData>(
+      variables === undefined ? ['nftsByWallet.infinite'] : ['nftsByWallet.infinite', variables],
+      (metaData) => fetchData<NftsByWalletQuery, NftsByWalletQueryVariables>(NftsByWalletDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const WalletByAddressDocument = `
     query walletByAddress($address: String!) {
   walletByAddress(address: $address) {
@@ -1868,6 +1921,21 @@ export const useWalletByAddressQuery = <
       fetchData<WalletByAddressQuery, WalletByAddressQueryVariables>(WalletByAddressDocument, variables),
       options
     );
+export const useInfiniteWalletByAddressQuery = <
+      TData = WalletByAddressQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof WalletByAddressQueryVariables,
+      variables: WalletByAddressQueryVariables,
+      options?: UseInfiniteQueryOptions<WalletByAddressQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<WalletByAddressQuery, TError, TData>(
+      ['walletByAddress.infinite', variables],
+      (metaData) => fetchData<WalletByAddressQuery, WalletByAddressQueryVariables>(WalletByAddressDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
 export const CompleteCheckoutWithDapperWalletDocument = `
     mutation CompleteCheckoutWithDapperWallet($transactionId: String!, $nftDatabaseId: String) {
   completeCheckoutWithDapperWallet(
