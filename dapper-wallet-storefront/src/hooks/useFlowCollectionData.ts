@@ -29,7 +29,7 @@ export function useFlowCollectionData(wallet: string) {
           await waitforme(3000)
           setCollections(DavisCollection)
         } else if (AVAILABLE_LIST.includes(SERVER_TAG)) {
-          console.log("feature flag")
+          console.log("feature flag: ", SERVER_TAG)
           const response = await flow.getCollectionsData(
             wallet,
             process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
