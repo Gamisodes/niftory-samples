@@ -1,9 +1,9 @@
 import { useNftsByWalletQuery } from "generated/graphql"
 import { useEffect } from "react"
+import { useGetBlockchainNFT } from "src/services/blockchain/hooks"
 import { INftStore, useNftsStore } from "src/store/nfts"
-import { useCollectionMainInterface } from "./useCollectionMainInterface"
-import { useFlowCollectionData } from "./useFlowCollectionData"
 import shallow from "zustand/shallow"
+import { useCollectionMainInterface } from "./useCollectionMainInterface"
 
 const setNftState = (state: INftStore) => state.setNfts
 
@@ -13,8 +13,12 @@ export function useGetFlowAndNiftoryData(currentUser) {
     { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
   )
 
-  const { gamisodesCollections, loading } = useFlowCollectionData(currentUser?.addr)
-
+  const { data: gamisodesCollections, isLoading: loading } = useGetBlockchainNFT(
+    {
+      wallet: currentUser?.addr,
+    },
+    { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
+  )
   const { allCollections, counter, gamisodesAmount, brainTrainAmount } = useCollectionMainInterface(
     gamisodesCollections,
     query
