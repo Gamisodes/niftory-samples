@@ -36,7 +36,7 @@ export const CollectionGrid = () => {
         title: nft?.title,
         ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
       })
-
+      
       return counter[selectedCollection][key]
     },
     [selectedCollection, counter]
@@ -117,4 +117,5 @@ export const CollectionGrid = () => {
       </section>
     </section>
   )
+  
 }

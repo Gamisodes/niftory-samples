@@ -6,13 +6,12 @@ import Ellipsis from "src/ui/Ellipsis"
 import { Nft } from "../../../generated/graphql"
 import { Subset } from "../../lib/types"
 
-type NFTCard = { nft: Subset<Nft>; clickUrl: string, counter: number }
+type NFTCard = { nft: Subset<Nft>; clickUrl: string; counter: number }
 
 export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
   const nftModel = nft?.model
   const imageUrl = nftModel?.content.poster.url
   const title = nftModel?.title
-
 
   const stats = {
     rarity: nftModel?.rarity,
