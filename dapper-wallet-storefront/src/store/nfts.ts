@@ -16,7 +16,7 @@ export interface INftStore extends CollectionProps {
 export const useNftsStore = create<INftStore>((set) => ({
   allCollections: {},
   counter: {},
-  isLoading: true,
+  isLoading: false,
   totalAmount: 0,
   setNfts: ({ allCollections, counter, isLoading, totalAmount }) =>
     set(() => ({
