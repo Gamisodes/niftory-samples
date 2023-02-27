@@ -21,7 +21,7 @@ const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore
 export const CollectionGrid = () => {
   const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
   
-  const [selectedCollection, setCollection] = useState(ECollectionNames.VIP)
+  const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
   const counterKey = useCallback(
@@ -50,14 +50,14 @@ export const CollectionGrid = () => {
   if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        <div className="col-span-12">
+        {/* <div className="col-span-12">
           <HorizontalFilter
             setShowFilter={setShowFilter}
             showFilter={showFilter}
             selectedCollection={selectedCollection}
             setCollection={setCollection}
           />
-        </div>
+        </div> */}
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />
