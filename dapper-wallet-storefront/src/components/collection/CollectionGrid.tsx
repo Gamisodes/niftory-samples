@@ -23,7 +23,10 @@ const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 export const CollectionGrid = () => {
   const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
 
-  const [selectedCollection, setCollection] = useState(ECollectionNames.BrainTrain)
+  const [selectedCollection, setCollection] = useState(() => {
+    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
+    return ECollectionNames.BrainTrain
+  })
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
   const counterKey = useCallback(
