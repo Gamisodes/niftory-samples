@@ -53,8 +53,6 @@ export type App = Identifiable & {
 };
 
 export type AppCreateInput = {
-  /** A user to add to the organization. Required if using backend credentials. */
-  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   /** The blockchain in which this app is deployed. */
   blockchain?: InputMaybe<Blockchain>;
   /** Name of the app */
@@ -232,17 +230,6 @@ export enum Currency {
   Usd = 'USD'
 }
 
-/** Transactions that need to be given to Dapper Wallet for use with their platform. */
-export type DapperTransactions = {
-  __typename?: 'DapperTransactions';
-  /** The metadata script for the purchase transaction. */
-  metadata?: Maybe<Scalars['String']>;
-  /** The purchase transaction. */
-  purchase?: Maybe<Scalars['String']>;
-  /** The setup script for wallets. */
-  setup?: Maybe<Scalars['String']>;
-};
-
 /** An interface containing common data about files. */
 export type File = {
   /** The MIME content type for this file. */
@@ -390,8 +377,6 @@ export type Mutation = {
   checkoutWithDapperWallet?: Maybe<CheckoutWithDapperWalletResponse>;
   /** Marks the checkout with Dapper Wallet as complete, and updates the [NFT]({{Types.NFT}}) as belonging to specified wallet. Called after [checkoutWithDapperWallet]({{Mutations.checkoutWithDapperWallet}}) once purchase is completed. */
   completeCheckoutWithDapperWallet?: Maybe<Nft>;
-  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
-  createApp?: Maybe<App>;
   /** Generates a pre-signed URL that can then be used to upload a file. Once the file has been uploaded to the URL, it will automatically be uploaded to IPFS (if desired). Use the returned [File]({{Types.SimpleFile}}).state to track the upload. */
   createFileUploadUrl?: Maybe<File>;
   /** Creates a new [NFTListing]({{Types.NFTListing}}). */
@@ -466,11 +451,6 @@ export type MutationCheckoutWithDapperWalletArgs = {
 export type MutationCompleteCheckoutWithDapperWalletArgs = {
   nftDatabaseId?: InputMaybe<Scalars['String']>;
   transactionId: Scalars['String'];
-};
-
-
-export type MutationCreateAppArgs = {
-  data: AppCreateInput;
 };
 
 
@@ -1001,8 +981,6 @@ export type Organization = Identifiable & {
 };
 
 export type OrganizationCreateInput = {
-  /** A user to add to the organization. Required if using backend credentials. */
-  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   name: Scalars['String'];
 };
 
@@ -1028,8 +1006,8 @@ export type Query = {
   appUsers?: Maybe<AppUserList>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
-  /** Gets transactions that need to be sent to Dapper for use with Dapper Wallet. */
-  dapperTransactions?: Maybe<DapperTransactions>;
+  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
+  createApp?: Maybe<App>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<SimpleFile>;
   /** Gets a [Invoice]({{Types.Invoice}}) by ID. */
@@ -1090,8 +1068,8 @@ export type QueryAppUsersArgs = {
 };
 
 
-export type QueryDapperTransactionsArgs = {
-  appId?: InputMaybe<Scalars['String']>;
+export type QueryCreateAppArgs = {
+  data: AppCreateInput;
 };
 
 
