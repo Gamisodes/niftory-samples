@@ -27,19 +27,18 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
       return (
         <>
           {stats?.editionSize && stats?.editionSize === "Open"
-            ? `${counter} Editions / Open`
-            : `${counter} Editions / ${nftModel?.quantity}`}
+          ? `${counter} Editions / Open`
+          : `${counter} Editions / ${nftModel?.quantity}`}
         </>
       )
-    } else
-      return (
-        <>
+    } else return (
+      <>
           {stats?.editionSize && stats?.editionSize === "Open"
-            ? `Edition: ${nft?.serialNumber ?? "~"} / Open`
-            : `Edition: ${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
+          ? `Edition: ${nft?.serialNumber ?? "~"} / Open`
+          : `Edition: ${nft?.serialNumber ?? "~"} / ${nftModel?.quantity}`}
         </>
-      )
-  }, [])
+    )
+  },[]);
 
   return (
     <Link className="flex" href={clickUrl}>
@@ -61,7 +60,9 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
           {stats && (
             <div className="flex justify-center mt-auto">
               <div className="flex w-fit font-dosis font-normal text-sm text-center bg-header text-white py-0.5 px-1">
-                <p>{renderEdition}</p>
+                <p>
+                  {renderEdition}
+                </p>
               </div>
             </div>
           )}
