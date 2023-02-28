@@ -1829,7 +1829,7 @@ export const useInfiniteNftModelsQuery = <
     )};
 
 export const NftsByWalletDocument = `
-    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 10, $walletId: ID = "", $filter: NFTFilterInput = {}) {
+    query nftsByWallet($address: String = "", $cursor: String = "", $maxResults: PositiveInt = 25, $walletId: ID = "", $filter: NFTFilterInput = {}) {
   nftsByWallet(
     address: $address
     cursor: $cursor

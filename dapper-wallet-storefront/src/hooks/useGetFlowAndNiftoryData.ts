@@ -25,8 +25,6 @@ export function useGetFlowAndNiftoryData(currentUser) {
     }
   )
 
-  // console.log(query);
-
   const { data: gamisodesCollections, isLoading: loading } = useGetBlockchainNFT(
     {
       wallet: currentUser?.addr,
