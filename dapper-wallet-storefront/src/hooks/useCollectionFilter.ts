@@ -10,7 +10,7 @@ export function useCollectionFilter(allCollections, selectedCollection) {
   const [filter, setFilter] = useState<IFilterState[]>(allFilters[selectedCollection])
   const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
-
+  
   useEffect(() => {   
     if ( allCollections[selectedCollection]?.length > 0 && !initialSet) {
       setNfts(allCollections[selectedCollection])
@@ -21,7 +21,7 @@ export function useCollectionFilter(allCollections, selectedCollection) {
   useEffect(() => {
     setFilter(allFilters[selectedCollection])
     setNfts(allCollections[selectedCollection])
-  }, [selectedCollection])
+  }, [allCollections, selectedCollection])
 
   useEffect(() => {
     const selectedFilters = filter.reduce((accum, { options, label, key }) => {
@@ -44,7 +44,7 @@ export function useCollectionFilter(allCollections, selectedCollection) {
       })
       setNfts(filteredNfts)
     } else setNfts(allCollections[selectedCollection])
-  }, [filter])
+  }, [filter, allCollections])
 
   return useMemo(() => ({ nfts, filter, setFilter }), [filter, nfts])
 }
