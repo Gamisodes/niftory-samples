@@ -75,7 +75,7 @@ Open http://localhost:3001
 - Web framework: [Next.js](https://nextjs.org/)
 - UI framework: [Chakra UI](https://chakra-ui.com/)
 - Auth framework: [NextAuth](https://next-auth.js.org/)
-- Graph QL Client: [urql](https://formidable.com/open-source/urql/)
+- Graph QL Client: [React-Query](https://react-query-v3.tanstack.com/)
 - GraphQL codegen: [graphql-codeg-generator](https://www.graphql-code-generator.com/)
 
 ### Wallet Setup

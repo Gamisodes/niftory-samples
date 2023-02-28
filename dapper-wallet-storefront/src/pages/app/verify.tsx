@@ -1,7 +1,7 @@
-import Head from "next/head"
 import Link from "next/link"
 
 import { useRouter } from "next/router"
+import { MetaTags } from "src/components/general/MetaTags"
 import AppLayout from "../../components/AppLayout"
 import { SectionHeader } from "../../ui/SectionHeader"
 
@@ -12,10 +12,7 @@ const VerifyPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta property="og:title" content={title} key="title" />
-      </Head>
+      <MetaTags title={title} />
       <AppLayout>
         <section className="mx-auto flex flex-col items-center text-black">
           <SectionHeader text="Check your email!" />

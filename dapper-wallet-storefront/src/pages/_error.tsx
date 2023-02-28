@@ -1,13 +1,17 @@
-import { ErrorProps } from 'next/error';
+import { ErrorProps } from "next/error"
+import { MetaTags } from "src/components/general/MetaTags"
 
-import AppLayout from '../components/AppLayout';
-import Error from '../ui/Error';
+import AppLayout from "../components/AppLayout"
+import Error from "../ui/Error"
 
 function ErrorPage({ statusCode }: ErrorProps) {
   return (
-    <AppLayout>
-      <Error statusCode={statusCode}></Error>
-    </AppLayout>
+    <>
+      <MetaTags />
+      <AppLayout>
+        <Error statusCode={statusCode}></Error>
+      </AppLayout>
+    </>
   )
 }
 

@@ -1,41 +1,25 @@
-import Head from "next/head"
-import { useMemo, useState, useEffect } from "react"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
-import { useCollectionFilter } from "src/hooks/useCollectionFilter"
+import { MetaTags } from "src/components/general/MetaTags"
+import { useGetFlowAndNiftoryData } from "src/hooks/useGetFlowAndNiftoryData"
 import { SectionHeader } from "src/ui/SectionHeader"
-import { Nft, NftBlockchainState, useNftsByWalletQuery } from "../../../../generated/graphql"
 import AppLayout from "../../../components/AppLayout"
 import { CollectionGrid } from "../../../components/collection/CollectionGrid"
 import { useWalletContext } from "../../../hooks/useWalletContext"
 
 const CollectionPage = () => {
   const { currentUser } = useWalletContext()
-  const [nftsByWalletResponse] = useNftsByWalletQuery({
-    variables: { address: currentUser?.addr },
-    pause: !currentUser?.addr,
-    requestPolicy: "cache-and-network",
-  })
-  const { allNfts, nfts, filter, setFilter } = useCollectionFilter(nftsByWalletResponse);
-  
+  useGetFlowAndNiftoryData(currentUser)
+
   const title = `My Collection | Gamisodes`
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta property="og:title" content={title} key="title" />
-      </Head>
+      <MetaTags title={title} />
       <AppLayout>
         <CollectionWrapper>
           <section className="pt-10">
             <SectionHeader classNames="pb-7" text="My Collection" />
           </section>
-          <CollectionGrid
-            allNfts={allNfts}
-            nfts={nfts}
-            filter={filter}
-            setFilter={setFilter}
-            isLoading={nftsByWalletResponse.fetching}
-          />
+          <CollectionGrid />
         </CollectionWrapper>
       </AppLayout>
     </>
@@ -43,4 +27,5 @@ const CollectionPage = () => {
 }
 
 CollectionPage.requireWallet = true
+CollectionPage.requireAuth = true
 export default CollectionPage
