@@ -16,12 +16,7 @@ import { useInfiniteNftsByWalletQuery } from "generated/graphql"
 import { useWalletContext } from "src/hooks/useWalletContext"
 import { useInView } from "react-intersection-observer"
 
-const selector = ({
-  allCollections,
-  counter,
-  isLoading,
-  totalAmount,
-}: INftStore) => ({
+const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
   counter,
   isLoading,
@@ -50,7 +45,7 @@ export const CollectionGrid = () => {
       },
     }
   )
-  
+
   useEffect(() => {
     if (AVAILABLE_LIST.includes(SERVER_TAG)) {
       if (inView && hasNextPage) {
@@ -58,14 +53,14 @@ export const CollectionGrid = () => {
       }
     }
   }, [inView, hasNextPage])
-  
+
   const [selectedCollection, setCollection] = useState(() => {
     if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
     return ECollectionNames.BrainTrain
   })
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
-  
+
   const counterKey = useCallback(
     (nft) => {
       if (selectedCollection === ECollectionNames.BrainTrain) return null
@@ -132,8 +127,7 @@ export const CollectionGrid = () => {
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
-          <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}>
-          </button>
+          <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}></button>
         </div>
       </section>
     )
