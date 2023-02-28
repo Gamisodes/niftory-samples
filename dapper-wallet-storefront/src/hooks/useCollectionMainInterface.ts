@@ -1,13 +1,17 @@
-import { UseQueryResult } from "@tanstack/react-query"
+import { UseInfiniteQueryResult, UseQueryResult } from "@tanstack/react-query"
 import { NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo } from "react"
 
 export function useCollectionMainInterface(
   gamisodesCollections,
-  nftsByWalletResponse: UseQueryResult<NftsByWalletQuery, unknown>
+  nftsByWalletResponse: UseInfiniteQueryResult<NftsByWalletQuery, unknown>
 ) {
+
   const brainTrainCollection = useMemo(() => {
-    const items = nftsByWalletResponse?.data?.nftsByWallet?.items ?? []
+    const items = nftsByWalletResponse?.data?.pages?.reduce((accum, item) => {
+      return [...accum, ...item.nftsByWallet.items]
+    }, []) ?? []
+    
     const nftsList = items
       .filter((nft) =>
         [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
@@ -31,7 +35,7 @@ export function useCollectionMainInterface(
         }
       })
     return nftsList
-  }, [nftsByWalletResponse?.data?.nftsByWallet?.items, nftsByWalletResponse?.isSuccess])
+  }, [nftsByWalletResponse?.data?.pages, nftsByWalletResponse?.isSuccess])
 
   const gamisodesCollectionsFiltered = useMemo(() => {
     const gadgetsCollectionUnseries = []
