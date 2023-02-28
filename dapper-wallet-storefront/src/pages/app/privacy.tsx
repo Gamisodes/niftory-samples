@@ -1,16 +1,13 @@
-import Head from "next/head"
 import { memo } from "react"
 import AppLayout from "src/components/AppLayout"
+import { MetaTags } from "src/components/general/MetaTags"
 
 function PrivacyComponent() {
   const title = `Privacy | Gamisodes`
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta property="og:title" content={title} key="title" />
-      </Head>
+      <MetaTags title={title} />
       <AppLayout>
         <section className="mx-auto container pb-5">
           <div className="text-black">

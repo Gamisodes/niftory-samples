@@ -1,78 +1,50 @@
-import { Exact, NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useEffect, useMemo, useState } from "react"
-import { UseQueryState } from "urql"
-import { allFilters } from 'src/const/allFilters'
+import { allFilters } from "src/const/allFilters"
 interface IFilterState {
   label: string
-  options: { selected: boolean; value: string }[]
+  key?: string
+  options: { selected: boolean; value: string; keyValue: string }[]
 }
 
-export function useCollectionFilter(
-  nftsByWalletResponse: UseQueryState<
-    NftsByWalletQuery,
-    Exact<{
-      address?: string
-    }>
-  >
-) {
-  const [filter, setFilter] = useState<IFilterState[]>(allFilters);
+export function useCollectionFilter(allCollections, selectedCollection) {
+  const [filter, setFilter] = useState<IFilterState[]>(allFilters[selectedCollection])
+  const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
-
-  const allNfts = useMemo(() => {
-    const nftsList = nftsByWalletResponse?.data?.nftsByWallet?.items
-      .filter((nft) =>
-        [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
-          nft.blockchainState
-        )
-      )
-      .map((nft) => {
-        return {
-          ...nft,
-          model: {
-            ...nft.model,
-            metadata: {
-              ...nft.model.metadata,
-              traits: nft.model.metadata.traits?.reduce((accum, trait) => {
-                return {
-                  ...accum,
-                  [trait.trait_type]: trait.value,
-                  ["Costume Type"]: nft?.model?.attributes?.costumeType,
-                }
-              }, {}),
-            },
-          },
-        }
-      })
-    return nftsList
-  }, [nftsByWalletResponse.fetching, nftsByWalletResponse.stale])
+  
+  useEffect(() => {   
+    if ( allCollections[selectedCollection]?.length > 0 && !initialSet) {
+      setNfts(allCollections[selectedCollection])
+      setInitial(true)
+    }
+  }, [allCollections, initialSet])
 
   useEffect(() => {
-    setNfts(allNfts)
-  }, [allNfts])
+    setFilter(allFilters[selectedCollection])
+    setNfts(allCollections[selectedCollection])
+  }, [allCollections, selectedCollection])
 
   useEffect(() => {
-    const selectedFilters = filter.reduce((accum, { options, label }) => {
+    const selectedFilters = filter.reduce((accum, { options, label, key }) => {
       const optionTrue = options
         .filter((option) => option.selected === true)
-        .map(({ value }) => value)
-      if (optionTrue.length > 0) return [...accum, { label, options: optionTrue }]
+        .map(({ value, keyValue }) => keyValue || value)
+      if (optionTrue.length > 0) return [...accum, { label: key || label, options: optionTrue }]
       return accum
     }, [])
 
     if (selectedFilters.length > 0) {
-      const filteredNfts = allNfts?.filter(({ model }) => {
+      const filteredNfts = allCollections[selectedCollection].filter(({ filters }) => {
         let counter = 0
         selectedFilters?.forEach(({ label, options }) => {
-          if (model?.metadata?.traits !== undefined && label in model?.metadata?.traits) 
-          {
-            options.includes(model.metadata.traits[label]) && ++counter
+          if (filters !== undefined && label in filters) {
+            options.includes(filters[label]) && ++counter
           }
         })
         return selectedFilters.length === counter
       })
       setNfts(filteredNfts)
-    } else setNfts(allNfts)
-  }, [filter])
+    } else setNfts(allCollections[selectedCollection])
+  }, [filter, allCollections])
 
-  return useMemo(() => ({ allNfts, nfts, filter, setFilter }), [filter, nfts])
+  return useMemo(() => ({ nfts, filter, setFilter }), [filter, nfts])
 }

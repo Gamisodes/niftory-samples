@@ -1,46 +1,105 @@
+import cn from "classnames"
 import Link from "next/link"
 import { Loading } from "src/icon/Loading"
-import cn from "classnames"
 
-import { Nft, NftBlockchainState } from "../../../generated/graphql"
-import { Subset } from "../../lib/types"
-import { NFTCard } from "./NFTCard"
+import { useCallback, useState, useEffect } from "react"
+import { ECollectionNames } from "src/const/enum"
+import { useCollectionFilter } from "src/hooks/useCollectionFilter"
+import { INftStore, useNftsStore } from "src/store/nfts"
+import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
-import { SetStateAction, useState } from "react"
+import { NFTCard } from "./NFTCard"
+import { EServerType, SERVER_TAG } from "src/lib/const"
+import Button from "src/ui/Button"
+import { useInfiniteNftsByWalletQuery } from "generated/graphql"
+import { useWalletContext } from "src/hooks/useWalletContext"
+import { useInView } from "react-intersection-observer"
 
-interface IFilterState {
-  label: string
-  options: { selected: boolean; value: string }[]
-}
-interface CollectionProps {
-  allNfts:Subset<Nft>[]
-  isLoading: boolean
-  nfts: Subset<Nft>[]
-  filter: {
-    label: string
-    options: { selected: boolean; value: string }[]
-  }[]
-  setFilter: (value: SetStateAction<IFilterState[]>) => void
-}
-export const CollectionGrid = ({ allNfts, isLoading, nfts, filter, setFilter }: CollectionProps) => {
-  const hasNfts = !!nfts?.length
+const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
+  allCollections,
+  counter,
+  isLoading,
+  totalAmount,
+})
+const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
+
+export const CollectionGrid = () => {
+  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
+  const { ref, inView } = useInView()
+
+  const { currentUser } = useWalletContext()
+  const { fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteNftsByWalletQuery(
+    "cursor",
+    { address: currentUser?.addr },
+    {
+      enabled: !!currentUser?.addr,
+      networkMode: "offlineFirst",
+      getPreviousPageParam: (firstPage) => {
+        return { cursor: firstPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
+      },
+      getNextPageParam(lastPage) {
+        if (lastPage.nftsByWallet.cursor)
+          return { cursor: lastPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
+        return false
+      },
+    }
+  )
+
+  useEffect(() => {
+    if (AVAILABLE_LIST.includes(SERVER_TAG)) {
+      if (inView && hasNextPage) {
+        fetchNextPage()
+      }
+    }
+  }, [inView, hasNextPage])
+
+  const [selectedCollection, setCollection] = useState(() => {
+    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
+    return ECollectionNames.BrainTrain
+  })
   const [showFilter, setShowFilter] = useState(true)
+  const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
+
+  const counterKey = useCallback(
+    (nft) => {
+      if (selectedCollection === ECollectionNames.BrainTrain) return null
+      const key = JSON.stringify({
+        title: nft?.title,
+        ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
+      })
+
+      return counter[selectedCollection][key]
+    },
+    [selectedCollection, counter]
+  )
 
   if (isLoading) {
     return (
-      <section>
+      <section className="flex flex-col items-center gap-2">
         <Loading />
+        <div className="col-span-full text-2xl">Your collection is loading.</div>
+        <div className="col-span-full text-2xl">
+          Large collections could take up to a few minutes.
+        </div>
       </section>
     )
   }
 
-  if (allNfts)
+  if (allCollections[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        {/* <div className="col-span-12">
-          <HorizontalFilter setShowFilter={setShowFilter} showFilter={showFilter} />
-        </div> */}
+        {AVAILABLE_LIST.includes(SERVER_TAG) && (
+          <div className="col-span-12">
+            <HorizontalFilter
+              setShowFilter={setShowFilter}
+              showFilter={showFilter}
+              selectedCollection={selectedCollection}
+              setCollection={setCollection}
+            />
+          </div>
+        )}
+
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />
@@ -57,23 +116,32 @@ export const CollectionGrid = ({ allNfts, isLoading, nfts, filter, setFilter }: 
           >
             {!!nfts?.length ? (
               nfts.map((nft) => (
-                <NFTCard key={nft.id} nft={nft} clickUrl={`/app/collection/${nft.id}`} />
+                <NFTCard
+                  key={nft.id}
+                  nft={nft}
+                  clickUrl={`/app/collection/${selectedCollection}/${nft.id}`}
+                  counter={counterKey(nft)}
+                />
               ))
             ) : (
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
+          <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}></button>
         </div>
       </section>
     )
+
   return (
     <section className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-4">
         <h3 className="text-center text-xl">Your collection is empty. Start Collecting!</h3>
-        <Link 
-          href={ process.env.NODE_ENV === 'development'
-            ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-            : `https://gamisodes.com/pages/collections`}
+        <Link
+          href={
+            process.env.NODE_ENV === "development"
+              ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+              : `https://gamisodes.com/pages/collections`
+          }
         >
           <button className="uppercase w-fit font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple">
             Go to Drops
