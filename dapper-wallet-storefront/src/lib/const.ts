@@ -11,3 +11,7 @@ export const SERVER_TAG: EServerType = Object.values(EServerType).includes(
 )
   ? (process.env.NEXT_PUBLIC_SERVER_TAG as EServerType)
   : EServerType.NO_MATCH
+
+export const COLLECTIONS_PATH = (
+  process.env.NEXT_PUBLIC_COLLECTION_PATH ?? "GamisodesCollection"
+).split(";")

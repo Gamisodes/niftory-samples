@@ -1,4 +1,5 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query"
+import { useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query"
+import { ICollection } from "src/lib/flowConnector/types"
 import { BlockchainRequest } from "./request"
 
 export const blockchainKeys = {
@@ -42,7 +43,7 @@ export function useGetBlockchainNFTsById(
   variables: BlockchainGetListBySpecificNFTQueryVariables,
   options?: UseQueryOptions<ISuccessResponseGetSpecificNftReady, IErrorsResponseGetSpecificList>
 ) {
-  return useQuery<ISuccessResponseGetListReady, IErrorsResponseGetList>(
+  return useQuery<ISuccessResponseGetSpecificNftReady, IErrorsResponseGetList>(
     blockchainKeys.lists(variables.wallet),
     () => BlockchainRequest.getSpecificNFT(variables.wallet, variables.collection, variables.ids),
     options
