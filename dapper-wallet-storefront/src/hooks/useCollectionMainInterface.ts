@@ -2,17 +2,26 @@ import { UseInfiniteQueryResult, UseQueryResult } from "@tanstack/react-query"
 import { NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo } from "react"
 
+
+
 export function useCollectionMainInterface(
   gamisodesCollections,
   nftsByWalletResponse: UseInfiniteQueryResult<NftsByWalletQuery, unknown>
 ) {
 
+  const counter = {
+    gadgetsCollection: {},
+    missionsCollection: {},
+    VIPCollection: {},
+    brainTrainCollection: {}
+  }
+
   const brainTrainCollection = useMemo(() => {
     const items = nftsByWalletResponse?.data?.pages?.reduce((accum, item) => {
       return [...accum, ...item.nftsByWallet.items]
     }, []) ?? []
-    
-    const nftsList = items
+
+    const nftsListUnseries = items
       .filter((nft) =>
         [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
           nft.blockchainState
@@ -34,19 +43,31 @@ export function useCollectionMainInterface(
           }, {}),
         }
       })
+
+      const nftsList = nftsListUnseries.filter((nft) => {
+          const val = JSON.stringify({
+            title: nft.title,
+          })
+          if (nft.quantity === 1) {
+            return true
+          }
+          if (val in counter.brainTrainCollection) {
+            counter.brainTrainCollection[val] += 1
+            return false
+          }
+    
+          counter.brainTrainCollection[val] = 1
+          return true
+      })
+      
     return nftsList
-  }, [nftsByWalletResponse?.data?.pages, nftsByWalletResponse?.isSuccess])
+  }, [nftsByWalletResponse?.data?.pages, nftsByWalletResponse?.isSuccess, gamisodesCollections])
 
   const gamisodesCollectionsFiltered = useMemo(() => {
     const gadgetsCollectionUnseries = []
     const missionsCollectionUnseries = []
     const VIPCollectionUnseries = []
 
-    const counter = {
-      gadgetsCollection: {},
-      missionsCollection: {},
-      VIPCollection: {},
-    }
     const items = gamisodesCollections?.items ?? []
     const collectionWithInterface = items.map((nft) => ({
       ...nft,
@@ -132,10 +153,9 @@ export function useCollectionMainInterface(
 
     return {
       collections: { gadgetsCollection, missionsCollection, VIPCollection },
-      counter,
       gamisodesAmount: collectionWithInterface.length,
     }
-  }, [gamisodesCollections])
+  }, [nftsByWalletResponse?.data?.pages, nftsByWalletResponse?.isSuccess, gamisodesCollections])
 
   return {
     allCollections: {
@@ -144,6 +164,6 @@ export function useCollectionMainInterface(
     },
     brainTrainAmount: brainTrainCollection.length,
     gamisodesAmount: gamisodesCollectionsFiltered.gamisodesAmount,
-    counter: gamisodesCollectionsFiltered.counter,
+    counter
   }
 }

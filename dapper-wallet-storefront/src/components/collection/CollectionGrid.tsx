@@ -2,7 +2,7 @@ import cn from "classnames"
 import Link from "next/link"
 import { Loading } from "src/icon/Loading"
 
-import { useCallback, useState, useEffect } from "react"
+import { useCallback, useState } from "react"
 import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { INftStore, useNftsStore } from "src/store/nfts"
@@ -11,10 +11,6 @@ import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
 import { EServerType, SERVER_TAG } from "src/lib/const"
-import Button from "src/ui/Button"
-import { useInfiniteNftsByWalletQuery } from "generated/graphql"
-import { useWalletContext } from "src/hooks/useWalletContext"
-import { useInView } from "react-intersection-observer"
 
 const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
   allCollections,
@@ -25,37 +21,30 @@ const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore
 const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 
 export const CollectionGrid = () => {
-  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
-  const { ref, inView } = useInView()
+  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
+  // const { ref, inView } = useInView()
 
-  const { currentUser } = useWalletContext()
-  const { fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteNftsByWalletQuery(
-    "cursor",
-    { address: currentUser?.addr },
-    {
-      enabled: !!currentUser?.addr,
-      networkMode: "offlineFirst",
-      getPreviousPageParam: (firstPage) => {
-        return { cursor: firstPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
-      },
-      getNextPageParam(lastPage) {
-        if (lastPage.nftsByWallet.cursor)
-          return { cursor: lastPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
-        return false
-      },
-    }
-  )
-
-  useEffect(() => {
-    if (AVAILABLE_LIST.includes(SERVER_TAG)) {
-      if (inView && hasNextPage) {
-        fetchNextPage()
-      }
-    }
-  }, [inView, hasNextPage])
-
+  // const { currentUser } = useWalletContext()
+  // const { fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteNftsByWalletQuery(
+  //   "cursor",
+  //   { address: currentUser?.addr },
+  //   {
+  //     enabled: !!currentUser?.addr,
+  //     networkMode: "offlineFirst",
+  //     getPreviousPageParam: (firstPage) => {
+  //       return { cursor: firstPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
+  //     },
+  //     getNextPageParam(lastPage) {
+  //       if (lastPage.nftsByWallet.cursor)
+  //         return { cursor: lastPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
+  //       return false
+  //     },
+  //   }
+  // )
+  console.log(counter);
+  
   const [selectedCollection, setCollection] = useState(() => {
-    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
+    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.BrainTrain
     return ECollectionNames.BrainTrain
   })
   const [showFilter, setShowFilter] = useState(true)
@@ -63,7 +52,6 @@ export const CollectionGrid = () => {
 
   const counterKey = useCallback(
     (nft) => {
-      if (selectedCollection === ECollectionNames.BrainTrain) return null
       const key = JSON.stringify({
         title: nft?.title,
         ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
@@ -127,7 +115,7 @@ export const CollectionGrid = () => {
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
-          <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}></button>
+          {/* <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}></button> */}
         </div>
       </section>
     )
