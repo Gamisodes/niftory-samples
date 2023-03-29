@@ -11,17 +11,17 @@ import NFTModelDetail from "src/components/drops/NFTModelDetail"
 import { MetaTags } from "src/components/general/MetaTags"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { getAddressFromCookie } from "src/lib/cookieUtils"
-
+import { anyToBoolean } from "src/lib/convertor"
 import {
-  NftModelDocument,
+  useNftModelQuery,
   NftModelQuery,
   NftModelQueryVariables,
-  useNftModelQuery,
-  WalletByAddressDocument,
+  NftModelDocument,
   WalletByAddressQuery,
   WalletByAddressQueryVariables,
-} from "../../../../generated/graphql"
-import AppLayout from "../../../components/AppLayout"
+  WalletByAddressDocument,
+} from "generated/graphql"
+import AppLayout from "src/components/AppLayout"
 
 const NFTModelDetailPage = () => {
   const router = useRouter()
@@ -87,7 +87,7 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
 
   const data: NftModelQuery = await queryClient.getQueryData(["nftModel", nftModelsVariables])
 
-  if (!data?.nftModel || data?.nftModel?.attributes?.isBlocked) {
+  if (!data?.nftModel || anyToBoolean(data?.nftModel?.attributes?.isBlocked)) {
     return {
       redirect: {
         destination: "/",
