@@ -1,5 +1,5 @@
 export const DEFAULT_NFT_PRICE = +process.env.NEXT_PUBLIC_DEFAULT_PRICE_FOR_NFT ?? 25
-
+export const WEBSITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? ""
 export enum EServerType {
   STAGING = "staging",
   PREPORD = "preprod",

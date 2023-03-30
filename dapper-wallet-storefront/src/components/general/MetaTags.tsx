@@ -1,5 +1,7 @@
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { PropsWithChildren, useMemo } from "react"
+import { WEBSITE_URL } from "src/lib/const"
 import { NFTModelDetail } from "src/typings/NftModelDetail"
 
 interface IMetaTags extends PropsWithChildren {
@@ -58,11 +60,12 @@ const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: n
   metadata,
   availableCount,
 }) => {
+  const { asPath } = useRouter()
   const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   const description = metadata?.description ?? ""
-
   const memorized = useMemo(
     function addProductJsonLd() {
+      const productUrl = `${WEBSITE_URL}${asPath}`
       const availability =
         availableCount === 0 ? "https://schema.org/SoldOut" : "https://schema.org/InStock"
       const obj = {
@@ -72,6 +75,7 @@ const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: n
         image: [metadata.content[0].contentUrl],
         description: metadata.description,
         isFamilyFriendly: true,
+        url: productUrl,
         review: {
           "@type": "Review",
           reviewRating: {
@@ -99,6 +103,7 @@ const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: n
           price: metadata.price,
           itemCondition: "https://schema.org/NewCondition",
           availability,
+          url: productUrl,
         },
       }
       return {
