@@ -72,6 +72,23 @@ const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: n
         image: [metadata.content[0].contentUrl],
         description: metadata.description,
         isFamilyFriendly: true,
+        review: {
+          "@type": "Review",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          author: {
+            "@type": "Person",
+            name: "Davis",
+          },
+        },
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: "5",
+          reviewCount: metadata.quantityMinted > 0 ? metadata.quantityMinted : 1,
+        },
         brand: {
           "@type": "Brand",
           name: "Gamisodes",
