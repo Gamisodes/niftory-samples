@@ -1,5 +1,6 @@
 import Head from "next/head"
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useMemo } from "react"
+import { NFTModelDetail } from "src/typings/NftModelDetail"
 
 interface IMetaTags extends PropsWithChildren {
   title?: string
@@ -36,7 +37,6 @@ export const MetaTags: React.FC<IMetaTags> = ({
       <link rel="manifest" href="/manifest.json" />
       <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
       <link rel="shortcut icon" href="/favicon.ico" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:url" content={origin} />
       <meta name="twitter:title" content={title} />
@@ -53,3 +53,50 @@ export const MetaTags: React.FC<IMetaTags> = ({
     </Head>
   )
 }
+const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: number }> = ({
+  children,
+  metadata,
+  availableCount,
+}) => {
+  const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
+  const description = metadata?.description ?? ""
+
+  const memorized = useMemo(
+    function addProductJsonLd() {
+      const availability =
+        availableCount === 0 ? "https://schema.org/SoldOut" : "https://schema.org/InStock"
+      const obj = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name: metadata.title,
+        image: [metadata.content[0].contentUrl],
+        description: metadata.description,
+        isFamilyFriendly: true,
+        brand: {
+          "@type": "Brand",
+          name: "Gamisodes",
+        },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: metadata.price,
+          itemCondition: "https://schema.org/NewCondition",
+          availability,
+        },
+      }
+      return {
+        __html: JSON.stringify(obj),
+      }
+    },
+    [metadata.title]
+  )
+
+  return (
+    <MetaTags title={title} description={description}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={memorized} key="product-jsonld" />
+      {children}
+    </MetaTags>
+  )
+}
+
+export default Object.assign(MetaTags, { Product })

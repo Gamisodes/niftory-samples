@@ -9,25 +9,9 @@ import { Loading } from "src/icon/Loading"
 import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
 import Button from "src/ui/Button"
 import { useWalletContext } from "../../hooks/useWalletContext"
+import MetaTags from "../general/MetaTags"
 import useCheckout from "./checkout/CheckoutProvider"
-
-type NFTModelDetailProps = {
-  metadata: {
-    type: EModelTypes
-    title: string
-    description: string
-    amount: number
-    quantityMinted: number
-    price: number
-    editionSize: string | null
-    content: {
-      contentType: string
-      contentUrl: string
-      thumbnailUrl: string
-      alt: string
-    }[]
-  }
-}
+import { NFTModelDetail } from "src/typings/NftModelDetail"
 
 const checkoutStatusMessages = [
   "",
@@ -127,7 +111,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
   return <Loading />
 })
 
-function NFTModelDrop({ metadata }: NFTModelDetailProps) {
+const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata }) {
   const { error } = useCheckout()
 
   const NFT_READY_TO_BUY =
@@ -145,40 +129,51 @@ function NFTModelDrop({ metadata }: NFTModelDetailProps) {
     }`
 
   const mainImage = metadata.content[0]
-
   return (
-    <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.webp')] bg-cover relative -top-16 py-16">
-      <div className="flex justify-center gap-5 items-center h-full flex-col lg:flex-row">
-        <div className="z-10">
-          {metadata.type === EModelTypes.WRAPPER ? (
-            <Image src="/product.png" alt="BrainTrain Product" width={556} height={498} />
-          ) : (
-            <Image alt="BrainTrain Product" src={mainImage.contentUrl} width={556} height={459} />
-          )}
-        </div>
-        <div className="text-white font-bangers max-w-md flex flex-col justify-center">
-          <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
-            {metadata.type === EModelTypes.WRAPPER &&
-              brain_train_links.map((val) => (
-                <Image key={val} src={val} alt="nft element" width={70} height={80} />
-              ))}
+    <>
+      <MetaTags.Product metadata={metadata} availableCount={NFT_READY_TO_BUY}>
+        <meta property="og:image" content={metadata.content[0].contentUrl ?? ""} key="image" />
+      </MetaTags.Product>
+      <section className="flex flex-col justify-between min-w-screen w-full min-h-screen h-full p-7 pb-6 bg-header.opacity bg-[url('/homepage_BG.webp')] bg-cover relative -top-16 py-16">
+        <div className="flex justify-center gap-5 items-center h-full flex-col lg:flex-row">
+          <div className="z-10">
+            {metadata.type === EModelTypes.WRAPPER ? (
+              <Image src="/product.png" alt="BrainTrain Product" width={556} height={498} />
+            ) : (
+              <Image alt="BrainTrain Product" src={mainImage.contentUrl} width={556} height={459} />
+            )}
           </div>
-          <h1 className="uppercase leading-[61px] text-[56px] mb-2 md:mb-6"> {metadata.title}</h1>
-          <p className="font-dosis text-lg mb-5">
-            <strong className="mb-6 flex font-bold text-xl">{metadata.description}</strong>
-            {TOTAL_AVAILABLE}
-          </p>
-          <p className="font-dosis font-bold text-4xl mb-2">${metadata.price}</p>
+          <div className="text-white font-bangers max-w-md flex flex-col justify-center">
+            <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
+              {metadata.type === EModelTypes.WRAPPER &&
+                brain_train_links.map((val) => (
+                  <Image key={val} src={val} alt="nft element" width={70} height={80} />
+                ))}
+            </div>
+            <h1 className="uppercase leading-[61px] text-[56px] mb-2 md:mb-6"> {metadata.title}</h1>
+            <p className="font-dosis text-lg mb-5">
+              <strong className="mb-6 flex font-bold text-xl">{metadata.description}</strong>
+              {TOTAL_AVAILABLE}
+            </p>
+            {metadata?.checkoutDisclaimer && (
+              <>
+                <p className="font-dosis text-lg mb-3">
+                  <strong>Disclaimer:</strong> <i>{metadata.checkoutDisclaimer ?? ""}</i>
+                </p>
+              </>
+            )}
+            <p className="font-dosis font-bold text-4xl mb-2">${metadata.price}</p>
+            {error && (
+              <>
+                <p className="font-dosis text-lg mb-3">{ERROR_MESSAGES[error] ?? error ?? ""}</p>
+              </>
+            )}
 
-          {error && (
-            <>
-              <p className="font-dosis text-lg mb-3">{ERROR_MESSAGES[error] ?? error ?? ""}</p>
-            </>
-          )}
-          <BuyButton nftAvailableToBuy={NFT_READY_TO_BUY} />
+            <BuyButton nftAvailableToBuy={NFT_READY_TO_BUY} />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
 

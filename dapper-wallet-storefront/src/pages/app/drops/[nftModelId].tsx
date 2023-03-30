@@ -46,6 +46,7 @@ const NFTModelDetailPage = () => {
       editionSize: ((nftModel?.metadata?.editionSize as string) ??
         (nftModel?.attributes?.editionSize as string) ??
         null) as string | null,
+      checkoutDisclaimer: (nftModel?.attributes?.checkoutDisclaimer as string) ?? null,
       content: [
         {
           contentType: nftModel?.content?.files[0]?.contentType,
@@ -58,13 +59,8 @@ const NFTModelDetailPage = () => {
     [nftModel?.id]
   )
 
-  const title = `${metadata.title ?? "Your's idea with"} | Gamisodes`
   return (
     <>
-      <MetaTags title={title} description={metadata?.description ?? ""}>
-        <meta property="og:image" content={metadata.content[0].contentUrl ?? ""} key="image" />
-      </MetaTags>
-
       <AppLayout>
         <Skeleton className="mx-auto w-full" isLoaded={isSuccess}>
           <CheckoutProvider id={nftModelId}>
