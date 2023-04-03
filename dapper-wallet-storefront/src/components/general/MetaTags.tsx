@@ -102,6 +102,7 @@ const Product: React.FC<PropsWithChildren & NFTModelDetail & { availableCount: n
           priceCurrency: "USD",
           price: metadata.price,
           itemCondition: "https://schema.org/NewCondition",
+          priceValidUntil: "2030-11-11",
           availability,
           url: productUrl,
         },
