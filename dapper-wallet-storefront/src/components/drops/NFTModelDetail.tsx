@@ -99,8 +99,8 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
     return (
       <>
         <p className="font-dosis text-lg mb-3">
-          To proceed with checkout, please sign in to your Google Account. If you've already
-          connected your Google Account, please refresh this page.
+          The proceed with checkout, please Sign In. If you've already signed in, please refresh
+          this page.
         </p>
         <Link href="/app/sign-in">
           <Button>Sign In</Button>
