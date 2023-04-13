@@ -1,7 +1,6 @@
 import cn from "classnames"
 import Link from "next/link"
 import { Loading } from "src/icon/Loading"
-
 import { useCallback, useState, useEffect } from "react"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { INftStore, useNftsStore } from "src/store/nfts"
@@ -9,7 +8,6 @@ import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
-import { EServerType, SERVER_TAG } from "src/lib/const"
 import { useCollectionStore } from "src/store/collection"
 import { useRouter } from "next/router"
 import { useFilterSearchStore } from "src/store/filterSearch"
@@ -21,7 +19,6 @@ const selector = ({ allCollections, counter, isLoading }: INftStore) => ({
 })
 const setSearch = (state) => state.setSearchInput
 const getSelectedCollection = ({ selectedCollection }) => ({ selectedCollection })
-const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 
 export const CollectionGrid = () => {
   const router = useRouter()
@@ -63,7 +60,6 @@ export const CollectionGrid = () => {
   if (allCollections?.[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-        {AVAILABLE_LIST.includes(SERVER_TAG) && (
           <div className="col-span-12">
             <HorizontalFilter
               setShowFilter={setShowFilter}
@@ -71,8 +67,6 @@ export const CollectionGrid = () => {
               selectedCollection={selectedCollection}
             />
           </div>
-        )}
-
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />

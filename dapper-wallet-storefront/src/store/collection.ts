@@ -1,9 +1,7 @@
-import { EServerType, SERVER_TAG } from "src/lib/const"
 import { ECollectionNames } from "src/const/enum"
 import create from "zustand"
 
-const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
-const defaultCollection = AVAILABLE_LIST.includes(SERVER_TAG) ? ECollectionNames.VIP : ECollectionNames.BrainTrain
+const defaultCollection = ECollectionNames.VIP
 
 interface ISelectedCollection {
   selectedCollection: ECollectionNames,

@@ -1,8 +1,6 @@
 import { useInfiniteNftsByWalletQuery } from "generated/graphql"
 import { useEffect } from "react"
 import { useWalletContext } from "../useWalletContext"
-import { EServerType, SERVER_TAG } from "src/lib/const"
-const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 
 export function useGetFromNiftory() {
   const { currentUser } = useWalletContext()
@@ -26,11 +24,9 @@ export function useGetFromNiftory() {
   )
 
   useEffect(() => {
-    if (AVAILABLE_LIST.includes(SERVER_TAG)) {
       if (query.hasNextPage) {
         query.fetchNextPage()
       }
-    }
   }, [query.hasNextPage])
 
   return query

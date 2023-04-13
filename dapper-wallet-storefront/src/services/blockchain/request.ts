@@ -12,7 +12,7 @@ function waitforme(millisec) {
 
 const flow = FlowCollections.create()
 
-const AVAILABLE_LIST = [EServerType.PREPORD]
+const AVAILABLE_LIST = [EServerType.PREPORD, EServerType.PRODUCTION]
 
 export const BlockchainRequest = {
   async getList(wallet: string) {
@@ -27,7 +27,6 @@ export const BlockchainRequest = {
       )
       return response["GamisodesCollection"]
     }
-
     console.log("not available")
     return []
   },
