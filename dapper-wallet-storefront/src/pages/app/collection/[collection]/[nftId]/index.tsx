@@ -1,50 +1,56 @@
 import { useRouter } from "next/router"
-import CollectionWrapper from "src/components/collection/CollectionWrapper"
-
+import { useCallback, useMemo } from "react"
 import AppLayout from "src/components/AppLayout"
+import CollectionWrapper from "src/components/collection/CollectionWrapper"
 import { NFTDetail } from "src/components/collection/NFTDetail"
 import { MetaTags } from "src/components/general/MetaTags"
-import { ECollectionNames } from "src/const/enum"
-import { Subset } from "src/lib/types"
 import { useNftsStore } from "src/store/nfts"
+import { INft } from "src/typings/INfts"
 import { LoginSkeleton } from "src/ui/Skeleton"
 import shallow from "zustand/shallow"
-import { Nft, useNftQuery } from "../../../../../../generated/graphql"
 
-const getCollections = ({ allCollections }) => allCollections
+interface INftCounter {
+  counter: number,
+  editions: number[]
+}
+
+const getCollections = ({ allCollections, counter }) => ({ allCollections, counter })
 
 export const NFTDetailPage = () => {
   const router = useRouter()
-  const allCollections = useNftsStore(getCollections, shallow)
+  const { allCollections, counter } = useNftsStore(getCollections, shallow)
 
   const nftId: string = router.query["nftId"]?.toString()
   const selectedCollection: string = router.query["collection"]?.toString()
 
-  const { data: nftResponse, isLoading } = useNftQuery(
-    { id: nftId },
-    { refetchInterval: 10 * 1000 }
+  const nft: INft = useMemo(() => allCollections[selectedCollection]?.find(({ id }) => id === nftId)
+    , [allCollections, selectedCollection, nftId])
+
+  const counterKey = useCallback(
+    (nft) => {
+      const key = JSON.stringify({
+        title: nft?.title,
+      })
+
+      return counter[selectedCollection][key]
+    },
+    [nft, selectedCollection, counter, allCollections]
   )
 
-  const nft: Subset<Nft> =
-    selectedCollection === ECollectionNames.BrainTrain
-      ? nftResponse?.nft
-      : allCollections[selectedCollection]?.find(({ id }) => id === nftId)
-
-  if (!nftId || isLoading) {
+  if (!nftId) {
     return <LoginSkeleton />
   }
 
-  const nftModel = nft?.model
-  const title = `${nftModel?.title ?? "Your's idea with"} | Gamisodes`
-
+  const title = `${nft?.title ?? "Your's idea with"} | Gamisodes`
+  
   return (
     <>
-      <MetaTags title={title} description={nftModel?.description ?? ""}>
-        <meta property="og:image" content={nftModel?.content?.files[0]?.url ?? ""} key="image" />
+      <MetaTags title={title} description={nft?.description ?? ""}>
+        <meta property="og:image" content={nft?.imageUrl?.thumbnailUrl ?? ""} key="image" />
       </MetaTags>
       <AppLayout>
         <CollectionWrapper paddingBottom={false}>
-          <NFTDetail nft={nft} />
+          <NFTDetail nft={nft} nftEditions={counterKey(nft)} />
         </CollectionWrapper>
       </AppLayout>
     </>

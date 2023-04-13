@@ -1,21 +1,34 @@
 import cn from "classnames"
-import { useCallback, useState } from "react"
-import { RadioGroup } from "@headlessui/react"
+import { Fragment, useCallback } from "react"
+import { Listbox, RadioGroup, Transition } from "@headlessui/react"
 import { ECollectionNames } from "src/const/enum"
+import { useCollectionStore } from "src/store/collection"
+import shallow from "zustand/shallow"
+import { ISearchNFT, useFilterSearchStore } from "src/store/filterSearch"
+import CollectionIcon from "src/icon/CollectionIcon.svg"
 
 const collections = [
   { label: "VIP", value: ECollectionNames.VIP, checked: false },
   { label: "Gadgets", value: ECollectionNames.Gadgets, checked: false },
   { label: "Missions", value: ECollectionNames.Missions, checked: false },
   { label: "Brain Train", value: ECollectionNames.BrainTrain, checked: false },
+  { label: "Gamisodes", value: ECollectionNames.Gamisodes, checked: false },
 ]
 
-export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection, setCollection }) => {
+const setSelectedCollection = (state) => state.setCollection
+const setSearch = (state) => state.setSearchInput
+const getSearchInput = ({ searchInput }: ISearchNFT) => ({ searchInput })
+
+export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection }) => {
+
   const openFilter = useCallback(() => setShowFilter((prev) => !prev), [])
+  const setCollection = useCollectionStore(setSelectedCollection, shallow)
+  const setSearchInput = useFilterSearchStore(setSearch, shallow)
+  const { searchInput } = useFilterSearchStore(getSearchInput, shallow)
 
   return (
     <div className="grid grid-cols-12 items-center gap-8">
-      <div className="col-span-3 flex gap-4">
+      <div className="col-span-12 lg:col-span-3 flex gap-4">
         <div
           onClick={() => openFilter()}
           className={cn(
@@ -35,7 +48,7 @@ export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection
             ></path>
           </svg>
         </div>
-        <div>
+        <div className="w-full">
           <label className="relative block text-black">
             <span className="sr-only">Search</span>
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -49,30 +62,70 @@ export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection
             </span>
             <input
               className="placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Filter"
+              placeholder="Search"
               type="text"
               name="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </label>
         </div>
       </div>
-      <div className="col-span-9">
+      {showFilter && (<div className="col-span-12 lg:hidden">
+        <Listbox value={selectedCollection} onChange={setCollection}>
+          <div className="w-full bg-white rounded-md text-header">
+            <Listbox.Button className="relative select-none font-semibold text-lg p-3 w-full text-left">
+              <span>Collections</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-7">
+                <CollectionIcon />
+              </span>
+            </Listbox.Button>
+            <Transition
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options>
+                {collections.map(({ label, value }, index) => (
+                  <Listbox.Option
+                    className="uppercase select-none font-semibold text-lg  w-full text-left"
+                    key={index + label}
+                    value={value}
+                  >
+                    {({ selected }) => (
+                      <>
+                        <span
+                          className={`p-3 rounded-md block truncate ${selected ? 'font-semibold bg-header text-white' : 'font-medium'
+                            }`}
+                        >
+                          {label}
+                        </span>
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </Listbox>
+      </div>)}
+      <div className="hidden lg:inline-flex lg:col-span-9">
         <RadioGroup
           value={selectedCollection}
           onChange={setCollection}
-          className="flex relative w-full bg-white rounded-md text-header"
+          className="flex flex-wrap lg:flex-nowrap relative w-full bg-white rounded-md text-header"
         >
           {collections.map(({ label, value }, index) => (
             <RadioGroup.Option
               key={index + label}
-              className="cursor-pointer w-1/4 flex items-center justify-center truncate uppercase select-none font-semibold text-lg rounded-md"
+              className="cursor-pointer w-full lg:w-1/4 flex items-center justify-center truncate uppercase select-none font-semibold text-lg rounded-md"
               value={value}
             >
               {({ checked }) => (
                 <span
-                  className={`${
-                    checked ? "bg-header text-white" : ""
-                  } w-full py-2 text-center duration-300`}
+                  className={`${checked ? "bg-header text-white" : ""
+                    } w-full py-2 text-center duration-300`}
                 >
                   {label}
                 </span>

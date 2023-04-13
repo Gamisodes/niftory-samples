@@ -2,7 +2,7 @@ export interface IItem {
   display: {
     name: string;
     description: string;
-    thumbnail: object;
+    thumbnail: {url: string};
   };
   traits: { traits: any[] };
   rarity?: any;

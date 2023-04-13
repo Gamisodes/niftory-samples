@@ -14,6 +14,7 @@ interface IErrorsResponseGetList {
   errors: string[]
   success: boolean
 }
+
 export function useGetBlockchainNFT(
   variables: BlockchainGetListQueryVariables,
   options?: UseQueryOptions<ISuccessResponseGetListReady, IErrorsResponseGetList>

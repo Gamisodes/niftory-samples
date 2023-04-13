@@ -11,7 +11,7 @@ interface GalleryProps {
     contentUrl: string
     thumbnailUrl: string
     alt: string
-  }[]
+  }
   aspectRatio?: number
 }
 
@@ -30,13 +30,13 @@ export const Gallery = ({ content }: GalleryProps) => {
   return (
     <div className="flex w-full flex-col gap-3 ">
       <div className="flex relative h-full">
-        {content[index].contentType?.includes("video") ? (
+        {content.contentType?.includes("video") ? (
           <video
             className="aspect-[4_/_3] object-cover w-full"
             style={{
               objectFit: "scale-down",
             }}
-            src={content[index].contentUrl}
+            src={content.contentUrl}
             controls={true}
             loop={true}
             muted={true}
@@ -46,14 +46,14 @@ export const Gallery = ({ content }: GalleryProps) => {
         ) : (
           <Image
             className="aspect-square w-full object-contain"
-            src={content[index].contentUrl}
+            src={content.contentUrl}
             // fill
             width={300}
             height={300}
             placeholder="blur"
             blurDataURL="/braintrain.webp"
             priority
-            alt={content[index].alt}
+            alt={content.alt}
           />
         )}
       </div>
