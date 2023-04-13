@@ -73,11 +73,11 @@ export const Navbar = () => {
               href: '/app/account'
             },
             {
-              title: 'My Brain & Paris Cards',
+              title: 'My Collection',
               href: '/app/collection'
             },
             {
-              title: 'My VIP & Trading Cards',
+              title: 'Claim VIP & Trading Cards',
               href: 'https://gamisodes.mint.store',
               newTab: true
             },

@@ -1,28 +1,29 @@
-import { Nft } from "generated/graphql"
-import { Subset } from "src/lib/types"
+import { INft } from "src/typings/INfts"
 import create from "zustand"
 
 interface CollectionProps {
-  isLoading: boolean
-  allCollections: { [key: string]: Subset<Nft>[] }
-  counter: { [key: string]: { [key: string]: number } }
-  totalAmount: number
+  isLoading?: boolean
+  allCollections: { [key: string]: INft[] }
+  counter: { 
+    [key: string]: { 
+      [key: string]: { counter: number; editions: number[] }
+    }[]
+  }
 }
 
 export interface INftStore extends CollectionProps {
   setNfts: (arg: CollectionProps) => void
+  setLoading: (arg: boolean) => void
 }
 
 export const useNftsStore = create<INftStore>((set) => ({
   allCollections: {},
   counter: {},
   isLoading: false,
-  totalAmount: 0,
-  setNfts: ({ allCollections, counter, isLoading, totalAmount }) =>
+  setNfts: ({ allCollections, counter }) =>
     set(() => ({
       allCollections,
       counter,
-      isLoading,
-      totalAmount,
     })),
+  setLoading: (isLoading) => set({ isLoading }),
 }))

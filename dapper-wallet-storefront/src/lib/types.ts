@@ -8,3 +8,6 @@ export type ComponentWithWallet<P = {}> = NextComponentType<NextPageContext, any
   requireWallet?: boolean
   requireAuth?: boolean
 }
+
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+ArrayType extends readonly (infer ElementType)[] ? ElementType : never

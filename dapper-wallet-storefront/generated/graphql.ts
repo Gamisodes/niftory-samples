@@ -46,15 +46,22 @@ export type App = Identifiable & {
   __typename?: 'App';
   /** The contract associated with this app. */
   contract?: Maybe<Contract>;
+  /** The dapper merchant account for this app */
+  dapperMerchantAccountAddress?: Maybe<Scalars['String']>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The keys for this app. */
+  keys?: Maybe<Keys>;
   /** The name for this app. */
   name?: Maybe<Scalars['String']>;
 };
 
 export type AppCreateInput = {
+  /** A user to add to the organization. Required if using backend credentials. */
+  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   /** The blockchain in which this app is deployed. */
   blockchain?: InputMaybe<Blockchain>;
+  dapperMerchantAccountAddress?: InputMaybe<Scalars['String']>;
   /** Name of the app */
   name?: InputMaybe<Scalars['String']>;
   /** The id of the organization to create app in */
@@ -149,8 +156,14 @@ export type BlockchainTransaction = {
   blockchain: Blockchain;
   /** The hash of the blockchain transaction. */
   hash: Scalars['String'];
+  /** The database ID of the transaction. */
+  id: Scalars['ID'];
   /** Name of the transaction performed */
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  /** The output of the transaction. */
+  result?: Maybe<Scalars['JSON']>;
+  /** The state of the transaction. */
+  state?: Maybe<BlockchainTransactionState>;
 };
 
 /** The response from initiating a checkout with Dapper Wallet. */
@@ -162,6 +175,8 @@ export type CheckoutWithDapperWalletResponse = {
   cadence?: Maybe<Scalars['String']>;
   /** A time when this listing will expire. */
   expiry?: Maybe<Scalars['String']>;
+  /** The address of the merchant account that will receive the payment. */
+  merchantAccountAddress?: Maybe<Scalars['String']>;
   /** The database ID representing the NFT. To be used for [completeCheckoutWithDapperWallet]({{Mutations.completeCheckoutWithDapperWallet}}) */
   nftDatabaseId?: Maybe<Scalars['String']>;
   /** The NFT blockchain hash if the NFT has already been minted. */
@@ -182,9 +197,8 @@ export type CheckoutWithDapperWalletResponse = {
   templateId?: Maybe<Scalars['String']>;
 };
 
-/** A smart contract on the blockchain. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
-export type Contract = Identifiable & {
-  __typename?: 'Contract';
+/** Properties common to all smart contracts. */
+export type Contract = {
   /** The address at which this contract is deployed. */
   address?: Maybe<Scalars['String']>;
   /** The blockchain in which this contract is deployed. */
@@ -193,7 +207,19 @@ export type Contract = Identifiable & {
   id: Scalars['ID'];
   /** The name of this contract. */
   name?: Maybe<Scalars['String']>;
+  /** The state of this contract. */
+  state?: Maybe<ContractState>;
 };
+
+/** The state of a contract on the blockchain */
+export enum ContractState {
+  /** The contract has been created but deployment hasn't started yet. */
+  Created = 'CREATED',
+  /** The contract is being deployed. */
+  Deploying = 'DEPLOYING',
+  /** The contract has been deployed. */
+  Ready = 'READY'
+}
 
 export type CreateFileOptionsInput = {
   /** The Content-Type (MIME type) of the file to be uploaded. This must match the Content-Type header you will use to upload the file to the returned URL. If this is left empty, your Content-Type header must also be empty. */
@@ -226,9 +252,39 @@ export type CreateNiftoryWalletInput = {
 
 /** A currency that can be accepted for payment. */
 export enum Currency {
+  /** The dapper utility token */
+  Duc = 'DUC',
+  /** The flow token */
+  Flow = 'FLOW',
+  /** The flow utility token */
+  Fut = 'FUT',
   /** The United States dollar. */
   Usd = 'USD'
 }
+
+/** A transaction used for Dapper wallet. */
+export type DapperTransaction = {
+  __typename?: 'DapperTransaction';
+  /** The metadata script for the transaction. */
+  metadataScript?: Maybe<Scalars['String']>;
+  /** The transaction code. */
+  transaction?: Maybe<Scalars['String']>;
+};
+
+/** A smart contract on an EVM blockchain. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
+export type EvmContract = Contract & Identifiable & {
+  __typename?: 'EvmContract';
+  /** The address at which this contract is deployed. */
+  address?: Maybe<Scalars['String']>;
+  /** The blockchain in which this contract is deployed. */
+  blockchain?: Maybe<Blockchain>;
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** The name of this contract. */
+  name?: Maybe<Scalars['String']>;
+  /** The state of this contract. */
+  state?: Maybe<ContractState>;
+};
 
 /** An interface containing common data about files. */
 export type File = {
@@ -277,6 +333,49 @@ export type FixedPricingInput = {
   currency: Currency;
   /** The price in the specified currency at which this item is for sale. */
   price: Scalars['PositiveFloat'];
+};
+
+/** A smart contract on the Polygon blockchain. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
+export type FlowContract = Contract & Identifiable & {
+  __typename?: 'FlowContract';
+  /** The address at which this contract is deployed. */
+  address?: Maybe<Scalars['String']>;
+  /** The blockchain in which this contract is deployed. */
+  blockchain?: Maybe<Blockchain>;
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** The name of this contract. */
+  name?: Maybe<Scalars['String']>;
+  /** Storage paths for this contract. */
+  paths?: Maybe<FlowContractPaths>;
+  /** The state of this contract. */
+  state?: Maybe<ContractState>;
+  /** Transactions that need to be given to Dapper Wallet for use with their platform. */
+  transactions?: Maybe<FlowContractTransactions>;
+};
+
+/** Paths used by Flow contracts for storage. */
+export type FlowContractPaths = {
+  __typename?: 'FlowContractPaths';
+  /** The Collection Public Path for the contract. */
+  collectionPublicPath?: Maybe<Scalars['String']>;
+  /** The Collection Storage Path for the contract. */
+  collectionStoragePath?: Maybe<Scalars['String']>;
+};
+
+/** Transactions used by a Flow contract. */
+export type FlowContractTransactions = {
+  __typename?: 'FlowContractTransactions';
+  /** A transaction that cancels any Marketplace Listing */
+  cancelMarketplaceListing?: Maybe<Scalars['String']>;
+  /** A transaction that creates a listing of an NFT on the Marketplace with Dapper wallet */
+  createMarketplaceListing?: Maybe<MultiCurrencyTransaction>;
+  /** A transaction that creates a listing of an NFT on the Marketplace with Dapper wallet */
+  purchaseMarketplaceListing?: Maybe<MultiCurrencyDapperTransaction>;
+  /** A transaction that purchases an NFT with Dapper wallet with USD. */
+  purchaseWithUsd?: Maybe<DapperTransaction>;
+  /** A transaction that sets up a wallet to receive NFTs for this contract. */
+  setup?: Maybe<Scalars['String']>;
 };
 
 /** An interface representing objects with a creation and update time */
@@ -344,6 +443,17 @@ export enum InvoiceState {
   Pending = 'PENDING'
 }
 
+/** The keys for an application in the Niftory platform */
+export type Keys = {
+  __typename?: 'Keys';
+  /** The public API key. */
+  apiKey?: Maybe<Scalars['String']>;
+  /** The public Client ID. */
+  clientId?: Maybe<Scalars['String']>;
+  /** The public Client Secret. */
+  clientSecret?: Maybe<Scalars['String']>;
+};
+
 /** The state of a listing. */
 export enum ListingState {
   /**
@@ -369,6 +479,80 @@ export enum ListingState {
   Sold = 'SOLD'
 }
 
+/** Listing of NFTs in marketplace */
+export type MarketplaceListing = Identifiable & {
+  __typename?: 'MarketplaceListing';
+  /** The appId of the app this MarketplaceListing belongs to. */
+  appId: Scalars['ID'];
+  /** The blockchain resource ID of the marketplace */
+  blockchainId?: Maybe<Scalars['String']>;
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** The NFT belonging to this listing. */
+  nft: Nft;
+  /** The price in the specified currency at which this item is for sale. */
+  pricing: FixedPricing;
+  /** The state of the marketplace listing */
+  state: MarketplaceListingState;
+  /** The transactions ids belonging to this marketplace listing */
+  transactionIds?: Maybe<Array<Maybe<Scalars['String']>>>;
+  /** The user to which the listing belongs to */
+  user?: Maybe<AppUser>;
+  /** The Wallet where the NFT belongs to */
+  wallet?: Maybe<Wallet>;
+};
+
+/** Properties to filter [MarketplaceListing]({{Types.MarketplaceListing}})s when querying them. */
+export type MarketplaceListingFilterInput = {
+  /** Database IDs of the [MarketplaceListing]({{Types.MarketplaceListing}})s to find. */
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** The IDs of the [NFTModel]({{Types.NFTModel}}) to filter by  */
+  nftModelIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** The IDs of the [AppUser]({{Types.AppUser}}) to filter by */
+  userIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** The IDs of the [Wallets]({{Types.Wallets}}) to filter by */
+  walletIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+};
+
+/** A list of MarketplaceListings. */
+export type MarketplaceListingList = Pageable & {
+  __typename?: 'MarketplaceListingList';
+  /** The cursor to use to fetch the next page of results, if any. */
+  cursor?: Maybe<Scalars['String']>;
+  /** The MarketplaceListings in this list. */
+  items?: Maybe<Array<Maybe<MarketplaceListing>>>;
+};
+
+/** The state of an Marketplace listing */
+export enum MarketplaceListingState {
+  /** The marketplace listing is available for purchase */
+  Available = 'AVAILABLE',
+  /** The marketplace listing is cancelled */
+  Cancelled = 'CANCELLED',
+  /** The marketplace listing has expired */
+  Expired = 'EXPIRED',
+  /** The marketplace listing has already been purchased */
+  Purchased = 'PURCHASED'
+}
+
+/** Dapper transactions with multiple currencies. */
+export type MultiCurrencyDapperTransaction = {
+  __typename?: 'MultiCurrencyDapperTransaction';
+  /** Dapper transaction using Flow Token */
+  flow?: Maybe<DapperTransaction>;
+  /** Dapper transaction using US Dollar */
+  usd?: Maybe<DapperTransaction>;
+};
+
+/** Transactions with multiple currencies. */
+export type MultiCurrencyTransaction = {
+  __typename?: 'MultiCurrencyTransaction';
+  /** Transaction using the Flow Token */
+  flow?: Maybe<Scalars['String']>;
+  /** Transaction using the US Dollar */
+  usd?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Initiates checkout for a reserved NFT. */
@@ -377,6 +561,14 @@ export type Mutation = {
   checkoutWithDapperWallet?: Maybe<CheckoutWithDapperWalletResponse>;
   /** Marks the checkout with Dapper Wallet as complete, and updates the [NFT]({{Types.NFT}}) as belonging to specified wallet. Called after [checkoutWithDapperWallet]({{Mutations.checkoutWithDapperWallet}}) once purchase is completed. */
   completeCheckoutWithDapperWallet?: Maybe<Nft>;
+  /** Completes a marketplace listing cancellation */
+  completeMarketplaceCancel?: Maybe<MarketplaceListing>;
+  /** Completes a marketplace listing creation */
+  completeMarketplaceList?: Maybe<MarketplaceListing>;
+  /** Completes a marketplace listing purchase */
+  completeMarketplacePurchase?: Maybe<MarketplaceListing>;
+  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
+  createApp?: Maybe<App>;
   /** Generates a pre-signed URL that can then be used to upload a file. Once the file has been uploaded to the URL, it will automatically be uploaded to IPFS (if desired). Use the returned [File]({{Types.SimpleFile}}).state to track the upload. */
   createFileUploadUrl?: Maybe<File>;
   /** Creates a new [NFTListing]({{Types.NFTListing}}). */
@@ -394,8 +586,12 @@ export type Mutation = {
   deleteNFTListing?: Maybe<NftListing>;
   /** Deletes an existing [NFTModel]({{Types.NFTModel}}). This operation will only be perfomed if no NFTs have been minted from this NFTModel */
   deleteNFTModel?: Maybe<NftModel>;
+  /** Deletes an existing [NFTSet]({{Types.NFTSet}}). This operation will only be perfomed if no NFTs have been minted from this NFTSet */
+  deleteNFTSet?: Maybe<NftSet>;
   /** Deploys the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   deployContract?: Maybe<Contract>;
+  /** Executes a transaction for a Niftory wallet. */
+  executeTransaction?: Maybe<BlockchainTransaction>;
   /** Initiates minting for a given [NFT]({{Types.NFT}}). */
   mintNFT?: Maybe<Nft>;
   /** Initiates minting for a given [NFTModel]({{Types.NFTmodel}}). */
@@ -408,6 +604,8 @@ export type Mutation = {
   reserve?: Maybe<Invoice>;
   /** Sets the primary [Wallet]({{Types.Wallet}}) for the currently signed in user. */
   setPrimaryWallet?: Maybe<Wallet>;
+  /** Signs a transaction for a Niftory wallet. */
+  signTransaction?: Maybe<Scalars['String']>;
   /** Signs a transaction for Dapper Wallet. */
   signTransactionForDapperWallet?: Maybe<Scalars['String']>;
   /** Initiates the transfer of an [NFT]({{Types.NFT}}) to the currently-logged in [AppUser]({{Types.AppUser}}). The NFT is reserved for the user in database, and you can use the NFT.status field to check on the transfer progress. */
@@ -451,6 +649,29 @@ export type MutationCheckoutWithDapperWalletArgs = {
 export type MutationCompleteCheckoutWithDapperWalletArgs = {
   nftDatabaseId?: InputMaybe<Scalars['String']>;
   transactionId: Scalars['String'];
+};
+
+
+export type MutationCompleteMarketplaceCancelArgs = {
+  id: Scalars['ID'];
+  transactionId: Scalars['String'];
+};
+
+
+export type MutationCompleteMarketplaceListArgs = {
+  nftId: Scalars['ID'];
+  transactionId: Scalars['String'];
+};
+
+
+export type MutationCompleteMarketplacePurchaseArgs = {
+  id: Scalars['ID'];
+  transactionId: Scalars['String'];
+};
+
+
+export type MutationCreateAppArgs = {
+  data: AppCreateInput;
 };
 
 
@@ -508,10 +729,26 @@ export type MutationDeleteNftModelArgs = {
 };
 
 
+export type MutationDeleteNftSetArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeployContractArgs = {
   appId: Scalars['String'];
   blockchain: Blockchain;
   name: Scalars['String'];
+};
+
+
+export type MutationExecuteTransactionArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['ID']>;
+  args?: InputMaybe<Scalars['JSONObject']>;
+  name?: InputMaybe<Scalars['String']>;
+  transaction: Scalars['String'];
+  userId?: InputMaybe<Scalars['ID']>;
+  walletId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -546,6 +783,15 @@ export type MutationReserveArgs = {
 export type MutationSetPrimaryWalletArgs = {
   address?: InputMaybe<Scalars['String']>;
   walletId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationSignTransactionArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['ID']>;
+  transaction: Scalars['String'];
+  userId?: InputMaybe<Scalars['ID']>;
+  walletId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -625,6 +871,8 @@ export type Nft = BlockchainEntity & Identifiable & SellableEntity & {
   blockchainState: NftBlockchainState;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The marketplace listings where this NFT belongs to */
+  marketplaceListings?: Maybe<Array<Maybe<MarketplaceListing>>>;
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
   /** The NFTModel from which this NFT was created. */
@@ -785,6 +1033,8 @@ export type NftModel = Attributable & BlockchainEntity & BlockchainResource & Ha
   description: Scalars['String'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The marketplace listings created with nfts from this model */
+  marketplaceListings?: Maybe<Array<Maybe<MarketplaceListing>>>;
   /** A mapping of properties that will be added to the blockchain. */
   metadata?: Maybe<Scalars['JSONObject']>;
   /** The listings for this model. These can be used to sell the NFTs creating using this model */
@@ -851,6 +1101,8 @@ export type NftModelCreateInput = {
 export type NftModelFilterInput = {
   /** Blockchain IDs of the [NFTModel]({{Types.NFTModel}})s to find. */
   blockchainIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** Filter nft models that have active listings in the marketplace  */
+  hasMarketplaceListing?: InputMaybe<Scalars['Boolean']>;
   /** Database IDs of the [NFTModel]({{Types.NFTModel}})s to find. */
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** The IDs of the [NFTSet]({{Types.NFTSet}})s that the [NFTModel]({{Types.NFTModel}}) should belong to. */
@@ -981,6 +1233,8 @@ export type Organization = Identifiable & {
 };
 
 export type OrganizationCreateInput = {
+  /** A user to add to the organization. Required if using backend credentials. */
+  adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
   name: Scalars['String'];
 };
 
@@ -1004,20 +1258,20 @@ export type Query = {
   appUserById?: Maybe<AppUser>;
   /** Gets the list of users for your app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   appUsers?: Maybe<AppUserList>;
+  /** Gets a blockchain transaction. */
+  blockchainTransaction?: Maybe<BlockchainTransaction>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
-  /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
-  createApp?: Maybe<App>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<SimpleFile>;
-  /** Gets a [Invoice]({{Types.Invoice}}) by ID. */
-  invoice?: Maybe<Invoice>;
   /** Gets the list of invoices for your app. */
   invoices?: Maybe<InvoiceList>;
+  /** Gets a [MarketplaceListing]({{Types.MarketplaceListing}}) by ID. */
+  marketplaceListing?: Maybe<MarketplaceListing>;
+  /** Gets an [MarketplaceListing]({{Types.MarketplaceListing}}) by ID. */
+  marketplaceListings?: Maybe<MarketplaceListingList>;
   /** Gets an [NFT]({{Types.NFT}}) by database ID. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nft?: Maybe<Nft>;
-  /** Gets a [NFTContent]({{Types.NFTContent}}) by ID. */
-  nftContent?: Maybe<NftContent>;
   /** Gets an [NFTFile]({{Types.NFTFile}}) by its ID, cloud storage, or IPFS URL. */
   nftFile?: Maybe<NftFile>;
   /** Gets an [NFTListing]({{Types.NFTListing}}) by ID. */
@@ -1032,8 +1286,6 @@ export type Query = {
   nfts?: Maybe<NftList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current wallet, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nftsByWallet?: Maybe<NftList>;
-  /** Gets a [Organization]({{Types.Organization}}) by ID. */
-  organization?: Maybe<Organization>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   set?: Maybe<NftSet>;
   /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
@@ -1052,8 +1304,7 @@ export type Query = {
 
 
 export type QueryAppByIdArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-  name?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
 };
 
 
@@ -1068,17 +1319,18 @@ export type QueryAppUsersArgs = {
 };
 
 
-export type QueryCreateAppArgs = {
-  data: AppCreateInput;
+export type QueryBlockchainTransactionArgs = {
+  hash?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryContractArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
 };
 
 
 export type QueryFileArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type QueryInvoiceArgs = {
   id: Scalars['ID'];
 };
 
@@ -1090,12 +1342,21 @@ export type QueryInvoicesArgs = {
 };
 
 
-export type QueryNftArgs = {
-  id: Scalars['ID'];
+export type QueryMarketplaceListingArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+  nftId?: InputMaybe<Scalars['ID']>;
 };
 
 
-export type QueryNftContentArgs = {
+export type QueryMarketplaceListingsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<MarketplaceListingFilterInput>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type QueryNftArgs = {
   id: Scalars['ID'];
 };
 
@@ -1147,11 +1408,6 @@ export type QueryNftsByWalletArgs = {
   filter?: InputMaybe<NftFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
   walletId?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryOrganizationArgs = {
-  id: Scalars['ID'];
 };
 
 
@@ -1395,6 +1651,14 @@ export enum WalletType {
   External = 'EXTERNAL'
 }
 
+/** The state of a blockchain transaction. */
+export enum BlockchainTransactionState {
+  /** The transaction hasn't been completed yet. */
+  Pending = 'PENDING',
+  /** The transaction has been completed. */
+  Sealed = 'SEALED'
+}
+
 export type ReadyWalletMutationVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1436,7 +1700,7 @@ export type VerifyWalletMutation = { __typename?: 'Mutation', verifyWallet?: { _
 export type ContractQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ContractQuery = { __typename?: 'Query', contract?: { __typename?: 'Contract', name?: string | null, address?: string | null } | null };
+export type ContractQuery = { __typename?: 'Query', contract?: { __typename?: 'EvmContract', name?: string | null, address?: string | null } | { __typename?: 'FlowContract', name?: string | null, address?: string | null } | null };
 
 export type NftQueryVariables = Exact<{
   id: Scalars['ID'];

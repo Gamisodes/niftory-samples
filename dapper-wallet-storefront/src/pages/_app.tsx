@@ -13,6 +13,8 @@ import WalletGuard from "src/guard/WalletGuard"
 import usePWA from "src/hooks/usePWA"
 import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
+import { BlockchainAndNiftoryWrapper } from "src/components/BlockchainAndNiftoryWrapper"
+import { useScrollRestoration } from "src/hooks/useScrollRestoration"
 
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
@@ -22,6 +24,7 @@ const App = ({
   Component,
   pageProps: { session, dehydratedState, ...pageProps },
 }: AppProps): JSX.Element => {
+  useScrollRestoration()
   usePWA()
   const isWalletAndAuth =
     (Component.requireAuth && Component.requireWallet && (
@@ -52,7 +55,9 @@ const App = ({
         <ChakraProvider theme={theme}>
           <ReactQueryProvider state={dehydratedState}>
             <WalletProvider requireWallet={Component.requireWallet}>
-              {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+              <BlockchainAndNiftoryWrapper>
+                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+              </BlockchainAndNiftoryWrapper>
             </WalletProvider>
           </ReactQueryProvider>
         </ChakraProvider>

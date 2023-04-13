@@ -1,6 +1,7 @@
 export enum ECollectionNames {
-  BrainTrain = "brainTrainCollection",
-  Gadgets = "gadgetsCollection",
-  VIP = "VIPCollection",
-  Missions = "missionsCollection",
+  BrainTrain = "braintrain",
+  Gadgets = "gadgets",
+  VIP = "vip",
+  Missions = "missions",
+  Gamisodes = "gamisodes"
 }

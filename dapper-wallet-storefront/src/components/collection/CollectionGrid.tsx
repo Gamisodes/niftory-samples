@@ -3,7 +3,6 @@ import Link from "next/link"
 import { Loading } from "src/icon/Loading"
 
 import { useCallback, useState, useEffect } from "react"
-import { ECollectionNames } from "src/const/enum"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
 import { INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
@@ -11,65 +10,40 @@ import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
 import { EServerType, SERVER_TAG } from "src/lib/const"
-import Button from "src/ui/Button"
-import { useInfiniteNftsByWalletQuery } from "generated/graphql"
-import { useWalletContext } from "src/hooks/useWalletContext"
-import { useInView } from "react-intersection-observer"
+import { useCollectionStore } from "src/store/collection"
+import { useRouter } from "next/router"
+import { useFilterSearchStore } from "src/store/filterSearch"
 
-const selector = ({ allCollections, counter, isLoading, totalAmount }: INftStore) => ({
+const selector = ({ allCollections, counter, isLoading }: INftStore) => ({
   allCollections,
   counter,
-  isLoading,
-  totalAmount,
+  isLoading
 })
+const setSearch = (state) => state.setSearchInput
+const getSelectedCollection = ({ selectedCollection }) => ({ selectedCollection })
 const AVAILABLE_LIST = [EServerType.STAGING, EServerType.PREPORD]
 
 export const CollectionGrid = () => {
-  const { allCollections, counter, isLoading, totalAmount } = useNftsStore(selector, shallow)
-  const { ref, inView } = useInView()
-
-  const { currentUser } = useWalletContext()
-  const { fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteNftsByWalletQuery(
-    "cursor",
-    { address: currentUser?.addr },
-    {
-      enabled: !!currentUser?.addr,
-      networkMode: "offlineFirst",
-      getPreviousPageParam: (firstPage) => {
-        return { cursor: firstPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
-      },
-      getNextPageParam(lastPage) {
-        if (lastPage.nftsByWallet.cursor)
-          return { cursor: lastPage.nftsByWallet.cursor ?? undefined, address: currentUser?.addr }
-        return false
-      },
-    }
-  )
-
-  useEffect(() => {
-    if (AVAILABLE_LIST.includes(SERVER_TAG)) {
-      if (inView && hasNextPage) {
-        fetchNextPage()
-      }
-    }
-  }, [inView, hasNextPage])
-
-  const [selectedCollection, setCollection] = useState(() => {
-    if (AVAILABLE_LIST.includes(SERVER_TAG)) return ECollectionNames.VIP
-    return ECollectionNames.BrainTrain
-  })
+  const router = useRouter()
+  const { allCollections, counter, isLoading } = useNftsStore(selector, shallow)
+  const { selectedCollection } = useCollectionStore(getSelectedCollection)
+  const setSearchInput = useFilterSearchStore(setSearch, shallow)
   const [showFilter, setShowFilter] = useState(true)
-  const { nfts, filter, setFilter } = useCollectionFilter(allCollections, selectedCollection)
+  const { nfts, filter, setFilter } = useCollectionFilter(selectedCollection)
+  
+  useEffect(() => {
+    router.push(`/app/collection/${selectedCollection}/`)
+    setSearchInput('')
+  }, [selectedCollection])
 
   const counterKey = useCallback(
     (nft) => {
-      if (selectedCollection === ECollectionNames.BrainTrain) return null
       const key = JSON.stringify({
         title: nft?.title,
-        ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.filters?.level }),
+        // ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.level }),
       })
 
-      return counter[selectedCollection][key]
+      return counter[selectedCollection][key]?.counter
     },
     [selectedCollection, counter]
   )
@@ -86,7 +60,7 @@ export const CollectionGrid = () => {
     )
   }
 
-  if (allCollections[selectedCollection])
+  if (allCollections?.[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
         {AVAILABLE_LIST.includes(SERVER_TAG) && (
@@ -95,7 +69,6 @@ export const CollectionGrid = () => {
               setShowFilter={setShowFilter}
               showFilter={showFilter}
               selectedCollection={selectedCollection}
-              setCollection={setCollection}
             />
           </div>
         )}
@@ -127,7 +100,6 @@ export const CollectionGrid = () => {
               <div className="col-span-full text-2xl">There Are No Collectibles to Show</div>
             )}
           </div>
-          <button ref={ref} disabled={!hasNextPage || isFetchingNextPage}></button>
         </div>
       </section>
     )

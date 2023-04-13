@@ -126,8 +126,7 @@ export const NavbarMenuItem = ({ item }) => {
                               className="flex gap-4"
                             >
                               <button
-                                className={`${active ? "bg-violet-500" : "text-white"} 
-                                group flex w-full items-center px-[2rem] py-[0.8rem] text-base border-[1px]`}
+                                className={`${active ? "bg-violet-500" : "text-white"} text-start group flex w-full items-center px-[2rem] py-[0.8rem] text-base border-[1px]`}
                               >
                                 {title}
                               </button>
