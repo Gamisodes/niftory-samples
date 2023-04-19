@@ -92,18 +92,6 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     if (isSuccess && data?.shouldLogout) leaveSignOutWithMessage()
   }, [isSuccess, data])
 
-  // const router = useRouter()
-  // useEffect(() => {
-  //   if (!requireWallet || isLoading || !currentUser) {
-  //     return
-  //   }
-
-  //   if (currentUser && !currentUser?.loggedIn) {
-  //     router.push("/app/account")
-  //     return
-  //   }
-  // }, [requireWallet, isLoading, currentUser, router])
-
   return (
     <WalletContext.Provider value={{ currentUser, isLoading, signIn, signOut }}>
       {children}

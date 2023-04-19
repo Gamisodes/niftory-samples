@@ -1,21 +1,22 @@
 import cn from "classnames"
 import Link from "next/link"
-import { Loading } from "src/icon/Loading"
-import { useCallback, useState, useEffect } from "react"
+import { useRouter } from "next/router"
+import { useCallback, useEffect, useState } from "react"
 import { useCollectionFilter } from "src/hooks/useCollectionFilter"
+import { Loading } from "src/icon/Loading"
+import { useCollectionStore } from "src/store/collection"
+import { useFilterSearchStore } from "src/store/filterSearch"
 import { INftStore, useNftsStore } from "src/store/nfts"
+import { INft } from "src/typings/INfts"
 import shallow from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
-import { useCollectionStore } from "src/store/collection"
-import { useRouter } from "next/router"
-import { useFilterSearchStore } from "src/store/filterSearch"
 
 const selector = ({ allCollections, counter, isLoading }: INftStore) => ({
   allCollections,
   counter,
-  isLoading
+  isLoading,
 })
 const setSearch = (state) => state.setSearchInput
 const getSelectedCollection = ({ selectedCollection }) => ({ selectedCollection })
@@ -27,14 +28,14 @@ export const CollectionGrid = () => {
   const setSearchInput = useFilterSearchStore(setSearch, shallow)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(selectedCollection)
-  
+
   useEffect(() => {
-    router.push(`/app/collection/${selectedCollection}/`)
-    setSearchInput('')
+    router.push(`/collection/${selectedCollection}/`)
+    setSearchInput("")
   }, [selectedCollection])
 
   const counterKey = useCallback(
-    (nft) => {
+    (nft: INft) => {
       const key = JSON.stringify({
         title: nft?.title,
         // ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.level }),
@@ -60,13 +61,13 @@ export const CollectionGrid = () => {
   if (allCollections?.[selectedCollection])
     return (
       <section className="grid grid-cols-12 gap-8 w-max">
-          <div className="col-span-12">
-            <HorizontalFilter
-              setShowFilter={setShowFilter}
-              showFilter={showFilter}
-              selectedCollection={selectedCollection}
-            />
-          </div>
+        <div className="col-span-12">
+          <HorizontalFilter
+            setShowFilter={setShowFilter}
+            showFilter={showFilter}
+            selectedCollection={selectedCollection}
+          />
+        </div>
         {showFilter && (
           <div className="lg:col-span-3 col-span-12">
             <CollectionFilter filter={filter} setFilter={setFilter} />
@@ -86,7 +87,7 @@ export const CollectionGrid = () => {
                 <NFTCard
                   key={nft.id}
                   nft={nft}
-                  clickUrl={`/app/collection/${selectedCollection}/${nft.id}`}
+                  clickUrl={`/collection/${selectedCollection}/${nft.id}`}
                   counter={counterKey(nft)}
                 />
               ))
@@ -105,7 +106,7 @@ export const CollectionGrid = () => {
         <Link
           href={
             process.env.NODE_ENV === "development"
-              ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
+              ? `/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
               : `https://gamisodes.com/pages/collections`
           }
         >

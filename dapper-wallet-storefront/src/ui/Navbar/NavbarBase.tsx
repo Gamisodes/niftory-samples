@@ -53,7 +53,7 @@ const Burger = ({ onClick, isOpen }: IBurgerProps) => {
 
 function NavbarBase({
   menu,
-  homeUrl = process.env.NODE_ENV === 'development' ? '/' : "https://gamisodes.com/",
+  homeUrl = "/",
   children,
 }: // additionalLinks,
 Props) {
@@ -71,17 +71,16 @@ Props) {
         </section>
         <section className="flex items-center w-[126px] transform-gpu transition-transform lg:transition-none lg:hover:scale-105 justify-self-center lg:justify-self-start justify-center lg:justify-start">
           <Link href={homeUrl}>
-            {/* <Logo /> */}
             <Image src="/header_logo.avif" alt="BrainTrain Logo" width={100} height={40} />
           </Link>
           {children}
         </section>
-        <section className="flex lg:hidden ml-auto text-white">
-          <ActiveLink activeClassName="font-semibold" href={'/app/account'} className="flex gap-4 ">
+        {/* <section className="flex lg:hidden ml-auto text-white">
+          <ActiveLink activeClassName="font-semibold" href={"/app/account"} className="flex gap-4 ">
             Cart
-              <Cart />
+            <Cart />
           </ActiveLink>
-        </section>
+        </section> */}
         <section
           className={classnames(
             "flex justify-center items-center bg-header/40 backdrop-blur-md lg:backdrop-blur-none min-h-[50px] lg:bg-transparent flex-col absolute lg:relative top-0 w-full lg:w-auto lg:grid grid-cols-[minmax(100px,1fr)_fit-content(100%)] transform-gpu transition-transform lg:transition-none ease-out",
@@ -102,7 +101,9 @@ Props) {
                   }
                 )}
               >
-                {element.map((item) => <NavbarMenuItem key={item.title + item.href} item={item} />)}
+                {element.map((item) => (
+                  <NavbarMenuItem key={item.title + item.href} item={item} />
+                ))}
               </ul>
             )
           })}

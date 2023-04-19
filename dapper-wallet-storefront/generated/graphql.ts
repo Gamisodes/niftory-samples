@@ -1598,8 +1598,8 @@ export type UserData = {
 /** Represents a blockchain wallet scoped to a particular [App]({{Types.App}}) and [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets). */
 export type Wallet = Attributable & HasTimes & Identifiable & {
   __typename?: 'Wallet';
-  /** This wallet's address on the blockchain. */
-  address: Scalars['String'];
+  /** This wallet's address on the blockchain. May be null until the wallet is actually created, in the case of custodial wallets. */
+  address?: Maybe<Scalars['String']>;
   /** The User who owns the wallet */
   appUser?: Maybe<AppUser>;
   /** A mapping of attributes for this object. These will be stored in the Niftory API but will not be added to the blockchain. */
@@ -1664,14 +1664,14 @@ export type ReadyWalletMutationVariables = Exact<{
 }>;
 
 
-export type ReadyWalletMutation = { __typename?: 'Mutation', readyWallet?: { __typename?: 'Wallet', id: string, address: string, state: WalletState } | null };
+export type ReadyWalletMutation = { __typename?: 'Mutation', readyWallet?: { __typename?: 'Wallet', id: string, address?: string | null, state: WalletState } | null };
 
 export type RegisterWalletMutationVariables = Exact<{
   address: Scalars['String'];
 }>;
 
 
-export type RegisterWalletMutation = { __typename?: 'Mutation', registerWallet?: { __typename?: 'Wallet', id: string, address: string, verificationCode?: string | null, state: WalletState } | null };
+export type RegisterWalletMutation = { __typename?: 'Mutation', registerWallet?: { __typename?: 'Wallet', id: string, address?: string | null, verificationCode?: string | null, state: WalletState } | null };
 
 export type TransferNftToWalletMutationVariables = Exact<{
   nftModelId: Scalars['ID'];
@@ -1695,7 +1695,7 @@ export type VerifyWalletMutationVariables = Exact<{
 }>;
 
 
-export type VerifyWalletMutation = { __typename?: 'Mutation', verifyWallet?: { __typename?: 'Wallet', id: string, address: string, state: WalletState } | null };
+export type VerifyWalletMutation = { __typename?: 'Mutation', verifyWallet?: { __typename?: 'Wallet', id: string, address?: string | null, state: WalletState } | null };
 
 export type ContractQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1739,7 +1739,7 @@ export type WalletByAddressQueryVariables = Exact<{
 }>;
 
 
-export type WalletByAddressQuery = { __typename?: 'Query', walletByAddress?: { __typename?: 'Wallet', id: string, address: string, state: WalletState, verificationCode?: string | null } | null };
+export type WalletByAddressQuery = { __typename?: 'Query', walletByAddress?: { __typename?: 'Wallet', id: string, address?: string | null, state: WalletState, verificationCode?: string | null } | null };
 
 export type CompleteCheckoutWithDapperWalletMutationVariables = Exact<{
   transactionId: Scalars['String'];

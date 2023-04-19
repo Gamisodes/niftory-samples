@@ -30,6 +30,20 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/collection",
+        destination: "/collection/vip",
+        permanent: true,
+      },
+      {
+        source: "/app/:slug*",
+        destination: "/:slug*",
+        permanent: true,
+      },
+    ]
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

@@ -89,11 +89,10 @@ const TraitsBlock = ({ traits }: ITraitsProps) => {
 
 export const NFTDetail = (props: Props) => {
   const { nft, nftEditions } = props
-  const router = useRouter();
+  const router = useRouter()
   const poster = nft?.imageUrl?.mediaURL
 
   const handleBtn = useCallback(() => {
-    // router.push(`/app/collection/${router.query["collection"]}`, undefined, {scroll: false})
     router.back()
   }, [])
 
@@ -120,9 +119,20 @@ export const NFTDetail = (props: Props) => {
   //   return undefined
   // }, [nft?.id])
 
-  const renderEditions = useMemo(() => nftEditions?.editions.sort((a, b) => a - b).map((edition, idx) => (
-  <div key={idx} className="w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-3">{edition}</div>
-  )), [nftEditions?.editions])
+  const renderEditions = useMemo(
+    () =>
+      nftEditions?.editions
+        .sort((a, b) => a - b)
+        .map((edition, idx) => (
+          <div
+            key={idx}
+            className="w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-3"
+          >
+            {edition}
+          </div>
+        )),
+    [nftEditions?.editions]
+  )
 
   const renderEdition = useMemo(() => {
     if (nftEditions?.counter > 1) {
@@ -141,13 +151,18 @@ export const NFTDetail = (props: Props) => {
             : `Edition: ${nft?.edition ?? "~"} / ${nft?.editionSize}`}
         </>
       )
-  }, [nftEditions]) 
+  }, [nftEditions])
 
   return (
     <section className="h-auto sm:h-full py-4 lg:py-24">
       <div className="flex flex-col gap-y-4 sm:h-full h-auto">
         <div className="space-x-12 w-full ">
-          <div onClick={handleBtn} className="w-fit px-5 py-2 font-bold text-base font-dosis bg-header hover:bg-pink-900 rounded cursor-pointer">Go Go Back</div>
+          <div
+            onClick={handleBtn}
+            className="w-fit px-5 py-2 font-bold text-base font-dosis bg-header hover:bg-pink-900 rounded cursor-pointer"
+          >
+            Go Go Back
+          </div>
         </div>
         <div className="flex h-auto sm:h-full flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
           <div className="flex justify-center sm:min-w-[384px] lg:max-w-sm space-x-6 lg:space-x-8 p-8 rounded bg-white text-black font-dosis">
@@ -155,13 +170,13 @@ export const NFTDetail = (props: Props) => {
               <div className="space-y-3">
                 <h3 className="text-5xl font-bold">{nft?.title}</h3>
               </div>
-                <p>{nft?.description}</p>
+              <p>{nft?.description}</p>
               <div className="pt-6">
                 <div className="flex w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-6">
                   {renderEdition}
                 </div>
                 <div className="flex flex-wrap gap-3 py-3">
-                {nftEditions?.counter > 1 && renderEditions}
+                  {nftEditions?.counter > 1 && renderEditions}
                 </div>
               </div>
               {/* {traits && <TraitsBlock traits={traits} />} */}

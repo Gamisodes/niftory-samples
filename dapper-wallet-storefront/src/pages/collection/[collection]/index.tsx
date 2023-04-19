@@ -6,9 +6,9 @@ import { MetaTags } from "src/components/general/MetaTags"
 import { SectionHeader } from "src/ui/SectionHeader"
 
 const SelectedCollectionPage = () => {
-  const {query} = useRouter();
+  const { query } = useRouter()
 
-  const title = `My Collection "${query["collection"]}" | Gamisodes`
+  const title = `My "${query["collection"]}" Collection | Gamisodes`
   return (
     <>
       <MetaTags title={title} />

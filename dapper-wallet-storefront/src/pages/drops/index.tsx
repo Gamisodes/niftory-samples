@@ -1,9 +1,8 @@
+import { useNftModelsQuery } from "generated/graphql"
 import { useMemo } from "react"
+import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
-
-import { useNftModelsQuery } from "../../../../generated/graphql"
-import AppLayout from "../../../components/AppLayout"
-import { SectionHeader } from "../../../ui/SectionHeader"
+import { SectionHeader } from "src/ui/SectionHeader"
 
 export const NFTModelsPage = () => {
   const { data: result, isLoading } = useNftModelsQuery({

@@ -19,7 +19,7 @@ function WalletGuard({ children }: PropsWithChildren) {
               <p className="text-dosis text-black text-xl font-bold pb-6">
                 You need to login to your Dapper Wallet
               </p>
-              <Link href={"/app/account"} className="flex w-fit items-center">
+              <Link href={"/account"} className="flex w-fit items-center">
                 <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
                   Sign in / Sign up
                 </button>

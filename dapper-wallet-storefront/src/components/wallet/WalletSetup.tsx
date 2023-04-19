@@ -55,13 +55,7 @@ export function WalletSetup() {
           buttonText="View My Collection"
           error={error as Error}
           isLoading={false}
-          onClick={() =>
-            router.push(
-              process.env.NODE_ENV === "development"
-                ? `/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`
-                : `/app/collection`
-            )
-          }
+          onClick={() => router.push(`/collection`)}
         />
       )
   }
