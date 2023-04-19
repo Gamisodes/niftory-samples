@@ -28,7 +28,7 @@ function AuthGuard({ children }: PropsWithChildren) {
             >
               Sign in / Sign up
             </button> */}
-              <Link href={"/app/sign-in"} className="flex w-fit items-center">
+              <Link href={"/sign-in"} className="flex w-fit items-center">
                 <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
                   Sign in / Sign up
                 </button>

@@ -31,7 +31,7 @@ interface CheckoutProviderProps extends React.PropsWithChildren {
   id: string
 }
 
-const SUCCESS_DROP_URL = "/app/collection/brainTrainCollection/"
+const SUCCESS_DROP_URL = "/collection/brainTrainCollection/"
 
 export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id }) => {
   const { data: nftModelResponse } = useNftModelQuery({ id })
@@ -197,7 +197,6 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
   }
 
   const handleCheckout = useCallback(async () => {
-    // router.push("/app/collection/d4548186-78b3-4cb8-bd33-7fee34a38c5c")
     const price = convertNumber(nftModelResponse?.nftModel?.attributes?.price, DEFAULT_NFT_PRICE)
 
     setErrorState(null)

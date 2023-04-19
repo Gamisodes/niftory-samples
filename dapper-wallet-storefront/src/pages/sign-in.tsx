@@ -7,8 +7,8 @@ import { InferGetServerSidePropsType } from "next"
 import { useMemo } from "react"
 import EmailSignIn from "src/components/auth/email/EmailSignIn"
 import { MetaTags } from "src/components/general/MetaTags"
-import AppLayout from "../../components/AppLayout"
-import { SectionHeader } from "../../ui/SectionHeader"
+import AppLayout from "src/components/AppLayout"
+import { SectionHeader } from "src/ui/SectionHeader"
 
 const icons = {
   google: <GoogleIcon className="w-5 mr-4" />,
@@ -20,8 +20,7 @@ const SignInPage = ({ providers }: InferGetServerSidePropsType<typeof getServerS
 
   const optionsMemo: Record<string, unknown> = useMemo(
     () => ({
-      callbackUrl:
-        typeof window !== "undefined" ? `${window?.location?.origin ?? ""}/app/account` : "",
+      callbackUrl: typeof window !== "undefined" ? `${window?.location?.origin ?? ""}/account` : "",
     }),
     []
   )

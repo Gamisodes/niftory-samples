@@ -21,7 +21,7 @@ function Hero() {
             a unique costume using elements featured in Season 1 of the 1980s animated series.
           </p>
           <p className="font-dosis font-bold text-4xl mb-2">$25</p>
-          <Link href={`/app/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
+          <Link href={`/drops/${process.env.NEXT_PUBLIC_DROP_ID}`}>
             <Button className="">Purchase ticket</Button>
           </Link>
         </div>

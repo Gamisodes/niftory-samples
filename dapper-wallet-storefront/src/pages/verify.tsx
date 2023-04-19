@@ -1,9 +1,9 @@
 import Link from "next/link"
 
 import { useRouter } from "next/router"
+import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
-import AppLayout from "../../components/AppLayout"
-import { SectionHeader } from "../../ui/SectionHeader"
+import { SectionHeader } from "src/ui/SectionHeader"
 
 const VerifyPage = () => {
   const router = useRouter()
@@ -23,7 +23,7 @@ const VerifyPage = () => {
                 <span className="italic">{email}</span>
               </p>
             </div>
-            <Link href={"/app/sign-in"} className="flex w-fit items-center mx-auto">
+            <Link href={"/sign-in"} className="flex w-fit items-center mx-auto">
               <button className="uppercase font-dosis font-bold text-base p-2 px-16 text-white transition-colors bg-header hover:bg-purple">
                 Back
               </button>

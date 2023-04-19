@@ -87,7 +87,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
             To proceed with CHECKOUT, please connect your Dapper digital collectibles wallet. If
             you’ve already connected your wallet, please refresh this page.
           </p>
-          <Link href={"/app/account"}>
+          <Link href={"/account"}>
             <Button>Connect Wallet</Button>
           </Link>
         </>
@@ -102,7 +102,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
           The proceed with checkout, please Sign In. If you've already signed in, please refresh
           this page.
         </p>
-        <Link href="/app/sign-in">
+        <Link href="/sign-in">
           <Button>Sign In</Button>
         </Link>
       </>
