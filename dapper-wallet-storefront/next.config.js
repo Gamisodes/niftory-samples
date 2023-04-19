@@ -33,6 +33,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/",
+        destination: "/collection/vip",
+        permanent: true,
+      },
+      {
         source: "/collection",
         destination: "/collection/vip",
         permanent: true,
