@@ -1,7 +1,7 @@
 import * as fcl from "@onflow/fcl"
 import axios from "axios"
 import { convertNumber } from "consts/helpers"
-import { useNftModelQuery } from "generated/graphql"
+import { NftDocument, NftQuery, NftQueryVariables, useNftModelQuery } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import React, { createContext, useCallback, useContext, useRef, useState } from "react"
@@ -10,14 +10,20 @@ import { useWalletContext } from "src/hooks/useWalletContext"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
 import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
+import { Convertor } from "src/lib/Nfts/convertor"
+import { useQueryClient } from "@tanstack/react-query"
+import { fetchData } from "fetcher"
+import { INftStore, useNftsStore } from "src/store/nfts"
+import shallow from "zustand/shallow"
 
+const setNewNftState = (state: INftStore) => state.setNewNft
 interface CheckoutProviderContextType {
   checkout: () => void
   error: EErrorIdentity | string | null
   checkoutProgress: number
 }
 
-const missingProvider = () => {
+const missingProvider =  () => {
   throw new Error("Attempted to useNotificationDot without NotificationDotProvider")
 }
 
@@ -31,11 +37,25 @@ interface CheckoutProviderProps extends React.PropsWithChildren {
   id: string
 }
 
-const SUCCESS_DROP_URL = "/collection/brainTrainCollection/"
+const useGetNFTData = () => {
+  const queryClient = useQueryClient()
+  return useCallback(async (id) => {
+    await queryClient.prefetchQuery(
+      ["nft", {id}],
+      fetchData<NftQuery, NftQueryVariables>(NftDocument, {id}),
+    )
+  
+    const data: NftQuery = await queryClient.getQueryData(["nft", {id}])
+    
+    return Convertor.Niftory(data.nft)
+  }, [])
+}
 
 export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id }) => {
   const { data: nftModelResponse } = useNftModelQuery({ id })
+  const getNftData = useGetNFTData()
   const { currentUser } = useWalletContext()
+  const setNewNfts = useNftsStore(setNewNftState, shallow)
   const router = useRouter()
   const { data: user } = useSession()
 
@@ -71,7 +91,9 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       const nftId = initiateCheckoutResponse?.data?.data?.id ?? ""
 
       updateCheckoutProgress(0)
-      await router.push(`${SUCCESS_DROP_URL}${nftId}`)
+      const nftData = await getNftData(nftId)
+      setNewNfts(nftData)
+      router.push(`/collection/${nftData.collection}/${nftId}?title=${nftData.title}&edition=${nftData.edition}`)
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)
@@ -172,8 +194,10 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       })
 
       const nft = completeCheckoutResponse.data.data
+      const nftData = await getNftData(nft.id)
+      setNewNfts(nftData)
       updateCheckoutProgress(0)
-      await router.push(`${SUCCESS_DROP_URL}${nft.id}`)
+      await router.push(`/collection/${nftData.collection}/${nft.id}?title=${nftData.title}&edition=${nftData.edition}`)
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)

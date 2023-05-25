@@ -1707,7 +1707,7 @@ export type NftQueryVariables = Exact<{
 }>;
 
 
-export type NftQuery = { __typename?: 'Query', nft?: { __typename?: 'NFT', blockchainId?: string | null, metadata?: any | null, id: string, serialNumber?: number | null, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, attributes?: any | null, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, set: { __typename?: 'NFTSet', attributes?: any | null, blockchainId?: string | null, createdAt: any, id: string, image?: any | null, metadata?: any | null, state: NftSetBlockchainState, status?: Status | null, title: string, updatedAt?: any | null }, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null } | null } | null };
+export type NftQuery = { __typename?: 'Query', nft?: { __typename?: 'NFT', blockchainId?: string | null, blockchainState: NftBlockchainState, metadata?: any | null, id: string, serialNumber?: number | null, status?: TransferState | null, model?: { __typename?: 'NFTModel', id: string, attributes?: any | null, state: NftModelBlockchainState, createdAt: any, status?: Status | null, blockchainId?: string | null, metadata?: any | null, title: string, description: string, rarity?: SimpleRarityLevel | null, quantity?: any | null, set: { __typename?: 'NFTSet', attributes?: any | null, blockchainId?: string | null, createdAt: any, id: string, image?: any | null, metadata?: any | null, state: NftSetBlockchainState, status?: Status | null, title: string, updatedAt?: any | null }, content?: { __typename?: 'NFTContent', id: string, poster?: { __typename?: 'SimpleFile', url: any, state: FileState, contentType?: string | null, id: string } | null, files?: Array<{ __typename?: 'NFTFile', url: any, id: string, state: FileState, contentType?: string | null } | null> | null } | null } | null } | null };
 
 export type NftModelQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1905,12 +1905,15 @@ export const NftDocument = `
     query nft($id: ID!) {
   nft(id: $id) {
     blockchainId
+    blockchainState
     metadata
     id
     serialNumber
     model {
       id
       attributes
+      state
+      createdAt
       status
       blockchainId
       metadata

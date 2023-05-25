@@ -22,7 +22,7 @@ interface IAllCollection {
         counter: number, 
         editions: number[]
       }
-    }[]
+    }
   }>
 }
 
@@ -63,10 +63,11 @@ export function useCollectionMainInterface(
       defaultSortedCollectionValue
     )
     //Create counter for similar NFTs
-    const counter = {...defaultSortedCollectionValue}
+    const defaultCounterKeys = Object.values(ENftCollection).reduce((accum, item: string) => ({ ...accum, [item]: {} }), {})
+    const counter = {...defaultCounterKeys}    
     //Create object with collections of NFTs. Each similar NFT has been union 
     const collections = {...defaultSortedCollectionValue}
-
+    
     //Fill the object by filtering NFTs by collection key and similar title key
     Object.keys(sortedCollections).forEach((collection) => {
       collections[collection] = sortedCollections[collection]
@@ -77,6 +78,7 @@ export function useCollectionMainInterface(
             // ...(collection === ENftCollection.GADGETS && { level: nft.level }),
           })
           if (collection === ENftCollection.BRAIN_TRAIN && nft.editionSize === 1) {
+            counter[collection][val] = { counter: 1, editions: [nft.edition] }
             return true
           }
 

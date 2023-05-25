@@ -1,11 +1,11 @@
 import { convertNumber } from "consts/helpers"
-import { NftsByWalletQuery } from "generated/graphql"
+import { NftQuery, NftsByWalletQuery } from "generated/graphql"
 import { EMissionsLocation, ENftCollection, ENftRarity, ENftSource, IBrainTrainNft, IMissionsNft, INft } from "src/typings/INfts"
 import { DEFAULT_NFT_PRICE } from "../const"
 import { IItem } from "../flowConnector/types"
 import { ArrayElement } from "../types"
 
-type NifloryNftItem = ArrayElement<NftsByWalletQuery["nftsByWallet"]["items"]>
+type NifloryNftItem = ArrayElement<NftsByWalletQuery["nftsByWallet"]["items"]> | NftQuery["nft"]
 
 const collection = (traits) => {
   if (

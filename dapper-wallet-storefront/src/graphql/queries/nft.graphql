@@ -1,12 +1,15 @@
 query nft($id: ID!) {
   nft(id: $id) {
     blockchainId
+    blockchainState
     metadata
     id
     serialNumber
     model {
       id
       attributes
+      state
+      createdAt
       status
       blockchainId
       metadata
