@@ -1,7 +1,10 @@
 import { useRouter } from "next/router"
 import { useCallback, useMemo } from "react"
 import { INft } from "src/typings/INfts"
-import { Gallery } from "../../ui/Content/Gallery/Gallery"
+import { useCollectionStore } from "src/store/collection"
+import shallow from "zustand/shallow"
+import { Gallery } from "src/ui/Content/Gallery/Gallery"
+import cn from "classnames"
 
 interface Props {
   nft: INft
@@ -22,6 +25,9 @@ export interface ITraits {
 interface ITraitsProps {
   traits: ITraits
 }
+
+const setSelectedCollection = (state) => state.setCollection
+
 const TraitsBlock = ({ traits }: ITraitsProps) => {
   return (
     <div className="pt-2 text-lg">
@@ -88,12 +94,20 @@ const TraitsBlock = ({ traits }: ITraitsProps) => {
 }
 
 export const NFTDetail = (props: Props) => {
+  const setCollection = useCollectionStore(setSelectedCollection, shallow)
   const { nft, nftEditions } = props
   const router = useRouter()
   const poster = nft?.imageUrl?.mediaURL
-
+  const newNftEdition: string = router.query["edition"]?.toString()
+  const selectedCollection: string = router.query["collection"]?.toString()
+  
   const handleBtn = useCallback(() => {
-    router.back()
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      setCollection(selectedCollection)
+      router.push(`/collection/${selectedCollection}`)
+    }
   }, [])
 
   const product = useMemo(
@@ -126,9 +140,12 @@ export const NFTDetail = (props: Props) => {
         .map((edition, idx) => (
           <div
             key={idx}
-            className="w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-3"
+            className={cn(
+              "w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-3",
+              `${edition === +newNftEdition && "bg-amber-400"}`
+              )}
           >
-            {edition}
+            {edition !== 0 ? edition : 'Transfer Initiated'}
           </div>
         )),
     [nftEditions?.editions]

@@ -11,7 +11,9 @@ function Error({ statusCode }: ErrorProps) {
         <Center className="text-black">
           <SectionHeader
             text={
-              statusCode == 404 ? "Uh oh. We couldn't find that page." : "Something went wrong."
+              statusCode == 404
+                ? "Uh oh. We couldn't find that page."
+                : "Something went wrong. We know that problem and we are currently working on it"
             }
           />
         </Center>

@@ -73,7 +73,7 @@ export function useCollectionFilter(selectedCollection) {
 
 
   useEffect(() => {
-    if (!!filter.length) {
+    if (!!filter?.length) {
       if (selectedFilters?.length > 0 || searchInput?.length > 0) {
         const filteredNfts = filterNFTs(allCollections[selectedCollection], selectedFilters, filter)
         setNfts(searchFilter(filteredNfts, searchInput))

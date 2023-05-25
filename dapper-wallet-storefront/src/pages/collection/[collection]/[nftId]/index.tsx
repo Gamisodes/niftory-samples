@@ -18,26 +18,24 @@ const getCollections = ({ allCollections, counter }) => ({ allCollections, count
 
 export const NFTDetailPage = () => {
   const router = useRouter()
-  const { allCollections, counter } = useNftsStore(getCollections, shallow)
-
+  const { allCollections, counter } = useNftsStore(getCollections, shallow)    
   const nftId: string = router.query["nftId"]?.toString()
+  const nftTitle: string = router.query["title"]?.toString()
   const selectedCollection: string = router.query["collection"]?.toString()
-
-  const nft: INft = useMemo(() => allCollections[selectedCollection]?.find(({ id }) => id === nftId)
-    , [allCollections, selectedCollection, nftId])
-
+  const nft: INft = useMemo(() => allCollections[selectedCollection]?.find(({ id, title }) => id === nftId || title === nftTitle)
+  , [allCollections, selectedCollection, nftId, nftTitle])
+  
   const counterKey = useCallback(
     (nft) => {
       const key = JSON.stringify({
         title: nft?.title,
       })
-
-      return counter[selectedCollection][key]
+      return counter[selectedCollection]?.[key]
     },
     [nft, selectedCollection, counter, allCollections]
   )
 
-  if (!nftId) {
+  if (!nft) {
     return <LoginSkeleton />
   }
 
