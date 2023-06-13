@@ -11,6 +11,7 @@ export enum ENftRarity {
   RARE = "rare",
   EPIC = "epic",
   LEGENDARY = "legendary",
+  SUPER_LEGENDARY = "super-legendary"
 }
 export enum ENftCollection {
   GADGETS = "gadgets",
@@ -95,7 +96,8 @@ export enum EMissionsLocation {
   TRANSYLVANIA = 'transylvania',
   PARIS = 'paris', 
   DUBLIN = 'dublin',
-  NEWYORK = 'new york'
+  NEWYORK = 'new york',
+  SYDNEY = 'sydney'
 }
 
 export interface IMissionsNft extends INft {
