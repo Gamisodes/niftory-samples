@@ -592,8 +592,6 @@ export type Mutation = {
   deployContract?: Maybe<Contract>;
   /** Executes a transaction for a Niftory wallet. */
   executeTransaction?: Maybe<BlockchainTransaction>;
-  /** Initiates minting for a given [NFT]({{Types.NFT}}). */
-  mintNFT?: Maybe<Nft>;
   /** Initiates minting for a given [NFTModel]({{Types.NFTmodel}}). */
   mintNFTModel?: Maybe<NftModel>;
   /** Marks a [Wallet]({{Types.Wallet}}) as ready, indicating that the wallet is ready to receive [NFT]({{Types.NFT}})s from the app's [Contract]({{Types.Contract}}). The wallet must be verified before this succeeds. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
@@ -749,11 +747,6 @@ export type MutationExecuteTransactionArgs = {
   transaction: Scalars['String'];
   userId?: InputMaybe<Scalars['ID']>;
   walletId?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type MutationMintNftArgs = {
-  nftModelId: Scalars['ID'];
 };
 
 
@@ -1193,6 +1186,10 @@ export enum NftSetBlockchainState {
 export type NftSetCreateInput = {
   /** A mapping of attributes for this resource. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: InputMaybe<Scalars['JSONObject']>;
+  /** The list of ids of the uploaded metadata [File]({{Types.File}}s). This can be created using [createFileUploadUrl]({{Mutations.createFileUploadUrl}}). */
+  fileIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** Metadata that will be added to the blockchain */
+  metadata?: InputMaybe<Scalars['JSONObject']>;
   /** String labels to tag this [NFTSet]({{Types.NFTSet}}) with. These will be stored in the Niftory API but will not be added to the blockchain. */
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   /** The user-friendly title for this model. */
@@ -1204,6 +1201,8 @@ export type NftSetFilterInput = {
   blockchainIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   /** Database IDs of the [NFTSet]({{Types.NFTSet}})s to find. */
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
   /** The tags in the [NFTSet]({{Types.NFTSet}}) to find. The sets returned will contain every tag specified. */
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   /** The title of the [NFTSet]({{Types.NFTSet}}) to find. */
@@ -1214,6 +1213,10 @@ export type NftSetFilterInput = {
 export type NftSetUpdateInput = {
   /** A mapping of attributes for this resource. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: InputMaybe<Scalars['JSONObject']>;
+  /** The list of ids of the uploaded metadata [File]({{Types.File}}s). This can be created using [createFileUploadUrl]({{Mutations.createFileUploadUrl}}). */
+  fileIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** Metadata that will be added to the blockchain */
+  metadata?: InputMaybe<Scalars['JSONObject']>;
   /** String labels to tag this [NFTSet]({{Types.NFTSet}}) with. These will be stored in the Niftory API but will not be added to the blockchain. Updating this will replace the existing tags. */
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   /** The user-friendly title for this set. */
@@ -1263,7 +1266,7 @@ export type Query = {
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
   /** Gets a [File]({{Types.File}}) by its ID. */
-  file?: Maybe<SimpleFile>;
+  file?: Maybe<File>;
   /** Gets the list of invoices for your app. */
   invoices?: Maybe<InvoiceList>;
   /** Gets a [MarketplaceListing]({{Types.MarketplaceListing}}) by ID. */
@@ -1272,8 +1275,6 @@ export type Query = {
   marketplaceListings?: Maybe<MarketplaceListingList>;
   /** Gets an [NFT]({{Types.NFT}}) by database ID. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nft?: Maybe<Nft>;
-  /** Gets an [NFTFile]({{Types.NFTFile}}) by its ID, cloud storage, or IPFS URL. */
-  nftFile?: Maybe<NftFile>;
   /** Gets an [NFTListing]({{Types.NFTListing}}) by ID. */
   nftListing?: Maybe<NftListing>;
   /** Gets [NFTListing]({{Types.NFTListing}})s for the current [App]({{Types.App}}) context */
@@ -1358,13 +1359,6 @@ export type QueryMarketplaceListingsArgs = {
 
 export type QueryNftArgs = {
   id: Scalars['ID'];
-};
-
-
-export type QueryNftFileArgs = {
-  id?: InputMaybe<Scalars['String']>;
-  ipfsUrl?: InputMaybe<Scalars['String']>;
-  url?: InputMaybe<Scalars['String']>;
 };
 
 

@@ -913,6 +913,7 @@ export const allFilters = {
         { selected: false, value: "Paris" },
         { selected: false, value: "Singapore" },
         { selected: false, value: "Transylvania" },
+        { selected: false, value: "Sydney" },
       ],
     },
     {
@@ -946,6 +947,10 @@ export const allFilters = {
         {
           selected: false,
           value: "Legendary",
+        },
+        {
+          selected: false,
+          value: "Super-Legendary",
         },
       ],
     },

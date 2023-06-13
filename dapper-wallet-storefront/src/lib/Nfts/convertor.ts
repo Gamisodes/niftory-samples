@@ -37,6 +37,7 @@ const missionName = (title) => {
   else if (title.toLowerCase().includes('paris')) return EMissionsLocation.PARIS
   else if (title.toLowerCase().includes('dublin')) return EMissionsLocation.DUBLIN
   else if (title.toLowerCase().includes('new york')) return EMissionsLocation.NEWYORK
+  else if (title.toLowerCase().includes('sydney')) return EMissionsLocation.SYDNEY
   else ''
 }
 
