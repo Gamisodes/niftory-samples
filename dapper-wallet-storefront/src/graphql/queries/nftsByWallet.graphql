@@ -33,6 +33,11 @@ query nftsByWallet(
         createdAt
         content {
           id
+          files {
+            contentType
+            id
+            url
+          }
           poster {
             url
             state

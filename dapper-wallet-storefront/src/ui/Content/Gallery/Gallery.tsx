@@ -32,16 +32,16 @@ export const Gallery = ({ content }: GalleryProps) => {
       <div className="flex relative h-full">
         {content.contentType?.includes("video") ? (
           <video
-            className="aspect-[4_/_3] object-cover w-full"
+            className="rounded-[38px]"
             style={{
               objectFit: "scale-down",
             }}
+            width={450}
             src={content.contentUrl}
-            controls={true}
-            loop={true}
-            muted={true}
-            playsInline={true}
-            autoPlay={true}
+            loop
+            muted
+            playsInline
+            autoPlay
           />
         ) : (
           <Image

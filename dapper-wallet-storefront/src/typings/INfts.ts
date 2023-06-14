@@ -11,7 +11,7 @@ export enum ENftRarity {
   RARE = "rare",
   EPIC = "epic",
   LEGENDARY = "legendary",
-  SUPER_LEGENDARY = "super-legendary"
+  SUPER_LEGENDARY = "super-legendary",
 }
 export enum ENftCollection {
   GADGETS = "gadgets",
@@ -22,8 +22,8 @@ export enum ENftCollection {
   GAMISODES = "gamisodes",
 }
 export enum ENftSource {
-  BLOCKCHAIN = 'BlockChain',
-  NIFTORY = 'Niftory'
+  BLOCKCHAIN = "BlockChain",
+  NIFTORY = "Niftory",
 }
 
 export interface INft {
@@ -32,6 +32,7 @@ export interface INft {
   description: string
   source: ENftSource
   imageUrl: {
+    contentType: string
     thumbnailUrl: string
     mediaURL: string
   }
@@ -46,7 +47,7 @@ export interface INft {
   price?: number
   isBlocked?: boolean
   maxNftForUser?: number
-  traits?: {[key:string]: string}
+  traits?: { [key: string]: string }
 }
 
 enum EBrainTrainTraitsLabel {
@@ -58,12 +59,12 @@ enum EBrainTrainTraitsLabel {
   EYES = "Eyes",
   HEAD_PIECE = "Head Piece",
   MOUTH = "Mouth",
-  TYPE = "Type"
+  TYPE = "Type",
 }
 
 export interface IBrainTrainNft extends INft {
-  traits: { 
-    [key in EBrainTrainTraitsLabel]: string;
+  traits: {
+    [key in EBrainTrainTraitsLabel]: string
   }
 }
 
@@ -92,12 +93,12 @@ enum EMissionsTraitsLabel {
 }
 
 export enum EMissionsLocation {
-  SINGAPORE = 'singapore',
-  TRANSYLVANIA = 'transylvania',
-  PARIS = 'paris', 
-  DUBLIN = 'dublin',
-  NEWYORK = 'new york',
-  SYDNEY = 'sydney'
+  SINGAPORE = "singapore",
+  TRANSYLVANIA = "transylvania",
+  PARIS = "paris",
+  DUBLIN = "dublin",
+  NEWYORK = "new york",
+  SYDNEY = "sydney",
 }
 
 export interface IMissionsNft extends INft {
