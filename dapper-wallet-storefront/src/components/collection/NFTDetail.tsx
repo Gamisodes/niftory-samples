@@ -100,7 +100,7 @@ export const NFTDetail = (props: Props) => {
   const poster = nft?.imageUrl?.mediaURL
   const newNftEdition: string = router.query["edition"]?.toString()
   const selectedCollection: string = router.query["collection"]?.toString()
-  
+
   const handleBtn = useCallback(() => {
     if (window.history.length > 1) {
       router.back()
@@ -113,7 +113,7 @@ export const NFTDetail = (props: Props) => {
   const product = useMemo(
     () => ({
       content: {
-        contentType: "image",
+        contentType: nft.imageUrl.contentType,
         contentUrl: nft?.imageUrl?.mediaURL,
         thumbnailUrl: poster,
         alt: nft?.title,
@@ -143,9 +143,9 @@ export const NFTDetail = (props: Props) => {
             className={cn(
               "w-fit font-dosis font-normal text-xl text-center bg-header text-white py-1 px-3",
               `${edition === +newNftEdition && "bg-amber-400"}`
-              )}
+            )}
           >
-            {edition !== 0 ? edition : 'Transfer Initiated'}
+            {edition !== 0 ? edition : "Transfer Initiated"}
           </div>
         )),
     [nftEditions?.editions]
