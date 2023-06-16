@@ -38,7 +38,7 @@ export const MetaTags: React.FC<IMetaTags> = ({
       <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
       <link rel="manifest" href="/manifest.json" />
       <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
-      <link rel="shortcut icon" href="/favicon.ico" />
+      <link rel="shortcut icon" href="/icons/favicon.ico" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:url" content={origin} />
       <meta name="twitter:title" content={title} />

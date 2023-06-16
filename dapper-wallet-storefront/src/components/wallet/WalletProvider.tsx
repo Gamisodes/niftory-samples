@@ -72,7 +72,7 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     fcl.currentUser.subscribe((walletUser) => {
       const walletFromUser = user?.user?.walletAddress
       const walletFromBlockchain = walletUser?.addr
-      console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
+      // console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
       if (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) {
         leaveSignOutWithMessage()
         return
@@ -88,7 +88,9 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
 
   //protector. If backend says that our wallet connected to another user - drop session
   useEffect(() => {
-    console.info("Protector Data: ", data)
+    if (process.env.NODE_ENV === "development") {
+      console.info("Protector Data: ", data);
+    }
     if (isSuccess && data?.shouldLogout) leaveSignOutWithMessage()
   }, [isSuccess, data])
 
