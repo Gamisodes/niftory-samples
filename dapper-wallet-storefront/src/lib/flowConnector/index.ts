@@ -60,9 +60,7 @@ export class FlowCollections {
     return result;
   }
 
-  static create() {
-    console.log('fcl.currentUser', fcl.currentUser.authorization);
-    
+  static create() {    
     return new FlowCollections(fcl, script);
   }
 }

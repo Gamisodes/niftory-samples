@@ -20,7 +20,6 @@ export const BlockchainRequest = {
       await waitforme(3000)
       return DavisCollection
     } else if (AVAILABLE_LIST.includes(SERVER_TAG)) {
-      console.log("feature flag: ", SERVER_TAG)
       const response = await flow.getCollectionsData(
         wallet,
         process.env.NEXT_PUBLIC_COLLECTION_PATH.split(";")
