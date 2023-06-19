@@ -133,16 +133,21 @@ const NiftoryConvertor = (nft: NifloryNftItem): IBrainTrainNft | IMissionsNft =>
     traits.rarity = ENftRarity.COMMON
   }
   const isOpenEdition = brainTrainSelector(nft, "editionSize")?.toLowerCase() === "open"
-  console.log('inside convertor', nft);
+  const files = Array.isArray(nft?.model?.content?.files)
+    ? nft?.model?.content?.files[0]
+    : undefined
+  if (!files) {
+    console.log("test files inside convertor: ", nft)
+  }
   return {
     id: nft.id,
     title: brainTrainSelector(nft, "title"),
     description: brainTrainSelector(nft, "description"),
     source: ENftSource.NIFTORY,
     imageUrl: {
-      contentType: nft.model.content.files![0]?.contentType ?? "",
+      contentType: files?.contentType ?? "",
       thumbnailUrl: nft.model.content.poster.url,
-      mediaURL: nft.model.content.files![0]?.url ?? "",
+      mediaURL: files?.url ?? "",
     },
     level: brainTrainSelector(nft, "level"),
     collection: brainTrainCollection(brainTrainSelector(nft, "collection")?.toLowerCase()),
