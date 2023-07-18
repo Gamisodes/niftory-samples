@@ -40,13 +40,14 @@ const brainTrainSelector = (nft: NifloryNftItem, key: string) => {
 }
 
 const missionName = (title) => {
-  if (title.toLowerCase().includes("singapore")) return EMissionsLocation.SINGAPORE
-  else if (title.toLowerCase().includes("transylvania")) return EMissionsLocation.TRANSYLVANIA
-  else if (title.toLowerCase().includes("paris")) return EMissionsLocation.PARIS
-  else if (title.toLowerCase().includes("dublin")) return EMissionsLocation.DUBLIN
+  if (title.toLowerCase().includes("dublin")) return EMissionsLocation.DUBLIN
   else if (title.toLowerCase().includes("new york")) return EMissionsLocation.NEWYORK
+  else if (title.toLowerCase().includes("paris")) return EMissionsLocation.PARIS
+  else if (title.toLowerCase().includes("san diego")) return EMissionsLocation.SANDIEGO
+  else if (title.toLowerCase().includes("singapore")) return EMissionsLocation.SINGAPORE
   else if (title.toLowerCase().includes("sydney")) return EMissionsLocation.SYDNEY
-  else ""
+  else if (title.toLowerCase().includes("transylvania")) return EMissionsLocation.TRANSYLVANIA
+  else return ""
 }
 
 const BlockChainConvertor = (nft: IItem): INft => {

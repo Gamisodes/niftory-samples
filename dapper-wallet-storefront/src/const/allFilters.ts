@@ -911,6 +911,7 @@ export const allFilters = {
         { selected: false, value: "Dublin" },
         { selected: false, value: "New York" },
         { selected: false, value: "Paris" },
+        { selected: false, value: "San Diego" },
         { selected: false, value: "Singapore" },
         { selected: false, value: "Sydney" },
         { selected: false, value: "Transylvania" }

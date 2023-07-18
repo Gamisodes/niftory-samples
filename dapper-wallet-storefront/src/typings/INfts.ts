@@ -93,12 +93,13 @@ enum EMissionsTraitsLabel {
 }
 
 export enum EMissionsLocation {
-  SINGAPORE = "singapore",
-  TRANSYLVANIA = "transylvania",
-  PARIS = "paris",
   DUBLIN = "dublin",
   NEWYORK = "new york",
+  PARIS = "paris",
+  SANDIEGO = "san diego",
+  SINGAPORE = "singapore",
   SYDNEY = "sydney",
+  TRANSYLVANIA = "transylvania",
 }
 
 export interface IMissionsNft extends INft {
