@@ -1,0 +1,30 @@
+mutation CreateNiftoryWallet($appId: ID = "") {
+  createNiftoryWallet(appId: $appId) {
+    address
+    attributes
+    createdAt
+    id
+    state
+    updatedAt
+    verificationCode
+    walletType
+    nfts {
+      blockchainId
+      blockchainState
+      id
+      metadata
+      modelId
+      saleState
+      serialNumber
+      status
+    }
+    appUser {
+      createdAt
+      email
+      id
+      image
+      name
+      updatedAt
+    }
+  }
+}

@@ -5,9 +5,14 @@ import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
 import { SectionHeader } from "src/ui/SectionHeader"
 
-function AuthGuard({ children }: PropsWithChildren) {
+type AuthGuardProps = PropsWithChildren & {
+  isActive: boolean
+}
+
+function AuthGuard({ children, isActive = false }: AuthGuardProps) {
   const { status } = useSession()
-  if (status === "authenticated") {
+
+  if (!isActive || status === "authenticated") {
     return <>{children}</>
   }
 
@@ -45,7 +50,7 @@ function AuthGuard({ children }: PropsWithChildren) {
       <MetaTags />
       <AppLayout>
         <section className="mx-auto text-black">
-          <SectionHeader text="Loading..." />
+          <SectionHeader text="Loading user..." />
         </section>
       </AppLayout>
     </>

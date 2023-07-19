@@ -45,7 +45,7 @@ export function useCollectionFilter(selectedCollection) {
   const [filter, setFilter] = useState<IFilterState[]>(() => allFilters[selectedCollection])
   const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
-
+  
   useEffect(() => {
     if (allCollections?.[selectedCollection]?.length > 0 && !initialSet) {
       setNfts(allCollections[selectedCollection])

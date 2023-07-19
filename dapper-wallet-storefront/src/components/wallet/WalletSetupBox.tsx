@@ -42,9 +42,9 @@ export const WalletSetupBox = ({
 
   return (
     <>
-      <div className="font-dosis font-bold text-xl text-center pb-4">{text}</div>
+      <div className="font-dosis font-bold text-xl text-center px-4 pb-4 lg:px-0">{text}</div>
 
-      <div className="flex flex-col gap-2 max-w-[245px]">
+      <div className="flex flex-col gap-2 max-w-[270px]">
         <button
           className="uppercase font-dosis font-bold text-base p-2 px-5 text-white transition-colors bg-header hover:bg-purple"
           onClick={onClick}

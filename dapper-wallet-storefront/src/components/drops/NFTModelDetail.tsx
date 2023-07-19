@@ -1,16 +1,17 @@
 import { Text } from "@chakra-ui/react"
 import { EModelTypes } from "consts/const"
-import { useWalletByAddressQuery, WalletState } from "generated/graphql"
+import { useMyWalletsQuery, WalletState } from "generated/graphql"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
-import * as React from "react"
+import { memo, useMemo } from "react"
 import { Loading } from "src/icon/Loading"
 import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
 import Button from "src/ui/Button"
 import { useWalletContext } from "../../hooks/useWalletContext"
 import MetaTags from "../general/MetaTags"
 import useCheckout from "./checkout/CheckoutProvider"
+import { PropsWithChildren } from "react"
 import { NFTModelDetail } from "src/typings/NftModelDetail"
 
 const checkoutStatusMessages = [
@@ -43,9 +44,10 @@ interface IBuyButton {
   nftAvailableToBuy: number
   errorState?: string
 }
-const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButton) {
+
+export const BuyButton = memo(function BuyButton({ nftAvailableToBuy }: IBuyButton) {
   const { currentUser } = useWalletContext()
-  const { data: walletData } = useWalletByAddressQuery(
+  const { data: walletData } = useMyWalletsQuery(
     { address: currentUser?.addr },
     { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
   )
@@ -66,6 +68,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
               disabled={error && error === EErrorIdentity.NFT_LIMIT_REACHED}
               isLoading={checkoutProgress > 0}
               onClick={checkout}
+              className="w-fit"
             >
               Checkout
             </Button>
@@ -73,7 +76,7 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
         )
       } else {
         return (
-          <Button disabled>
+          <Button className="w-fit" disabled>
             <Text>Not Available</Text>
           </Button>
         )
@@ -111,7 +114,9 @@ const BuyButton = React.memo(function BuyButton({ nftAvailableToBuy }: IBuyButto
   return <Loading />
 })
 
-const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata }) {
+export type INftModelDetail = PropsWithChildren & NFTModelDetail
+
+const NFTModelDrop: React.FC<INftModelDetail> = function NFTModelDrop({ metadata, children }) {
   const { error } = useCheckout()
 
   const NFT_READY_TO_BUY =
@@ -130,7 +135,7 @@ const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata 
 
   const mainImage = metadata.content[0]
 
-  const renderImage = React.useMemo(() => {
+  const renderImage = useMemo(() => {
     switch (mainImage.contentType) {
       case "video/mp4":
         return (
@@ -164,7 +169,6 @@ const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata 
           <div className="z-10">{renderImage}</div>
           <div className="text-white font-bangers max-w-md flex flex-col justify-center">
             <div className="grid grid-cols-3 w-[232px] mb-2 gap-3">
-              {}
               {metadata.type === EModelTypes.WRAPPER &&
                 brain_train_links.map((val) => (
                   <Image key={val} src={val} alt="nft element" width={70} height={80} />
@@ -182,14 +186,17 @@ const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata 
                 </p>
               </>
             )}
-            <p className="font-dosis font-bold text-4xl mb-2">${metadata.price}</p>
+            {typeof metadata?.price !== "undefined" && (
+              <p className="font-dosis font-bold text-4xl mb-2">
+                {metadata.price === 0 ? "Free" : `$${metadata?.price}`}
+              </p>
+            )}
             {error && (
               <>
                 <p className="font-dosis text-lg mb-3">{ERROR_MESSAGES[error] ?? error ?? ""}</p>
               </>
             )}
-
-            <BuyButton nftAvailableToBuy={NFT_READY_TO_BUY} />
+            {children}
           </div>
         </div>
       </section>
@@ -197,4 +204,4 @@ const NFTModelDrop: React.FC<NFTModelDetail> = function NFTModelDrop({ metadata 
   )
 }
 
-export default React.memo(NFTModelDrop)
+export default memo(NFTModelDrop)

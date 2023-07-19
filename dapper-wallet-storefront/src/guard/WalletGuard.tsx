@@ -5,8 +5,16 @@ import { MetaTags } from "src/components/general/MetaTags"
 import { useWalletContext } from "src/hooks/useWalletContext"
 import { SectionHeader } from "src/ui/SectionHeader"
 
-function WalletGuard({ children }: PropsWithChildren) {
+type WalletGuardProps = PropsWithChildren & {
+  isActive: boolean
+}
+
+function WalletGuard({ children, isActive = false }: WalletGuardProps) {
   const { currentUser } = useWalletContext()
+
+  if (!isActive) {
+    return <>{children}</>
+  }
 
   if (currentUser && !currentUser.loggedIn) {
     return (
@@ -40,7 +48,7 @@ function WalletGuard({ children }: PropsWithChildren) {
       <MetaTags />
       <AppLayout>
         <section className="mx-auto text-black">
-          <SectionHeader text="Loading..." />
+          <SectionHeader text="Loading blockchain wallet..." />
         </section>
       </AppLayout>
     </>

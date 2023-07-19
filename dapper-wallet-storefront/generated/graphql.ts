@@ -39,21 +39,78 @@ export type AdminUser = Identifiable & UserData & {
   name?: Maybe<Scalars['String']>;
   /** The organizations this user belongs to. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
+  /** Role of the admin user */
+  role?: Maybe<Scalars['String']>;
+  /** Accepted datetime of TOS agreement */
+  tosAcceptanceDateTime?: Maybe<Scalars['DateTime']>;
+};
+
+export type AdminUserCreateInput = {
+  /** The appIds of apps to create the user to */
+  appIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** The email of the user */
+  email?: InputMaybe<Scalars['String']>;
+  /** The name of the user */
+  name?: InputMaybe<Scalars['String']>;
+  /** The role of the user */
+  role?: InputMaybe<Scalars['String']>;
+};
+
+/** A list of admin Users. */
+export type AdminUserList = Pageable & {
+  __typename?: 'AdminUserList';
+  /** The cursor to use to fetch the next page of results, if any. */
+  cursor?: Maybe<Scalars['String']>;
+  /** The admin users in this list. */
+  items?: Maybe<Array<Maybe<AdminUser>>>;
+};
+
+export type AdminUserUpdateInput = {
+  /** The appIds of apps to update the user to */
+  appIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** The email of the user */
+  email?: InputMaybe<Scalars['String']>;
+  /** The name of the user */
+  name?: InputMaybe<Scalars['String']>;
+  /** The role of the user */
+  role?: InputMaybe<Scalars['String']>;
+};
+
+export type AdminUsersFilterInput = {
+  /** The role of the user to filter */
+  role?: InputMaybe<Scalars['String']>;
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
 };
 
 /** An application in the Niftory ecosystem. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
 export type App = Identifiable & {
   __typename?: 'App';
+  /** The blockchain in which this app is deployed. */
+  blockchain?: Maybe<Blockchain>;
+  /** The number of concurrent blockchain operations for app. */
+  concurrency?: Maybe<Scalars['UnsignedInt']>;
   /** The contract associated with this app. */
   contract?: Maybe<Contract>;
+  /** The credentials for this app. */
+  credentials?: Maybe<Array<Maybe<Keys>>>;
   /** The dapper merchant account for this app */
   dapperMerchantAccountAddress?: Maybe<Scalars['String']>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
-  /** The keys for this app. */
+  /** The key pool size for creation of niftory custodial wallets. */
+  keyPoolSize?: Maybe<Scalars['UnsignedInt']>;
+  /**
+   * The keys for this app.
+   * @deprecated Use credentials instead
+   */
   keys?: Maybe<Keys>;
   /** The name for this app. */
   name?: Maybe<Scalars['String']>;
+  /** The organization this app belongs to */
+  organization?: Maybe<Organization>;
+  /** Blockchain storage address for the app's NFTs after they are initially minted */
+  storageAddress?: Maybe<Scalars['String']>;
 };
 
 export type AppCreateInput = {
@@ -68,6 +125,22 @@ export type AppCreateInput = {
   organizationId?: InputMaybe<Scalars['String']>;
   /** The URIs to redirect to after signin. Only required if using oauth */
   redirectUris?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+/** A list of all apps. */
+export type AppList = Pageable & {
+  __typename?: 'AppList';
+  /** The cursor to use to fetch the next page of results, if any. */
+  cursor?: Maybe<Scalars['String']>;
+  /** The Apps in this list. */
+  items?: Maybe<Array<Maybe<App>>>;
+};
+
+export type AppUpdateInput = {
+  /** Name of the app */
+  name?: InputMaybe<Scalars['String']>;
+  /** Storage address of the app  */
+  storageAddress?: InputMaybe<Scalars['String']>;
 };
 
 /** Represents a user of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -105,6 +178,16 @@ export type AppUserList = Pageable & {
   cursor?: Maybe<Scalars['String']>;
   /** The AppUsers in this list. */
   items?: Maybe<Array<Maybe<AppUser>>>;
+};
+
+export type AppUsersFilterInput = {
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
+};
+
+export type AppsFilterInput = {
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
 };
 
 /** An interface representing objects that have attributes property for non-blockchain property storage. */
@@ -205,10 +288,14 @@ export type Contract = {
   blockchain?: Maybe<Blockchain>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** On-chain contract metadata. */
+  metadata?: Maybe<Scalars['JSONObject']>;
   /** The name of this contract. */
   name?: Maybe<Scalars['String']>;
   /** The state of this contract. */
   state?: Maybe<ContractState>;
+  /** The version of niftory contract */
+  version?: Maybe<Scalars['String']>;
 };
 
 /** The state of a contract on the blockchain */
@@ -217,8 +304,27 @@ export enum ContractState {
   Created = 'CREATED',
   /** The contract is being deployed. */
   Deploying = 'DEPLOYING',
+  /** The contract deployment failed. */
+  DeployFailed = 'DEPLOY_FAILED',
   /** The contract has been deployed. */
-  Ready = 'READY'
+  Ready = 'READY',
+  /** The contract update failed. */
+  UpdateFailed = 'UPDATE_FAILED',
+  /** The contract is being updated. */
+  Updating = 'UPDATING'
+}
+
+export type ContractUpdateInput = {
+  /** The version of the contract to update to */
+  version?: InputMaybe<ContractVersion>;
+};
+
+/** The type of contract versions. */
+export enum ContractVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+  V2_1 = 'V2_1',
+  V2_1_1 = 'V2_1_1'
 }
 
 export type CreateFileOptionsInput = {
@@ -240,6 +346,8 @@ export type CreateNftListingInput = {
   nftModelId: Scalars['ID'];
   /** The price of the NFTlisting. Must be greater than 0. */
   price: Scalars['PositiveFloat'];
+  /** The status of the NFTListing, example - HIDE_IN_STORE, SHOW_IN_STORE  */
+  state?: InputMaybe<ListingState>;
   /** The title of the listing */
   title?: InputMaybe<Scalars['String']>;
 };
@@ -248,6 +356,19 @@ export type CreateNftListingInput = {
 export type CreateNiftoryWalletInput = {
   /** A mapping of attributes for this resource. These will be stored in the Niftory API but will not be added to the blockchain. */
   attributes?: InputMaybe<Scalars['JSONObject']>;
+};
+
+/** The type of client for Niftory authentication. */
+export enum CredentialType {
+  /** A client that can't keep secrets (e.g. TV or game console). */
+  Device = 'DEVICE',
+  /** A server-side client that can keep secrets. */
+  Server = 'SERVER'
+}
+
+export type CredentialUpdateInput = {
+  /** The URIs to redirect to after signin. Only required if using oauth. Will replace the current list. */
+  redirectUris: Array<InputMaybe<Scalars['URL']>>;
 };
 
 /** A currency that can be accepted for payment. */
@@ -260,6 +381,50 @@ export enum Currency {
   Fut = 'FUT',
   /** The United States dollar. */
   Usd = 'USD'
+}
+
+/** Custom Blockchain Transaction that can be peroformed on [Wallet]({{Types.Wallet}}) scoped to a specific app */
+export type CustomTransaction = Identifiable & {
+  __typename?: 'CustomTransaction';
+  /** The appId of the app this Custom Transaction belongs to. */
+  appId: Scalars['ID'];
+  /** The Approval state of the transaction. Transactions need to be approved by a Niftory Admin before execution */
+  approvalState?: Maybe<CustomTransactionState>;
+  /** The code of the custom transaction written in Cadence */
+  code: Scalars['String'];
+  hash: Scalars['String'];
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** The metadata script for the transaction. */
+  metadataScript?: Maybe<Scalars['String']>;
+  /**  A user friendly name for the custom transaction */
+  name: Scalars['String'];
+};
+
+export type CustomTransactionCreateInput = {
+  /** The code of the custom transaction written in cadence */
+  code: Scalars['String'];
+  /** The associated metadata script of the transaction, if it exists */
+  metadataScript: Scalars['String'];
+  /** a user friendly name for the transaction */
+  name: Scalars['String'];
+};
+
+/** List of custom blokchain transactions. */
+export type CustomTransactionList = Pageable & {
+  __typename?: 'CustomTransactionList';
+  /** The cursor to use to fetch the next page of results, if any. */
+  cursor?: Maybe<Scalars['String']>;
+  /** The custom blockchain Transactions in this list */
+  items?: Maybe<Array<Maybe<CustomTransaction>>>;
+};
+
+/** The state of a custom blockchain transaction. */
+export enum CustomTransactionState {
+  /** The transaction has been allowed by an admin. */
+  Allowed = 'ALLOWED',
+  /** The transaction is pending. */
+  Submitted = 'SUBMITTED'
 }
 
 /** A transaction used for Dapper wallet. */
@@ -280,10 +445,14 @@ export type EvmContract = Contract & Identifiable & {
   blockchain?: Maybe<Blockchain>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** On-chain contract metadata. */
+  metadata?: Maybe<Scalars['JSONObject']>;
   /** The name of this contract. */
   name?: Maybe<Scalars['String']>;
   /** The state of this contract. */
   state?: Maybe<ContractState>;
+  /** The version of niftory contract */
+  version?: Maybe<Scalars['String']>;
 };
 
 /** An interface containing common data about files. */
@@ -344,6 +513,8 @@ export type FlowContract = Contract & Identifiable & {
   blockchain?: Maybe<Blockchain>;
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** On-chain contract metadata. */
+  metadata?: Maybe<Scalars['JSONObject']>;
   /** The name of this contract. */
   name?: Maybe<Scalars['String']>;
   /** Storage paths for this contract. */
@@ -352,6 +523,8 @@ export type FlowContract = Contract & Identifiable & {
   state?: Maybe<ContractState>;
   /** Transactions that need to be given to Dapper Wallet for use with their platform. */
   transactions?: Maybe<FlowContractTransactions>;
+  /** The version of niftory contract */
+  version?: Maybe<Scalars['String']>;
 };
 
 /** Paths used by Flow contracts for storage. */
@@ -443,6 +616,21 @@ export enum InvoiceState {
   Pending = 'PENDING'
 }
 
+export type InvoicesFilterInput = {
+  /** The end date of invoices to filter */
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  /** The starting date of invoice to filter */
+  startDate?: InputMaybe<Scalars['DateTime']>;
+};
+
+/** The type of kms key types. */
+export enum KmsKeyProviderType {
+  /** The aws kms key provider */
+  AwsKmsKeyProvider = 'AWS_KMS_KEY_PROVIDER',
+  /** The GCP kms key provider */
+  GcpKmsKeyProvider = 'GCP_KMS_KEY_PROVIDER'
+}
+
 /** The keys for an application in the Niftory platform */
 export type Keys = {
   __typename?: 'Keys';
@@ -452,6 +640,10 @@ export type Keys = {
   clientId?: Maybe<Scalars['String']>;
   /** The public Client Secret. */
   clientSecret?: Maybe<Scalars['String']>;
+  /** The URIs that users can be redirected to after authenticating with this client. */
+  redirectUris?: Maybe<Array<Maybe<Scalars['URL']>>>;
+  /** The type of credential. */
+  type?: Maybe<CredentialType>;
 };
 
 /** The state of a listing. */
@@ -555,6 +747,12 @@ export type MultiCurrencyTransaction = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Marks the current TOS version as accepted for the logged in user */
+  acceptAdminUserTOS?: Maybe<AdminUser>;
+  /** Adds a credential for the specified app. Only supported for privileged clients. */
+  addCredential?: Maybe<Keys>;
+  /** Approves a custom blockchain transaction to execute it on the blockchain */
+  approveCustomTransaction?: Maybe<CustomTransaction>;
   /** Initiates checkout for a reserved NFT. */
   checkout?: Maybe<InitiateCheckoutResponse>;
   /** Initiates checkout with Dapper Wallet of specified [NFTModel]({{Types.NFTModel}})s, and returns a signed transaction to complete checkout with. Flow blockchain only. */
@@ -567,8 +765,12 @@ export type Mutation = {
   completeMarketplaceList?: Maybe<MarketplaceListing>;
   /** Completes a marketplace listing purchase */
   completeMarketplacePurchase?: Maybe<MarketplaceListing>;
+  /** Updates an admin user */
+  createAdminUser?: Maybe<AdminUser>;
   /** Creates the [App]({{Types.App}}) on the specified organization for the user. */
   createApp?: Maybe<App>;
+  /** Creates a custom blockchain transaction. that can be later executed on the blockchain */
+  createCustomTransaction?: Maybe<CustomTransaction>;
   /** Generates a pre-signed URL that can then be used to upload a file. Once the file has been uploaded to the URL, it will automatically be uploaded to IPFS (if desired). Use the returned [File]({{Types.SimpleFile}}).state to track the upload. */
   createFileUploadUrl?: Maybe<File>;
   /** Creates a new [NFTListing]({{Types.NFTListing}}). */
@@ -577,9 +779,13 @@ export type Mutation = {
   createNFTModel?: Maybe<NftModel>;
   /** Creates a new [NFTSet]({{Types.NFTSet}}). */
   createNFTSet?: Maybe<NftSet>;
-  /** Provisions a custodial Niftory [Wallet]({{Types.Wallet}}) and, if specified, associates it with the given [AppUser]({{Types.AppUser}}). Note: The call fails if the user already has a wallet. */
+  /** Provisions a Niftory [Wallet]({{Types.Wallet}}) and, if specified, associates it with the given [AppUser]({{Types.AppUser}}). Note: The call fails if the user already has a wallet. */
   createNiftoryWallet?: Maybe<Wallet>;
   createOrganization: Organization;
+  /** Deletes a credential and returns the deleted credential. Only supported for privileged clients. */
+  deleteCredential?: Maybe<Keys>;
+  /** Deletes a custom blockchain transaction from the database, This won't delete the transaction from the blockchain */
+  deleteCustomTransaction?: Maybe<CustomTransaction>;
   /** Deletes the specified file from cloud storage (but not IPFS). */
   deleteFile?: Maybe<File>;
   /** Deletes an existing [NFTListing]({{Types.NFTListing}}). */
@@ -588,12 +794,15 @@ export type Mutation = {
   deleteNFTModel?: Maybe<NftModel>;
   /** Deletes an existing [NFTSet]({{Types.NFTSet}}). This operation will only be perfomed if no NFTs have been minted from this NFTSet */
   deleteNFTSet?: Maybe<NftSet>;
+  deleteOrganizationMember: OrganizationMember;
   /** Deploys the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   deployContract?: Maybe<Contract>;
   /** Executes a transaction for a Niftory wallet. */
   executeTransaction?: Maybe<BlockchainTransaction>;
   /** Initiates minting for a given [NFTModel]({{Types.NFTmodel}}). */
   mintNFTModel?: Maybe<NftModel>;
+  /** Initiates minting for a given [NFTSet]({{Types.NFTSet}}). */
+  mintNFTSet?: Maybe<NftSet>;
   /** Marks a [Wallet]({{Types.Wallet}}) as ready, indicating that the wallet is ready to receive [NFT]({{Types.NFT}})s from the app's [Contract]({{Types.Contract}}). The wallet must be verified before this succeeds. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
   readyWallet?: Maybe<Wallet>;
   /** Registers a [Wallet]({{Types.Wallet}}), associating it with the currently signed-in [AppUser]({{Types.AppUser}}) if specified. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
@@ -610,12 +819,22 @@ export type Mutation = {
   transfer?: Maybe<Nft>;
   /** Unlinks the specified [Wallet]({{Types.Wallet}}) from the currently signed in user. */
   unlinkWallet?: Maybe<Wallet>;
+  /** Updates an admin user */
+  updateAdminUser?: Maybe<AdminUser>;
+  /** Updates app details of provided appId */
+  updateApp?: Maybe<App>;
+  /** Updates the [Contract]({{Types.Contract}}) for the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
+  updateContract?: Maybe<Contract>;
+  /** Updates credentials for the specified client. Only supported for privileged clients. */
+  updateCredential?: Maybe<Keys>;
   /** Updates an existing [NFTListing]({{Types.NFTListing}}). */
   updateNFTListing?: Maybe<NftListing>;
   /** Updates an existing [NFTModel]({{Types.NFTModel}}). Note that if this NFTModel has already been used to mint an NFT, the update operation will fail for any properties that affect the blockchain (such as 'quantity', 'title', 'metadata', etc.), whereas updating 'attributes' will succeed. */
   updateNFTModel?: Maybe<NftModel>;
   /** Updates an existing [NFTSet]({{Types.NFTSet}}). */
   updateNFTSet?: Maybe<NftSet>;
+  updateOrganization: Organization;
+  updateOrganizationMember: OrganizationMember;
   /** Update a [Wallet]({{Types.Wallet}}) of the currently signed-in user. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/set-up-wallets). */
   updateWallet?: Maybe<Wallet>;
   /** Creates an [NFTContent]({{Types.NFTContent}}) object containing pre-signed URLs that can then be used to upload a file and poster. The primary file will automatically be uploaded to IPFS once it's been uploaded to the pre-signed URL. Each returned [File]({{Types.SimpleFile}}) has a 'state' property to track the upload. */
@@ -624,6 +843,18 @@ export type Mutation = {
   verifyWallet?: Maybe<Wallet>;
   /** Initiates the withdrawal of an [NFT]({{Types.NFT}}) from a custodial Niftory [Wallet]{{Types.Wallet}} to a receiver [Wallet]({{Types.Wallet}}) address */
   withdraw?: Maybe<Nft>;
+};
+
+
+export type MutationAddCredentialArgs = {
+  appId: Scalars['ID'];
+  data?: InputMaybe<CredentialUpdateInput>;
+  type?: InputMaybe<CredentialType>;
+};
+
+
+export type MutationApproveCustomTransactionArgs = {
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -668,8 +899,19 @@ export type MutationCompleteMarketplacePurchaseArgs = {
 };
 
 
+export type MutationCreateAdminUserArgs = {
+  data?: InputMaybe<AdminUserCreateInput>;
+};
+
+
 export type MutationCreateAppArgs = {
   data: AppCreateInput;
+};
+
+
+export type MutationCreateCustomTransactionArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  data: CustomTransactionCreateInput;
 };
 
 
@@ -711,6 +953,16 @@ export type MutationCreateOrganizationArgs = {
 };
 
 
+export type MutationDeleteCredentialArgs = {
+  clientId: Scalars['ID'];
+};
+
+
+export type MutationDeleteCustomTransactionArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
 export type MutationDeleteFileArgs = {
   id?: InputMaybe<Scalars['ID']>;
   url?: InputMaybe<Scalars['String']>;
@@ -728,7 +980,14 @@ export type MutationDeleteNftModelArgs = {
 
 
 export type MutationDeleteNftSetArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteOrganizationMemberArgs = {
+  organizationId?: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -744,7 +1003,8 @@ export type MutationExecuteTransactionArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   args?: InputMaybe<Scalars['JSONObject']>;
   name?: InputMaybe<Scalars['String']>;
-  transaction: Scalars['String'];
+  transaction?: InputMaybe<Scalars['String']>;
+  transactionId?: InputMaybe<Scalars['ID']>;
   userId?: InputMaybe<Scalars['ID']>;
   walletId?: InputMaybe<Scalars['ID']>;
 };
@@ -754,6 +1014,12 @@ export type MutationMintNftModelArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
   quantity?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type MutationMintNftSetArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
 };
 
 
@@ -810,6 +1076,30 @@ export type MutationUnlinkWalletArgs = {
 };
 
 
+export type MutationUpdateAdminUserArgs = {
+  data?: InputMaybe<AdminUserUpdateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationUpdateAppArgs = {
+  appId: Scalars['ID'];
+  data: AppUpdateInput;
+};
+
+
+export type MutationUpdateContractArgs = {
+  appId: Scalars['ID'];
+  data?: InputMaybe<ContractUpdateInput>;
+};
+
+
+export type MutationUpdateCredentialArgs = {
+  clientId: Scalars['ID'];
+  data: CredentialUpdateInput;
+};
+
+
 export type MutationUpdateNftListingArgs = {
   data: UpdateNftListingInput;
   id: Scalars['ID'];
@@ -823,8 +1113,20 @@ export type MutationUpdateNftModelArgs = {
 
 
 export type MutationUpdateNftSetArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   data: NftSetUpdateInput;
   id: Scalars['ID'];
+};
+
+
+export type MutationUpdateOrganizationArgs = {
+  data: OrganizationUpdateInput;
+  id: Scalars['ID'];
+};
+
+
+export type MutationUpdateOrganizationMemberArgs = {
+  data: OrganizationMemberUpdateInput;
 };
 
 
@@ -883,6 +1185,8 @@ export type Nft = BlockchainEntity & Identifiable & SellableEntity & {
   status?: Maybe<TransferState>;
   /** Blockchain transcations for this NFT */
   transactions?: Maybe<Array<Maybe<BlockchainTransaction>>>;
+  /** Most recent updated date of this NFT, if any */
+  updatedAt?: Maybe<Scalars['DateTime']>;
   /** The wallet containing this NFT, if it is owned by a user. */
   wallet?: Maybe<Wallet>;
 };
@@ -955,6 +1259,8 @@ export type NftFilterInput = {
   nftModelIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** Sale states of the [NFT]({{Types.NFT}})s to find. When querying within a user context, defaults to [PAID, FULFILLED]. Otherwise, defaults to all. */
   saleStates?: InputMaybe<Array<InputMaybe<SaleState>>>;
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
   /** Transfer states of the [NFT]({{Types.NFT}})s to find. Defaults to all. */
   transferStates?: InputMaybe<Array<InputMaybe<TransferState>>>;
 };
@@ -996,7 +1302,7 @@ export type NftListing = Attributable & HasTimes & Identifiable & {
 export type NftListingFilterInput = {
   /** The IDs of the NFTListing. */
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  /** The ID of the NFTModel that the NFTListing should belong to. */
+  /** The status of the NFTListing, example - HIDE_IN_STORE, SHOW_IN_STORE  */
   state?: InputMaybe<ListingState>;
   /** The title of the NFTListing. */
   title?: InputMaybe<Scalars['String']>;
@@ -1078,7 +1384,7 @@ export type NftModelCreateInput = {
   description?: InputMaybe<Scalars['String']>;
   /** Metadata that will be added to the blockchain for any NFTs minted from this model. */
   metadata?: InputMaybe<Scalars['JSONObject']>;
-  /** The total supply of NFTs that can be available for this model. This can be updated until the NFTModel is minted. */
+  /** The total supply of NFTs that can be available for this model. This should be at least 1. This can be updated until the NFTModel is minted. */
   quantity?: InputMaybe<Scalars['PositiveInt']>;
   /** The status of the model. */
   status?: InputMaybe<Status>;
@@ -1098,6 +1404,8 @@ export type NftModelFilterInput = {
   hasMarketplaceListing?: InputMaybe<Scalars['Boolean']>;
   /** Database IDs of the [NFTModel]({{Types.NFTModel}})s to find. */
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
   /** The IDs of the [NFTSet]({{Types.NFTSet}})s that the [NFTModel]({{Types.NFTModel}}) should belong to. */
   setIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   /** Filter by [NFTModel]({{Types.NFTModel}}) status. */
@@ -1231,13 +1539,53 @@ export type Organization = Identifiable & {
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
   /** This organization's members. */
-  members?: Maybe<Array<Maybe<AdminUser>>>;
+  members?: Maybe<Array<Maybe<OrganizationMember>>>;
   name?: Maybe<Scalars['String']>;
 };
 
 export type OrganizationCreateInput = {
   /** A user to add to the organization. Required if using backend credentials. */
   adminUserEmail?: InputMaybe<Scalars['EmailAddress']>;
+  name: Scalars['String'];
+};
+
+/** Member of an organization */
+export type OrganizationMember = Identifiable & UserData & {
+  __typename?: 'OrganizationMember';
+  /** The apps this user is an admin for. */
+  apps?: Maybe<Array<Maybe<App>>>;
+  /** This user's email. */
+  email?: Maybe<Scalars['EmailAddress']>;
+  /** A unique identifier for this object in the Niftory API. */
+  id: Scalars['ID'];
+  /** The URL for this user's image. */
+  image?: Maybe<Scalars['String']>;
+  /** The user's full name. */
+  name?: Maybe<Scalars['String']>;
+  /** Role of the user in organization */
+  organizationRole?: Maybe<OrganizationRole>;
+};
+
+export type OrganizationMemberUpdateInput = {
+  /** The list of appIds in organization to connect user to */
+  appIds: Array<InputMaybe<Scalars['String']>>;
+  /** The email of the organization member */
+  email: Scalars['String'];
+  /** The name of the organization member */
+  name: Scalars['String'];
+  /** The id of the organization to create the user in */
+  organizationId: Scalars['String'];
+  /** The role of the organization member */
+  organizationRole: OrganizationRole;
+};
+
+/** The role of an admin in an organization. */
+export enum OrganizationRole {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
+}
+
+export type OrganizationUpdateInput = {
   name: Scalars['String'];
 };
 
@@ -1251,6 +1599,10 @@ export type Query = {
   __typename?: 'Query';
   /** Gets the currently signed in [AdminUser]({{Types.AdminUser}}). */
   adminUser?: Maybe<AdminUser>;
+  /** Gets the [AdminUser]({{Types.AdminUser}}) by their userId. */
+  adminUserById?: Maybe<AdminUser>;
+  /** Gets a list of [AdminUser]({{Types.AdminUser}})s */
+  adminUsers?: Maybe<AdminUserList>;
   /** Gets the [App]({{Types.App}}) for the current application context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   app?: Maybe<App>;
   /** Gets an [App]({{Types.App}}) by its ID. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -1261,10 +1613,16 @@ export type Query = {
   appUserById?: Maybe<AppUser>;
   /** Gets the list of users for your app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
   appUsers?: Maybe<AppUserList>;
+  /** Gets the [AppList]({{Types.AppList}}) for the niftory admins. */
+  apps?: Maybe<AppList>;
   /** Gets a blockchain transaction. */
   blockchainTransaction?: Maybe<BlockchainTransaction>;
   /** Gets the [Contract]({{Types.Contract}}) from the currently authenticated app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/contract). */
   contract?: Maybe<Contract>;
+  /** Gets a custom blockchain transaction. */
+  customTransaction?: Maybe<CustomTransaction>;
+  /** Gets a list of custom blockchain transactions. */
+  customTransactions?: Maybe<CustomTransactionList>;
   /** Gets a [File]({{Types.File}}) by its ID. */
   file?: Maybe<File>;
   /** Gets the list of invoices for your app. */
@@ -1283,14 +1641,23 @@ export type Query = {
   nftModel?: Maybe<NftModel>;
   /** Gets [NFTModel]({{Types.NFTModel}})s for the current [App]({{Types.App}}) context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nftModels?: Maybe<NftModelList>;
+  /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
+  nftSet?: Maybe<NftSet>;
+  /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
+  nftSets?: Maybe<Array<Maybe<NftSet>>>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current [AppUser]({{Types.AppUser}}) context, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nfts?: Maybe<NftList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current wallet, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nftsByWallet?: Maybe<NftList>;
+  organizationById?: Maybe<Organization>;
+  /** Gets the sales stats for the specified app. */
+  saleStats?: Maybe<SaleStatsResponse>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   set?: Maybe<NftSet>;
   /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
   sets?: Maybe<Array<Maybe<NftSet>>>;
+  /** Gets the user stats for the specified app. */
+  userStats?: Maybe<UserStatsResponse>;
   /** Gets the primary [Wallet]({{Types.Wallet}}) belonging to the current [AppUser]({{Types.AppUser}}) context. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/query-wallets). */
   wallet?: Maybe<Wallet>;
   /** Gets a [Wallet]({{Types.Wallet}}) by its blockchain address. Wallet must be registered using [registerWallet]({{Mutations.registerWallet}}) before this request succeeds. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/query-wallets). */
@@ -1299,8 +1666,23 @@ export type Query = {
   walletById?: Maybe<Wallet>;
   /** Gets the primary [Wallet]({{Types.Wallet}}) for a given [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/query-wallets). */
   walletByUserId?: Maybe<Wallet>;
+  /** Gets the wallet stats for the specified app. */
+  walletStats?: Maybe<WalletStatsResponse>;
   /** Gets all [Wallet]({{Types.Wallet}})s for a given app. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets/query-wallets). */
   wallets?: Maybe<WalletList>;
+};
+
+
+export type QueryAdminUserByIdArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
+};
+
+
+export type QueryAdminUsersArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<AdminUsersFilterInput>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
 };
 
 
@@ -1310,12 +1692,22 @@ export type QueryAppByIdArgs = {
 
 
 export type QueryAppUserByIdArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   id: Scalars['ID'];
 };
 
 
 export type QueryAppUsersArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<AppUsersFilterInput>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type QueryAppsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<AppsFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
 };
 
@@ -1331,6 +1723,19 @@ export type QueryContractArgs = {
 };
 
 
+export type QueryCustomTransactionArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryCustomTransactionsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
+  search?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFileArgs = {
   id: Scalars['ID'];
 };
@@ -1339,6 +1744,7 @@ export type QueryFileArgs = {
 export type QueryInvoicesArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<InvoicesFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
 };
 
@@ -1368,6 +1774,7 @@ export type QueryNftListingArgs = {
 
 
 export type QueryNftListingsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
   cursor?: InputMaybe<Scalars['String']>;
   filter?: InputMaybe<NftListingFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
@@ -1384,6 +1791,17 @@ export type QueryNftModelsArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   filter?: InputMaybe<NftModelFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
+};
+
+
+export type QueryNftSetArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryNftSetsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<NftSetFilterInput>;
 };
 
 
@@ -1405,6 +1823,17 @@ export type QueryNftsByWalletArgs = {
 };
 
 
+export type QueryOrganizationByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QuerySaleStatsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<SalesStatFilterInput>;
+};
+
+
 export type QuerySetArgs = {
   id: Scalars['ID'];
 };
@@ -1413,6 +1842,11 @@ export type QuerySetArgs = {
 export type QuerySetsArgs = {
   appId?: InputMaybe<Scalars['ID']>;
   filter?: InputMaybe<NftSetFilterInput>;
+};
+
+
+export type QueryUserStatsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -1432,9 +1866,15 @@ export type QueryWalletByUserIdArgs = {
 };
 
 
+export type QueryWalletStatsArgs = {
+  appId?: InputMaybe<Scalars['ID']>;
+};
+
+
 export type QueryWalletsArgs = {
   appId: Scalars['ID'];
   cursor?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<WalletsFilterInput>;
   maxResults?: InputMaybe<Scalars['PositiveInt']>;
 };
 
@@ -1499,6 +1939,26 @@ export enum SaleState {
   /** The item is reserved for a future purchase. */
   Reserved = 'RESERVED'
 }
+
+/** The response for saleStats call */
+export type SaleStatsResponse = {
+  __typename?: 'SaleStatsResponse';
+  /** The total number of listings sold */
+  listingsSold?: Maybe<Scalars['UnsignedInt']>;
+  /** The total number of sales made */
+  totalSales?: Maybe<Scalars['UnsignedInt']>;
+  /** The total number of unique buyers of listings */
+  uniqueBuyers?: Maybe<Scalars['UnsignedInt']>;
+  /** The total number of unique listings sold */
+  uniqueListingsSold?: Maybe<Scalars['UnsignedInt']>;
+};
+
+export type SalesStatFilterInput = {
+  /** The end date of invoices to filter */
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  /** The starting date of invoice to filter */
+  startDate?: InputMaybe<Scalars['DateTime']>;
+};
 
 /** An interface representing properties common to all objects that can be bought and sold */
 export type SellableEntity = {
@@ -1569,6 +2029,8 @@ export type UpdateNftListingInput = {
   nftModelId?: InputMaybe<Scalars['ID']>;
   /** The price of the NFTlisting. Must be greater than 0. */
   price?: InputMaybe<Scalars['PositiveFloat']>;
+  /** The status of the NFTListing, example - HIDE_IN_STORE, SHOW_IN_STORE  */
+  state?: InputMaybe<ListingState>;
   /** The title of the listing */
   title?: InputMaybe<Scalars['String']>;
 };
@@ -1589,6 +2051,13 @@ export type UserData = {
   name?: Maybe<Scalars['String']>;
 };
 
+/** The response for userStats call */
+export type UserStatsResponse = {
+  __typename?: 'UserStatsResponse';
+  /** The total number of users */
+  totalUsers?: Maybe<Scalars['UnsignedInt']>;
+};
+
 /** Represents a blockchain wallet scoped to a particular [App]({{Types.App}}) and [AppUser]({{Types.AppUser}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/wallets). */
 export type Wallet = Attributable & HasTimes & Identifiable & {
   __typename?: 'Wallet';
@@ -1602,6 +2071,8 @@ export type Wallet = Attributable & HasTimes & Identifiable & {
   createdAt: Scalars['DateTime'];
   /** A unique identifier for this object in the Niftory API. */
   id: Scalars['ID'];
+  /** The number of nfts belonging to this wallet */
+  nftCount?: Maybe<Scalars['UnsignedInt']>;
   /** The NFTs from the current app that are in this wallet. */
   nfts?: Maybe<Array<Maybe<Nft>>>;
   /** The state of this wallet. */
@@ -1625,9 +2096,9 @@ export type WalletList = Pageable & {
 
 /** The state of a wallet. */
 export enum WalletState {
-  /** (Custodial Wallet Only) The Niftory custodial wallet failed to be created on the blockchain. */
+  /** (Niftory Wallet Only) The Niftory wallet failed to be created on the blockchain. */
   CreationFailed = 'CREATION_FAILED',
-  /** (Custodial Wallet Only) The Niftory custodial wallet is in the process of being created on-chain. The address and state of the Wallet object will be updated once complete. */
+  /** (Niftory Wallet Only) The Niftory wallet is in the process of being created on-chain. The address and state of the Wallet object will be updated once complete. */
   PendingCreation = 'PENDING_CREATION',
   /** The wallet is ready to receive NFTs from this app's contract. */
   Ready = 'READY',
@@ -1637,13 +2108,25 @@ export enum WalletState {
   Verified = 'VERIFIED'
 }
 
+/** The response for walletStats call */
+export type WalletStatsResponse = {
+  __typename?: 'WalletStatsResponse';
+  /** The total number of sales made */
+  totalWallets?: Maybe<Scalars['UnsignedInt']>;
+};
+
 /** The type of wallet. */
 export enum WalletType {
-  /** A custodial wallet created by the niftory API. */
-  Custodial = 'CUSTODIAL',
   /** An external wallet linked by the user. */
-  External = 'EXTERNAL'
+  External = 'EXTERNAL',
+  /** A wallet created by the niftory API. */
+  Niftory = 'NIFTORY'
 }
+
+export type WalletsFilterInput = {
+  /** The search query for full text search */
+  search?: InputMaybe<Scalars['String']>;
+};
 
 /** The state of a blockchain transaction. */
 export enum BlockchainTransactionState {
@@ -1652,6 +2135,13 @@ export enum BlockchainTransactionState {
   /** The transaction has been completed. */
   Sealed = 'SEALED'
 }
+
+export type CreateNiftoryWalletMutationVariables = Exact<{
+  appId?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type CreateNiftoryWalletMutation = { __typename?: 'Mutation', createNiftoryWallet?: { __typename?: 'Wallet', address?: string | null, attributes?: any | null, createdAt: any, id: string, state: WalletState, updatedAt?: any | null, verificationCode?: string | null, walletType?: WalletType | null, nfts?: Array<{ __typename?: 'NFT', blockchainId?: string | null, blockchainState: NftBlockchainState, id: string, metadata?: any | null, modelId?: string | null, saleState?: SaleState | null, serialNumber?: number | null, status?: TransferState | null } | null> | null, appUser?: { __typename?: 'AppUser', createdAt: any, email?: any | null, id: string, image?: string | null, name?: string | null, updatedAt?: any | null } | null } | null };
 
 export type ReadyWalletMutationVariables = Exact<{
   address: Scalars['String'];
@@ -1669,7 +2159,8 @@ export type RegisterWalletMutation = { __typename?: 'Mutation', registerWallet?:
 
 export type TransferNftToWalletMutationVariables = Exact<{
   nftModelId: Scalars['ID'];
-  address: Scalars['String'];
+  address?: InputMaybe<Scalars['String']>;
+  walletId?: InputMaybe<Scalars['ID']>;
 }>;
 
 
@@ -1695,6 +2186,14 @@ export type ContractQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ContractQuery = { __typename?: 'Query', contract?: { __typename?: 'EvmContract', name?: string | null, address?: string | null } | { __typename?: 'FlowContract', name?: string | null, address?: string | null } | null };
+
+export type MyWalletsQueryVariables = Exact<{
+  walletId?: InputMaybe<Scalars['ID']>;
+  address?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type MyWalletsQuery = { __typename?: 'Query', walletById?: { __typename?: 'Wallet', address?: string | null, attributes?: any | null, state: WalletState, verificationCode?: string | null, walletType?: WalletType | null, createdAt: any, id: string } | null, walletByAddress?: { __typename?: 'Wallet', address?: string | null, attributes?: any | null, state: WalletState, verificationCode?: string | null, walletType?: WalletType | null, createdAt: any, id: string } | null };
 
 export type NftQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1735,6 +2234,20 @@ export type WalletByAddressQueryVariables = Exact<{
 
 export type WalletByAddressQuery = { __typename?: 'Query', walletByAddress?: { __typename?: 'Wallet', id: string, address?: string | null, state: WalletState, verificationCode?: string | null } | null };
 
+export type WalletByIdQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type WalletByIdQuery = { __typename?: 'Query', walletById?: { __typename?: 'Wallet', address?: string | null, attributes?: any | null, state: WalletState, verificationCode?: string | null, walletType?: WalletType | null, createdAt: any, id: string } | null };
+
+export type WalletsQueryVariables = Exact<{
+  appId: Scalars['ID'];
+}>;
+
+
+export type WalletsQuery = { __typename?: 'Query', wallets?: { __typename?: 'WalletList', cursor?: string | null, items?: Array<{ __typename?: 'Wallet', id: string, address?: string | null, state: WalletState } | null> | null } | null };
+
 export type CompleteCheckoutWithDapperWalletMutationVariables = Exact<{
   transactionId: Scalars['String'];
   nftDatabaseId?: InputMaybe<Scalars['String']>;
@@ -1761,6 +2274,47 @@ export type SignTransactionForDapperWalletMutationVariables = Exact<{
 export type SignTransactionForDapperWalletMutation = { __typename?: 'Mutation', signTransactionForDapperWallet?: string | null };
 
 
+export const CreateNiftoryWalletDocument = `
+    mutation CreateNiftoryWallet($appId: ID = "") {
+  createNiftoryWallet(appId: $appId) {
+    address
+    attributes
+    createdAt
+    id
+    state
+    updatedAt
+    verificationCode
+    walletType
+    nfts {
+      blockchainId
+      blockchainState
+      id
+      metadata
+      modelId
+      saleState
+      serialNumber
+      status
+    }
+    appUser {
+      createdAt
+      email
+      id
+      image
+      name
+      updatedAt
+    }
+  }
+}
+    `;
+export const useCreateNiftoryWalletMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateNiftoryWalletMutation, TError, CreateNiftoryWalletMutationVariables, TContext>) =>
+    useMutation<CreateNiftoryWalletMutation, TError, CreateNiftoryWalletMutationVariables, TContext>(
+      ['CreateNiftoryWallet'],
+      (variables?: CreateNiftoryWalletMutationVariables) => fetchData<CreateNiftoryWalletMutation, CreateNiftoryWalletMutationVariables>(CreateNiftoryWalletDocument, variables)(),
+      options
+    );
 export const ReadyWalletDocument = `
     mutation readyWallet($address: String!) {
   readyWallet(address: $address) {
@@ -1799,8 +2353,8 @@ export const useRegisterWalletMutation = <
       options
     );
 export const TransferNftToWalletDocument = `
-    mutation transferNFTToWallet($nftModelId: ID!, $address: String!) {
-  transfer(nftModelId: $nftModelId, address: $address) {
+    mutation transferNFTToWallet($nftModelId: ID!, $address: String, $walletId: ID) {
+  transfer(nftModelId: $nftModelId, address: $address, walletId: $walletId) {
     id
   }
 }
@@ -1892,6 +2446,55 @@ export const useInfiniteContractQuery = <
     return useInfiniteQuery<ContractQuery, TError, TData>(
       variables === undefined ? ['contract.infinite'] : ['contract.infinite', variables],
       (metaData) => fetchData<ContractQuery, ContractQueryVariables>(ContractDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
+export const MyWalletsDocument = `
+    query myWallets($walletId: ID = "default_key", $address: String = "default_key") {
+  walletById(id: $walletId) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+  walletByAddress(address: $address) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+}
+    `;
+export const useMyWalletsQuery = <
+      TData = MyWalletsQuery,
+      TError = unknown
+    >(
+      variables?: MyWalletsQueryVariables,
+      options?: UseQueryOptions<MyWalletsQuery, TError, TData>
+    ) =>
+    useQuery<MyWalletsQuery, TError, TData>(
+      variables === undefined ? ['myWallets'] : ['myWallets', variables],
+      fetchData<MyWalletsQuery, MyWalletsQueryVariables>(MyWalletsDocument, variables),
+      options
+    );
+export const useInfiniteMyWalletsQuery = <
+      TData = MyWalletsQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof MyWalletsQueryVariables,
+      variables?: MyWalletsQueryVariables,
+      options?: UseInfiniteQueryOptions<MyWalletsQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<MyWalletsQuery, TError, TData>(
+      variables === undefined ? ['myWallets.infinite'] : ['myWallets.infinite', variables],
+      (metaData) => fetchData<MyWalletsQuery, MyWalletsQueryVariables>(MyWalletsDocument, {...variables, ...(metaData.pageParam ?? {})})(),
       options
     )};
 
@@ -2199,6 +2802,85 @@ export const useInfiniteWalletByAddressQuery = <
     return useInfiniteQuery<WalletByAddressQuery, TError, TData>(
       ['walletByAddress.infinite', variables],
       (metaData) => fetchData<WalletByAddressQuery, WalletByAddressQueryVariables>(WalletByAddressDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
+export const WalletByIdDocument = `
+    query walletById($id: ID = "") {
+  walletById(id: $id) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+}
+    `;
+export const useWalletByIdQuery = <
+      TData = WalletByIdQuery,
+      TError = unknown
+    >(
+      variables?: WalletByIdQueryVariables,
+      options?: UseQueryOptions<WalletByIdQuery, TError, TData>
+    ) =>
+    useQuery<WalletByIdQuery, TError, TData>(
+      variables === undefined ? ['walletById'] : ['walletById', variables],
+      fetchData<WalletByIdQuery, WalletByIdQueryVariables>(WalletByIdDocument, variables),
+      options
+    );
+export const useInfiniteWalletByIdQuery = <
+      TData = WalletByIdQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof WalletByIdQueryVariables,
+      variables?: WalletByIdQueryVariables,
+      options?: UseInfiniteQueryOptions<WalletByIdQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<WalletByIdQuery, TError, TData>(
+      variables === undefined ? ['walletById.infinite'] : ['walletById.infinite', variables],
+      (metaData) => fetchData<WalletByIdQuery, WalletByIdQueryVariables>(WalletByIdDocument, {...variables, ...(metaData.pageParam ?? {})})(),
+      options
+    )};
+
+export const WalletsDocument = `
+    query Wallets($appId: ID!) {
+  wallets(appId: $appId) {
+    cursor
+    items {
+      id
+      address
+      state
+    }
+  }
+}
+    `;
+export const useWalletsQuery = <
+      TData = WalletsQuery,
+      TError = unknown
+    >(
+      variables: WalletsQueryVariables,
+      options?: UseQueryOptions<WalletsQuery, TError, TData>
+    ) =>
+    useQuery<WalletsQuery, TError, TData>(
+      ['Wallets', variables],
+      fetchData<WalletsQuery, WalletsQueryVariables>(WalletsDocument, variables),
+      options
+    );
+export const useInfiniteWalletsQuery = <
+      TData = WalletsQuery,
+      TError = unknown
+    >(
+      pageParamKey: keyof WalletsQueryVariables,
+      variables: WalletsQueryVariables,
+      options?: UseInfiniteQueryOptions<WalletsQuery, TError, TData>
+    ) =>{
+    
+    return useInfiniteQuery<WalletsQuery, TError, TData>(
+      ['Wallets.infinite', variables],
+      (metaData) => fetchData<WalletsQuery, WalletsQueryVariables>(WalletsDocument, {...variables, ...(metaData.pageParam ?? {})})(),
       options
     )};
 

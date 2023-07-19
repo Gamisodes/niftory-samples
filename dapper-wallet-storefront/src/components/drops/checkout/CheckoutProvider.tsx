@@ -1,7 +1,14 @@
 import * as fcl from "@onflow/fcl"
 import axios from "axios"
 import { convertNumber } from "consts/helpers"
-import { NftDocument, NftQuery, NftQueryVariables, useNftModelQuery } from "generated/graphql"
+import {
+  CheckoutWithDapperWalletMutation,
+  NftDocument,
+  NftQuery,
+  NftQueryVariables,
+  TransferNftToWalletMutation,
+  useNftModelQuery,
+} from "generated/graphql"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import React, { createContext, useCallback, useContext, useRef, useState } from "react"
@@ -15,6 +22,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { fetchData } from "fetcher"
 import { INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
+import { WalletType } from "src/typings/INfts"
+import { createSuccessRedirectToBoughtenNFT } from "src/utils/createSuccessRedirectToBoughtenNFT"
 
 const setNewNftState = (state: INftStore) => state.setNewNft
 interface CheckoutProviderContextType {
@@ -23,7 +32,7 @@ interface CheckoutProviderContextType {
   checkoutProgress: number
 }
 
-const missingProvider =  () => {
+const missingProvider = () => {
   throw new Error("Attempted to useNotificationDot without NotificationDotProvider")
 }
 
@@ -41,13 +50,13 @@ const useGetNFTData = () => {
   const queryClient = useQueryClient()
   return useCallback(async (id) => {
     await queryClient.prefetchQuery(
-      ["nft", {id}],
-      fetchData<NftQuery, NftQueryVariables>(NftDocument, {id}),
+      ["nft", { id }],
+      fetchData<NftQuery, NftQueryVariables>(NftDocument, { id })
     )
-  
-    const data: NftQuery = await queryClient.getQueryData(["nft", {id}])
-    
-    return Convertor.Niftory(data.nft)
+
+    const data: NftQuery = await queryClient.getQueryData(["nft", { id }])
+
+    return Convertor.Niftory(data.nft, WalletType.External)
   }, [])
 }
 
@@ -87,13 +96,24 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
         wallet: currentUser?.addr ?? "",
         dropsId: id ?? "",
       })
-      const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
-      const nftId = initiateCheckoutResponse?.data?.data?.id ?? ""
+      const initiateCheckoutResponse = await axios.post<{
+        data: TransferNftToWalletMutation
+        success: boolean
+      }>(`/api/nftModel/${id}/initiateCheckout`)
+      const nftId = initiateCheckoutResponse?.data?.data?.transfer?.id ?? ""
 
       updateCheckoutProgress(0)
       const nftData = await getNftData(nftId)
       setNewNfts(nftData)
-      router.push(`/collection/${nftData.collection}/${nftId}?title=${nftData.title}&edition=${nftData.edition}`)
+      router.push(
+        createSuccessRedirectToBoughtenNFT({
+          collectionName: nftData.collection,
+          nftID: nftId,
+          edition: nftData.edition,
+          title: nftData.title,
+          walletTypeSource: WalletType.External,
+        })
+      )
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)
@@ -125,7 +145,10 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
         wallet: currentUser?.addr ?? "",
         dropsId: id ?? "",
       })
-      const initiateCheckoutResponse = await axios.post(`/api/nftModel/${id}/initiateCheckout`)
+      const initiateCheckoutResponse = await axios.post<{
+        success: boolean
+        data: CheckoutWithDapperWalletMutation["checkoutWithDapperWallet"]
+      }>(`/api/nftModel/${id}/initiateCheckout`)
       const {
         cadence,
         registryAddress,
@@ -197,7 +220,15 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       const nftData = await getNftData(nft.id)
       setNewNfts(nftData)
       updateCheckoutProgress(0)
-      await router.push(`/collection/${nftData.collection}/${nft.id}?title=${nftData.title}&edition=${nftData.edition}`)
+      await router.push(
+        createSuccessRedirectToBoughtenNFT({
+          collectionName: nftData.collection,
+          nftID: nft?.id,
+          edition: nftData.edition,
+          title: nftData.title,
+          walletTypeSource: WalletType.External,
+        })
+      )
     } catch (error) {
       setErrorState(error?.response?.data?.error[0] ?? error?.message)
       updateCheckoutProgress(0)

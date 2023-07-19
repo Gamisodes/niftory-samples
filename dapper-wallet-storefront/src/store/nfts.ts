@@ -1,14 +1,19 @@
-import { INft } from "src/typings/INfts"
+import { ENftCollection, INft } from "src/typings/INfts"
 import create from "zustand"
 
+export interface ICounter { 
+  counter: number; 
+  editions: number[]; 
+  nfts: INft[] 
+}
 interface CollectionProps {
   isLoading?: boolean
   allCollections: { [key: string]: INft[] }
-  counter: { 
-    [key: string]: { 
-      [key: string]: { counter: number; editions: number[] }
+  counter: {
+    [key in ENftCollection] ?: {
+      [key: string]: ICounter
     }
-  }
+  } 
 }
 
 export interface INftStore extends CollectionProps {
@@ -34,6 +39,7 @@ export const useNftsStore = create<INftStore>((set, get) => ({
       const val = JSON.stringify({title: nft.title})
       newCounter[nft.collection][val].counter +=1
       newCounter[nft.collection][val].editions.push(nft.edition)
+      newCounter[nft.collection][val].nfts.push(nft)
       set(() => ({
         allCollections,
         counter: newCounter,
@@ -43,7 +49,7 @@ export const useNftsStore = create<INftStore>((set, get) => ({
       newAllCollection[nft.collection].push(nft)
       const newCounter = {...counter}
       const val = JSON.stringify({title: nft.title})
-      newCounter[nft.collection][val] = { counter: 1, editions: [nft.edition] }
+      newCounter[nft.collection][val] = { counter: 1, editions: [nft.edition], nfts: [nft] }
       set(() => ({
         allCollections: newAllCollection,
         counter: newCounter,

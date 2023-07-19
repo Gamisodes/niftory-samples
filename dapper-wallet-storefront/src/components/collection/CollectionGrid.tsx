@@ -28,7 +28,8 @@ export const CollectionGrid = () => {
   const setSearchInput = useFilterSearchStore(setSearch, shallow)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(selectedCollection)
-
+  console.log({allCollections, counter});
+  
   useEffect(() => {
     router.push(`/collection/${selectedCollection}/`)
     setSearchInput("")
@@ -41,7 +42,7 @@ export const CollectionGrid = () => {
         // ...(selectedCollection === ECollectionNames.Gadgets && { level: nft?.level }),
       })
 
-      return counter[selectedCollection][key]?.counter
+      return counter[selectedCollection][key]
     },
     [selectedCollection, counter]
   )

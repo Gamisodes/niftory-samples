@@ -1,0 +1,10 @@
+query Wallets($appId: ID!) {
+  wallets(appId: $appId) {
+    cursor
+    items {
+      id
+      address
+      state
+    }
+  }
+}

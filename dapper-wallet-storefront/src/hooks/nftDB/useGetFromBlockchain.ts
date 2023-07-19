@@ -12,6 +12,6 @@ export function useGetFromBlockchain() {
       networkMode: "offlineFirst",
       refetchInterval: 1000 * 60 * 10, // every 10 minutes,
     }
-  )
-  return query
+    )
+      return query
 }

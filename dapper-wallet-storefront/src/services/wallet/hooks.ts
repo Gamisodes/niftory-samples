@@ -1,6 +1,6 @@
 import { CompositeSignature } from "@onflow/fcl"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { WalletByAddressQuery } from "generated/graphql"
+import { MyWalletsQuery } from "generated/graphql"
 import { WalletRequest } from "./request"
 
 export const walletKeys = {
@@ -20,8 +20,8 @@ export function useSendReadyWalletQuery() {
     () => WalletRequest.postReadyWallet(),
     {
       onSuccess(data) {
-        queryClient.setQueriesData<WalletByAddressQuery>(
-          ["walletByAddress", { address: data?.data?.readyWallet?.address ?? "" }],
+        queryClient.setQueriesData<MyWalletsQuery>(
+          ["myWallets", { address: data?.data?.readyWallet?.address ?? "" }],
           (oldData) => {
             return {
               ...oldData,
@@ -29,7 +29,7 @@ export function useSendReadyWalletQuery() {
                 ...oldData.walletByAddress,
                 ...data.data.readyWallet,
               },
-            } as WalletByAddressQuery
+            } as MyWalletsQuery
           }
         )
       },
@@ -51,8 +51,8 @@ export function useSendRegisterWalletQuery() {
     () => WalletRequest.postRegisterWallet(),
     {
       onSuccess(data) {
-        queryClient.setQueriesData<WalletByAddressQuery>(
-          ["walletByAddress", { address: data?.data?.registerWallet?.address ?? "" }],
+        queryClient.setQueriesData<MyWalletsQuery>(
+          ["myWallets", { address: data?.data?.registerWallet?.address ?? "" }],
           (oldData) => {
             return {
               ...oldData,
@@ -60,7 +60,7 @@ export function useSendRegisterWalletQuery() {
                 ...oldData.walletByAddress,
                 ...data.data.registerWallet,
               },
-            } as WalletByAddressQuery
+            } as MyWalletsQuery
           }
         )
       },
@@ -85,8 +85,8 @@ export function useSendVerifyWalletQuery() {
     IVerifyWalletData
   >((props) => WalletRequest.postVerifyWallet(props), {
     onSuccess(data) {
-      queryClient.setQueriesData<WalletByAddressQuery>(
-        ["walletByAddress", { address: data?.data?.verifyWallet?.address ?? "" }],
+      queryClient.setQueriesData<MyWalletsQuery>(
+        ["myWallets", { address: data?.data?.verifyWallet?.address ?? "" }],
         (oldData) => {
           return {
             ...oldData,
@@ -94,7 +94,7 @@ export function useSendVerifyWalletQuery() {
               ...oldData.walletByAddress,
               ...data.data.verifyWallet,
             },
-          } as WalletByAddressQuery
+          } as MyWalletsQuery
         }
       )
     },

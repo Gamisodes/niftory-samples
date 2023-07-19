@@ -1,0 +1,20 @@
+query myWallets($walletId: ID = "default_key", $address: String = "default_key") {
+  walletById(id: $walletId) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+  walletByAddress(address: $address) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+}

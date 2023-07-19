@@ -7,15 +7,15 @@ import "../styles/global.css"
 
 import { Session } from "next-auth"
 import { GoogleAnalytics } from "nextjs-google-analytics"
+import { BlockchainAndNiftoryWrapper } from "src/components/BlockchainAndNiftoryWrapper"
 import RouterHistory from "src/components/RouterHistory"
 import AuthGuard from "src/guard/AuthGuard"
+import CustodialWalletGuard from "src/guard/CustodialWallet"
 import WalletGuard from "src/guard/WalletGuard"
 import usePWA from "src/hooks/usePWA"
+import { useScrollRestoration } from "src/hooks/useScrollRestoration"
 import { ReactQueryProvider } from "src/lib/ReactQueryClientProvider"
 import theme from "../lib/chakra-theme"
-import { BlockchainAndNiftoryWrapper } from "src/components/BlockchainAndNiftoryWrapper"
-import { useScrollRestoration } from "src/hooks/useScrollRestoration"
-
 type AppProps<P = { session: Session; dehydratedState?: unknown }> = NextAppProps<P> & {
   Component: ComponentWithWallet
 }
@@ -26,29 +26,6 @@ const App = ({
 }: AppProps): JSX.Element => {
   useScrollRestoration()
   usePWA()
-  const isWalletAndAuth =
-    (Component.requireAuth && Component.requireWallet && (
-      <AuthGuard>
-        <WalletGuard>
-          <Component {...pageProps} />
-        </WalletGuard>
-      </AuthGuard>
-    )) ||
-    null
-  const isWallet =
-    (Component.requireWallet && (
-      <WalletGuard>
-        <Component {...pageProps} />
-      </WalletGuard>
-    )) ||
-    null
-  const isAuth =
-    (Component.requireAuth && (
-      <AuthGuard>
-        <Component {...pageProps} />
-      </AuthGuard>
-    )) ||
-    null
   return (
     <RouterHistory>
       <SessionProvider session={session}>
@@ -56,7 +33,13 @@ const App = ({
           <ReactQueryProvider state={dehydratedState}>
             <WalletProvider requireWallet={Component.requireWallet}>
               <BlockchainAndNiftoryWrapper>
-                {isWalletAndAuth || isWallet || isAuth || <Component {...pageProps} />}
+                <AuthGuard isActive={Component.requireAuth}>
+                  <WalletGuard isActive={Component.requireWallet}>
+                    <CustodialWalletGuard isActive={Component.requiredCustodialWallet}>
+                      <Component {...pageProps} />
+                    </CustodialWalletGuard>
+                  </WalletGuard>
+                </AuthGuard>
               </BlockchainAndNiftoryWrapper>
             </WalletProvider>
           </ReactQueryProvider>
