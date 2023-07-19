@@ -1,0 +1,11 @@
+query walletById($id: ID = "") {
+  walletById(id: $id) {
+    address
+    attributes
+    state
+    verificationCode
+    walletType
+    createdAt
+    id
+  }
+}

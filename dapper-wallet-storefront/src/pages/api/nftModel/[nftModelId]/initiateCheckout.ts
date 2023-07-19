@@ -21,6 +21,7 @@ import { NextApiHandler } from "next"
 import { DEFAULT_NFT_PRICE } from "src/lib/const"
 import { getBackendGraphQLClient } from "../../../../lib/BackendGraphQLClient"
 import { getAddressFromCookie } from "../../../../lib/cookieUtils"
+import { assignFreeNftToWallet } from "src/backend/custodialNFT/assignFreeNFT"
 
 const CheckoutWithDapperWallet = gql`
   mutation CheckoutWithDapperWallet(
@@ -104,34 +105,19 @@ const handler: NextApiHandler = async (req, res) => {
         expiry: Number.MAX_SAFE_INTEGER,
       })
       res.status(200).json({ data: checkoutResponse.checkoutWithDapperWallet, success: true })
+      return
     } else if (price === 0) {
-      const maxNftForUser = convertNumber(nftModelResponse?.nftModel?.attributes?.maxNftForUser)
-      if (maxNftForUser === 0) {
-        const transferToUser = await backendGQLClient.request<
-          TransferNftToWalletMutation,
-          TransferNftToWalletMutationVariables
-        >(TransferNftToWalletDocument, { address, nftModelId })
-        res.status(200).json({ data: transferToUser.transfer, success: true })
-        return
-      }
-      let cursor = ""
-      const nftsItems: NftsByWalletQuery["nftsByWallet"]["items"] = []
-      do {
-        const nfts = await backendGQLClient.request<NftsByWalletQuery, NftsByWalletQueryVariables>(
-          NftsByWalletDocument,
-          { address, filter: { nftModelIds: [nftModelId] }, cursor }
-        )
-        nftsItems.push(...nfts.nftsByWallet.items)
-        cursor = nfts.nftsByWallet.cursor
-      } while (typeof cursor === "string")
-      if (nftsItems.length < maxNftForUser) {
-        const transferToUser = await backendGQLClient.request<
-          TransferNftToWalletMutation,
-          TransferNftToWalletMutationVariables
-        >(TransferNftToWalletDocument, { address, nftModelId })
-        res.status(200).json({ data: transferToUser.transfer, success: true })
+      const answer = await assignFreeNftToWallet({
+        nftModelToAssign: nftModelResponse,
+        userAddress: address,
+        gqclient: backendGQLClient,
+      })
+
+      if (!answer.success) {
+        throw new Error(answer.error as string)
       } else {
-        throw new Error(EErrorIdentity.NFT_LIMIT_REACHED)
+        res.status(200).json({ data: answer.data, success: true })
+        return
       }
     } else {
       throw new Error(EErrorIdentity.NO_PRICE)

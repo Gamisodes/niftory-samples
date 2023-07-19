@@ -5,12 +5,12 @@ let prisma: PrismaClient
 
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient({
-    log: ["query", "error"],
+    // log: ["query", "error"],
   })
 } else {
   if (!global.prisma) {
     global.prisma = new PrismaClient({
-      log: ["query", "error"],
+      // log: ["query", "error"],
     })
   }
   prisma = global.prisma

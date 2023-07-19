@@ -2,7 +2,7 @@ import * as fcl from "@onflow/fcl"
 import { useRouter } from "next/router"
 
 import { Loading } from "src/icon/Loading"
-import { useWalletByAddressQuery, Wallet, WalletState } from "../../../generated/graphql"
+import { useMyWalletsQuery, Wallet, WalletState } from "../../../generated/graphql"
 import { useWalletContext } from "../../hooks/useWalletContext"
 import ConfigureWallet from "./ConfigureWallet"
 import RegisterWallet from "./RegisterWallet"
@@ -24,16 +24,15 @@ export function WalletSetup() {
   const router = useRouter()
   const { currentUser } = useWalletContext()
 
-  const { data: walletData, error } = useWalletByAddressQuery(
+  const { data: walletData, error } = useMyWalletsQuery(
     { address: currentUser?.addr },
     {
       enabled: !!currentUser?.addr,
       networkMode: "offlineFirst",
     }
   )
-
   const wallet = currentUser?.addr && walletData?.walletByAddress
-
+    
   if (currentUser?.addr === null || wallet === null) {
     return <RegisterWallet />
   }

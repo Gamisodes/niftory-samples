@@ -5,26 +5,42 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native","linux-musl"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
 }
 
-model Wallet{
-  id        String  @id @default(cuid())
-  address   String  @unique
-  user      User    @relation(fields: [userEmail], references: [email])
-  userEmail String  @unique
+
+enum WalletState {
+  CREATION_FAILED
+  PENDING_CREATION
+  READY
+  UNVERIFIED
+  VERIFIED
+}
+model Wallet {
+  id        String @id @default(cuid())
+  address   String @unique
+  user      User   @relation(fields: [userEmail], references: [email])
+  userEmail String @unique
+}
+
+model CustodialWallet {
+  id              String @id @default(cuid())
+  niftoryWalletId String @unique
+  user            User   @relation(fields: [userEmail], references: [email])
+  userEmail       String @unique
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  wallet        Wallet?
-  accounts      Account[]
-  sessions      Session[]
+  id              String           @id @default(cuid())
+  name            String?
+  email           String?          @unique
+  emailVerified   DateTime?
+  image           String?
+  wallet          Wallet?
+  custodialWallet CustodialWallet?
+  accounts        Account[]
+  sessions        Session[]
 }
 
 model Account {
@@ -47,6 +63,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
@@ -54,6 +71,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model VerificationToken {
   id         Int      @id @default(autoincrement())
   identifier String

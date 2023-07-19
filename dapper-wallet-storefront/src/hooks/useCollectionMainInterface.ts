@@ -2,9 +2,9 @@ import { InfiniteData } from "@tanstack/react-query"
 import { NftBlockchainState, NftsByWalletQuery } from "generated/graphql"
 import { useMemo, useEffect } from "react"
 import { Convertor } from "src/lib/Nfts/convertor"
-import { ENftCollection, IBrainTrainNft, IGadgetNft, IMissionsNft, INft, IVipNft } from "src/typings/INfts"
+import { ENftCollection, IBrainTrainNft, IGadgetNft, IMissionsNft, INft, IVipNft, WalletType } from "src/typings/INfts"
 import { enumToDefaultObject } from "src/utils/enumToDefaultObject"
-import { INftStore, useNftsStore } from "src/store/nfts"
+import { ICounter, INftStore, useNftsStore } from "src/store/nfts"
 import shallow from "zustand/shallow"
 
 const setNftState = (state: INftStore) => state.setNfts
@@ -18,50 +18,74 @@ interface IAllCollection {
   },
   counter: Partial<{
     [key in ENftCollection]: {
-      [key: string]: {
-        counter: number, 
-        editions: number[]
-      }
+      [key: string]: ICounter
     }
   }>
 }
+interface INiftoryCollection {
+  collection: InfiniteData<NftsByWalletQuery>;
+  isSuccess: boolean;
+}
+interface ICollectionMainInterface {
+  BlockchainCollections;
+  Dapper: INiftoryCollection;
+  NiftoryCustodial: INiftoryCollection;
+}
 
-export function useCollectionMainInterface(
-  gamisodesCollections,
-  niftoryCollection: InfiniteData<NftsByWalletQuery>,
-  isSuccessFetchNiftory
+export function useCollectionMainInterface({
+  BlockchainCollections, 
+  Dapper: 
+    {
+      collection: DapperCollection, 
+      isSuccess: isSuccessDapper, 
+    },
+  NiftoryCustodial: {
+      collection: CustodialCollection, 
+      isSuccess: isSuccessCustodial, 
+    }
+  }: ICollectionMainInterface
 ) {
   //Zustand setState
   const setNfts = useNftsStore(setNftState, shallow)
 
   const allCollectionsNew: IAllCollection = useMemo(() => {
     //Get data from Niftory
-    const niftoryNft = (niftoryCollection?.pages ?? [])
-      //Union NFTs from all pages
-      .reduce((accum, item) => {
-        return [...accum, ...item.nftsByWallet.items]
-      }, [])
-      //Filter only transfered
-      .filter((nft) =>
-        [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
+    const DapperCollectionNft = (DapperCollection?.pages ?? [])
+    //Union NFTs from all pages
+    .reduce((accum, item) => {
+      return [...accum, ...item.nftsByWallet.items]
+    }, [])
+    .filter((nft) =>
+          [NftBlockchainState.Transferred, NftBlockchainState.Transferring].includes(
           nft.blockchainState
         )
       )
+    .map((nft) => Convertor.Niftory(nft, WalletType.External))  
+
+    const CustodialCollectionNFT = (CustodialCollection?.pages ?? [])
+    //Union NFTs from all pages
+    .reduce((accum, item) => {
+      return [...accum, ...item.nftsByWallet.items]
+    }, [])
+    .map((nft) => Convertor.Niftory(nft, WalletType.Custodial))
+
+    const niftoryNft = [...DapperCollectionNft, ...CustodialCollectionNFT]
       //Convert each NFT to main type
-      .map(Convertor.Niftory)
+      
     //Get data from Blockchain
-    const blockchainNft = (gamisodesCollections?.items ?? [])
+    const blockchainNft = (BlockchainCollections?.items ?? [])
     //Convert each NFT to main type
-    .map(Convertor.Blockchain)
+    .map((nft) => Convertor.Blockchain(nft, WalletType.External))
     //Union NFTs to one array   
     const allConvertedNfts = [...niftoryNft, ...blockchainNft]
     //Default object for next reducer
     const defaultSortedCollectionValue = enumToDefaultObject<Partial<{[key in ENftCollection]: any}>>(ENftCollection, [] as INft[])
     //Sort NFTs by collection
+    
     const sortedCollections = allConvertedNfts.reduce(
       (accum, nft) => ({ ...accum, [nft.collection]: [...(accum[nft.collection] ?? []), nft] }),
       defaultSortedCollectionValue
-    )
+      )
     //Create counter for similar NFTs
     const defaultCounterKeys = Object.values(ENftCollection).reduce((accum, item: string) => ({ ...accum, [item]: {} }), {})
     const counter = {...defaultCounterKeys}    
@@ -74,11 +98,9 @@ export function useCollectionMainInterface(
         .filter((nft) => {
           const val = JSON.stringify({
             title: nft.title,
-            //for gadgets collection also need to check level key
-            // ...(collection === ENftCollection.GADGETS && { level: nft.level }),
           })
           if (collection === ENftCollection.BRAIN_TRAIN && nft.editionSize === 1) {
-            counter[collection][val] = { counter: 1, editions: [nft.edition] }
+            counter[collection][val] = { counter: 1, editions: [nft.edition], nfts: [nft] }
             return true
           }
 
@@ -87,10 +109,11 @@ export function useCollectionMainInterface(
             counter[collection][val].counter += 1
             //Combine ID`s of NFTs in one array to display on NFT personal page
             counter[collection][val].editions.push(nft.edition)
+            counter[collection][val].nfts.push(nft)
             return false
           }
 
-          counter[collection][val] = { counter: 1, editions: [nft.edition] }
+          counter[collection][val] = { counter: 1, editions: [nft.edition], nfts: [nft] }
           return true
         })
         //sort each collection NFTs by alphabet 
@@ -102,8 +125,8 @@ export function useCollectionMainInterface(
     })
 
     return { collections, counter }
-  }, [niftoryCollection, gamisodesCollections, isSuccessFetchNiftory])
-
+  }, [DapperCollection, CustodialCollection, BlockchainCollections, isSuccessDapper, isSuccessCustodial])
+  
   //Send data to Zustand state
   useEffect(() => {
     const { collections, counter } = allCollectionsNew
@@ -111,5 +134,5 @@ export function useCollectionMainInterface(
       allCollections: collections,
       counter,
     })
-  }, [niftoryCollection?.pages, isSuccessFetchNiftory, gamisodesCollections])
+  }, [DapperCollection?.pages, CustodialCollection?.pages, isSuccessDapper, isSuccessCustodial, BlockchainCollections])
 }

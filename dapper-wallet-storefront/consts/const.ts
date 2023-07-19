@@ -3,3 +3,5 @@ export enum EModelTypes {
 
   GENERAL = "General",
 }
+
+export const WALLET_TYPE_SOURCE = "walletTypeSource"

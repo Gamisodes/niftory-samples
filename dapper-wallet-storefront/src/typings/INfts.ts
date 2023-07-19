@@ -48,6 +48,7 @@ export interface INft {
   isBlocked?: boolean
   maxNftForUser?: number
   traits?: { [key: string]: string }
+  walletType: WalletType
 }
 
 enum EBrainTrainTraitsLabel {
@@ -104,4 +105,11 @@ export enum EMissionsLocation {
 
 export interface IMissionsNft extends INft {
   traits: { [key in EMissionsTraitsLabel]: string }
+}
+
+export enum WalletType {
+  /** A custodial wallet created by the niftory API. */
+  Custodial = 'CUSTODIAL',
+  /** An external wallet linked by the user. */
+  External = 'EXTERNAL'
 }

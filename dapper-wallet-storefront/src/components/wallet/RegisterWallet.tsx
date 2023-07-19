@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 import { useEffect, useRef } from "react"
 import usePreventLeave from "src/hooks/usePreventLeave"
 import gaAPI from "src/services/ga_events"
@@ -36,11 +37,11 @@ function RegisterWallet() {
     <WalletSetupBox
       text={
         <p className="flex flex-col">
-          <span>First, you need to create or connect your Dapper digital collectibles wallet.</span>
-          <span>Hit the button below and follow the prompts.</span>
+          <span>Want to create or connect your own Dapper Digital Collectibles Wallet?</span>
+          <span>Hit the button below and follow the prompts. <Link className="text-header" href="https://gamisodes.com/blogs/news/digital-collectibles-wallet-explained" target="_blank">Learn more.</Link></span>
         </p>
       }
-      buttonText="Link or create your wallet"
+      buttonText="Link or create dapper wallet"
       onClick={signIn}
       isLoading={isLoading}
       error={(error as unknown as Error) ?? (error?.errors![0] as unknown as Error) ?? null}

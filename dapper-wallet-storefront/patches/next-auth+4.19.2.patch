@@ -1,0 +1,60 @@
+diff --git a/node_modules/next-auth/core/routes/callback.js b/node_modules/next-auth/core/routes/callback.js
+index 2696b2d..450f1c0 100644
+--- a/node_modules/next-auth/core/routes/callback.js
++++ b/node_modules/next-auth/core/routes/callback.js
+@@ -217,6 +217,7 @@ async function callback(params) {
+     try {
+       var _events$signIn2;
+ 
++      let _callbackUrl = callbackUrl
+       const token = query === null || query === void 0 ? void 0 : query.token;
+       const identifier = query === null || query === void 0 ? void 0 : query.email;
+ 
+@@ -319,21 +320,24 @@ async function callback(params) {
+         });
+       }
+ 
+-      await ((_events$signIn2 = events.signIn) === null || _events$signIn2 === void 0 ? void 0 : _events$signIn2.call(events, {
++     const signInEventCallbackResponse =  await ((_events$signIn2 = events.signIn) === null || _events$signIn2 === void 0 ? void 0 : _events$signIn2.call(events, {
+         user,
+         account,
+         isNewUser
+       }));
++      if(signInEventCallbackResponse){
++        _callbackUrl = signInEventCallbackResponse
++      }
+       
+       if (isNewUser && pages.newUser) {
+         return {
+-          redirect: `${pages.newUser}${pages.newUser.includes("?") ? "&" : "?"}callbackUrl=${encodeURIComponent(callbackUrl)}`,
++          redirect: `${pages.newUser}${pages.newUser.includes("?") ? "&" : "?"}callbackUrl=${encodeURIComponent(_callbackUrl)}`,
+           cookies
+         };
+       }
+ 
+       return {
+-        redirect: callbackUrl,
++        redirect: _callbackUrl,
+         cookies
+       };
+     } catch (error) {
+diff --git a/node_modules/next-auth/core/types.d.ts b/node_modules/next-auth/core/types.d.ts
+index a660989..373c0de 100644
+--- a/node_modules/next-auth/core/types.d.ts
++++ b/node_modules/next-auth/core/types.d.ts
+@@ -344,13 +344,14 @@ export interface EventCallbacks {
+      * credential provider.
+      * For other providers, you'll get the User object from your adapter, the account,
+      * and an indicator if the user was new to your Adapter.
++     * If you using `email` type auth, you can return new callbackUrl after succesffully sign-in
+      */
+     signIn: (message: {
+         user: User;
+         account: Account | null;
+         profile?: Profile;
+         isNewUser?: boolean;
+-    }) => Awaitable<void>;
++    }) => Awaitable<string | void>;
+     /**
+      * The message object will contain one of these depending on
+      * if you use JWT or database persisted sessions:

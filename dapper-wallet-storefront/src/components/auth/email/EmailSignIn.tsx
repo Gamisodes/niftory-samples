@@ -25,9 +25,14 @@ function EmailSignIn({ children, providerId, options }: IEmailSignIn) {
   const onSubmit = useCallback(async ({ email }: IFormikState) => {
     const _options = { ...options, email, redirect: false }
     try {
-      const { ok } = await signIn(providerId, _options)
-      if (ok) {
+      const { ok, url, error, status } = await signIn(providerId, _options, {
+        // nftModelId: "d263ae9a-0b9e-47c0-aa78-ff0d181946db",
+      })
+      console.log(ok, error, status)
+      if (ok && !error) {
         router.push(`/verify?email=${email}`)
+      } else {
+        router.push("/")
       }
     } catch (error) {
       console.log("Unable to sign-in: ", error)

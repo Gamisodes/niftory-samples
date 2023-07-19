@@ -8,6 +8,7 @@ import {
   IBrainTrainNft,
   IMissionsNft,
   INft,
+  WalletType,
 } from "src/typings/INfts"
 import { DEFAULT_NFT_PRICE } from "../const"
 import { IItem } from "../flowConnector/types"
@@ -50,7 +51,7 @@ const missionName = (title) => {
   else return ""
 }
 
-const BlockChainConvertor = (nft: IItem): INft => {
+const BlockChainConvertor = (nft: IItem, walletType: WalletType): INft => {
   const traits = nft.traits.traits?.reduce((accum, trait) => {
     return {
       ...accum,
@@ -94,10 +95,11 @@ const BlockChainConvertor = (nft: IItem): INft => {
           ? missionName(nft.display.name).toLowerCase()
           : undefined,
     },
+    walletType
   }
 }
 
-const NiftoryConvertor = (nft: NifloryNftItem): IBrainTrainNft | IMissionsNft => {
+const NiftoryConvertor = (nft: NifloryNftItem, walletType: WalletType): IBrainTrainNft | IMissionsNft => {
   const isMissions =
     brainTrainCollection(brainTrainSelector(nft, "collection")?.toLowerCase()) ===
     ENftCollection.MISSIONS
@@ -164,6 +166,7 @@ const NiftoryConvertor = (nft: NifloryNftItem): IBrainTrainNft | IMissionsNft =>
     ),
     isOpenEdition,
     traits,
+    walletType
   }
 }
 

@@ -11,7 +11,7 @@ function Button({ isLoading, loadingText, children, ...props }: IButton) {
     <button
       {...props}
       className={classNames(
-        "inline-flex w-fit px-5 py-2 uppercase font-bold text-base font-dosis bg-header disabled:bg-pink-900 disabled:opacity-90 hover:bg-pink-900",
+        "inline-flex px-5 py-2 uppercase font-bold text-base font-dosis bg-header disabled:bg-pink-900 disabled:opacity-90 hover:bg-pink-900 transition-all",
         props.className,
         { "bg-pink-900": isLoading }
       )}

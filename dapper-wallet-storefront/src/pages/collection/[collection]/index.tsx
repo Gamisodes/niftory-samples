@@ -3,9 +3,10 @@ import AppLayout from "src/components/AppLayout"
 import { CollectionGrid } from "src/components/collection/CollectionGrid"
 import CollectionWrapper from "src/components/collection/CollectionWrapper"
 import { MetaTags } from "src/components/general/MetaTags"
+import { ComponentWithWallet } from "src/lib/types"
 import { SectionHeader } from "src/ui/SectionHeader"
 
-const SelectedCollectionPage = () => {
+const SelectedCollectionPage: ComponentWithWallet = () => {
   const { query } = useRouter()
 
   const title = `My "${query["collection"]}" Collection | Gamisodes`
@@ -24,7 +25,8 @@ const SelectedCollectionPage = () => {
   )
 }
 
-SelectedCollectionPage.requireWallet = true
+// SelectedCollectionPage.requireWallet = true
+SelectedCollectionPage.requiredCustodialWallet = true
 SelectedCollectionPage.requireAuth = true
 
 export default SelectedCollectionPage
