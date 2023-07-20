@@ -12,7 +12,7 @@ export const promoNftEmail: EmailFunction = async function promoNftEmail(params,
   const { data: nftModelResponse } = await getNftModelById({ nftModelId: additional.nftModelId })
 
   return {
-    subject: "Get your NFT",
+    subject: "Go Go Get Your Free Digital Edition Now!",
     html: promoNftHtml({ url: `${_url}`, host, theme, nftModel: nftModelResponse }),
     text: promoNftText({ url: `${_url}`, host }),
   }

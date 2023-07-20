@@ -62,9 +62,9 @@ const PromoNFTModelDrop: React.FC<INftModelDetail> = function NFTModelDrop({ met
           <div className="">Where Cartoons, Collectibles, & Gaming Collide</div>
         </div>
         <div className="flex justify-center gap-6 items-start h-full flex-col lg:flex-row">
-          <div className="z-10 w-2/5 lg:w-1/5 self-center lg:self-start">{renderImage}</div>
-          <div className="font-bangers max-w-xl 2xl:max-w-lg flex flex-col justify-center">
-            <h1 className="uppercase leading-[32px] text-[28px] lg:leading-[54px] lg:text-[48px] mb-4 md:mb-6">
+          <div className="z-10 w-2/5 lg:w-1/6 self-center lg:self-start">{renderImage}</div>
+          <div className="font-bangers max-w-xl flex flex-col justify-center">
+            <h1 className="uppercase leading-[32px] text-[28px] lg:leading-[54px] lg:text-[46px] mb-4 md:mb-6">
               Great work Inspector, but there's no time to waste!{" "}
               <span className="text-[#EFAC37]">
                 Claim your free Mission: San Diego digital edition
@@ -84,7 +84,7 @@ const PromoNFTModelDrop: React.FC<INftModelDetail> = function NFTModelDrop({ met
             </div>
           </div>
         </div>
-        <div className="flex-col gap-4 items-center hidden lg:flex">
+        <div className="flex-col gap-4 items-center hidden lg:flex pb-5">
           <div className="flex gap-10 justify-center">
             <EmojyInfoBlock title={PromoPageTexts[0].title} text={PromoPageTexts[0].text} />
             <EmojyInfoBlock title={PromoPageTexts[1].title} text={PromoPageTexts[1].text} />
