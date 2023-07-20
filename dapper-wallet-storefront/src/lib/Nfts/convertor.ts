@@ -122,7 +122,7 @@ const NiftoryConvertor = (nft: NifloryNftItem, walletType: WalletType): IBrainTr
   } else {
     const modelMetadata = Object.entries(nft.model.metadata).reduce(
       (accum, [key, value]: [string, string]) => {
-        accum[key] = value?.toLowerCase() ?? ""
+        accum[key] = value?.toString().toLowerCase() ?? ""
         return accum
       },
       {}
