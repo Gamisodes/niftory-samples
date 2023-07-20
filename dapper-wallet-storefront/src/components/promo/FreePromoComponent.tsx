@@ -110,10 +110,10 @@ function FreePromoComponent() {
                       {isSubmitting ? (
                         <>
                           <Loading className="w-3 h-3" />
-                          Transfer
+                          TRANSFERRING NOW
                         </>
                       ) : (
-                        <>Get free NFT</>
+                        <>CLAIM NOW</>
                       )}
                     </Button>
                   </div>

@@ -38,7 +38,7 @@ export const NFTCard = ({ clickUrl, nft, counter }: NFTCard) => {
       <div className="flex relative flex-col bg-white h-full text-black max-w-xs md:max-w-[157px] p-4 rounded-lg transform-gpu transition-all hover:bg-gray-200 hover:border-purple hover:shadow-sm hover:-translate-y-1">
         {isCustodialWalletType && (
           <div className="absolute flex bg-gray-200/75 z-10 w-full left-0 top-0 px-3 py-1 justify-center text-sm rounded-t-lg">
-            Custodial Wallet
+            Gamisodes Wallet
             <div className="absolute w-2 h-2 bg-header top-1/3 right-3 rounded-full animate-ping" />
           </div>
         ) }
