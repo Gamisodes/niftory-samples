@@ -14,10 +14,10 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   try {
-    const wallets = await prisma.wallet.findMany({ include: { user: true } })
-    if (!wallets.length) res.status(200).json({ data: wallets, success: false })
+    const users = await prisma.user.findMany({ include: { wallet: true, custodialWallet: true } })
+    if (!users.length) res.status(200).json({ data: users, success: false })
 
-    res.status(200).json({ data: wallets, success: true })
+    res.status(200).json({ data: users, success: true })
   } catch (error) {
     res.status(500).json({
       error: [error],
