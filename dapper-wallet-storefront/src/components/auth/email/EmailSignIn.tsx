@@ -1,52 +1,82 @@
+import { useToast } from "@chakra-ui/react"
 import classNames from "classnames"
 import { Field, Form, Formik } from "formik"
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/router"
-import { PropsWithChildren, memo, useCallback } from "react"
+import { PropsWithChildren, memo, useCallback, useEffect, useRef } from "react"
+import ReCAPTCHA from "react-google-recaptcha"
 import { Loading } from "src/icon/Loading"
+import { createRedirectUrl } from "src/lib/createRedirectUrl"
+import { useMailAuthLink } from "src/services/auth/hooks"
 import * as yup from "yup"
 
-interface IEmailSignIn extends PropsWithChildren {
-  providerId: string
-  options: Record<string, unknown>
-}
+type IEmailSignIn = PropsWithChildren
 
 interface IFormikState {
   email: string
+  captcha: string
 }
 
 const EmailSchema = yup.object({
   email: yup.string().email().required(),
+  captcha: yup.string().min(10).required(),
 })
 
-function EmailSignIn({ children, providerId, options }: IEmailSignIn) {
-  const router = useRouter()
-
-  const onSubmit = useCallback(async ({ email }: IFormikState) => {
-    const _options = { ...options, email, redirect: false }
+function EmailSignIn({ children }: IEmailSignIn) {
+  const toast = useToast()
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
+  const { mutateAsync, isError, isSuccess, isLoading } = useMailAuthLink()
+  const onSubmit = useCallback(async ({ email, captcha }: IFormikState) => {
+    // const _options = { ...options, email, redirect: false }
     try {
-      const { ok, url, error, status } = await signIn(providerId, _options, {
-        // nftModelId: "d263ae9a-0b9e-47c0-aa78-ff0d181946db",
+      await mutateAsync({
+        email,
+        captcha,
+        redirectUrl: createRedirectUrl("/account"),
       })
-      console.log(ok, error, status)
-      if (ok && !error) {
-        router.push(`/verify?email=${email}`)
-      } else {
-        router.push("/")
-      }
+      // const { ok, url, error, status } = await signIn(providerId, _options, {
+      //   // nftModelId: "d263ae9a-0b9e-47c0-aa78-ff0d181946db",
+      // })
+      // console.log(ok, error, status)
+      // if (ok && !error) {
+      //   router.push(`/verify?email=${email}`)
+      // } else {
+      //   router.push("/")
+      // }
     } catch (error) {
       console.log("Unable to sign-in: ", error)
     }
   }, [])
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast({
+        title: "Sign-in success",
+        description: "Please, check your email for the next steps",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      })
+    }
+  }, [isSuccess])
+  useEffect(() => {
+    if (isError) {
+      toast({
+        title: "Sign-in error",
+        description: "Please, try again. Our dev's will resolve this problem soon",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      })
+    }
+  }, [isError])
+
   return (
     <>
       <Formik<IFormikState>
-        initialValues={{ email: "" }}
+        initialValues={{ email: "", captcha: "fsadfsdf" }}
         validationSchema={EmailSchema}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting }) => {
+        {({ isSubmitting, errors, setFieldValue, setFieldTouched }) => {
           return (
             <Form className="w-72 md:w-96 border-b-2 pb-6 mb-6" id="email_subscription_form">
               <Field name="email">
@@ -56,6 +86,7 @@ function EmailSignIn({ children, providerId, options }: IEmailSignIn) {
                       <input
                         className="border border-black text-gray-600 w-full p-3 text-base font-roboto"
                         {...field}
+                        disabled={isLoading}
                         type="email"
                         placeholder="Enter email"
                       />
@@ -90,6 +121,34 @@ function EmailSignIn({ children, providerId, options }: IEmailSignIn) {
                     </div>
                   </div>
                 )}
+              </Field>
+              <Field name="captcha">
+                {({ form }) => {
+                  return (
+                    <>
+                      <ReCAPTCHA
+                        className="w-max mx-auto pt-5"
+                        ref={recaptchaRef}
+                        onBlur={() => setFieldTouched("captcha", true)}
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                        onChange={(token) => {
+                          setFieldValue("captcha", token)
+                        }}
+                      />
+                      <section
+                        className={classNames("text-red-500 w-max mx-auto text-sm py-1", {
+                          invisible: !form.errors.captcha,
+                        })}
+                      >
+                        {!form.errors.captcha && form.touched.captcha ? (
+                          <p>Enter the captcha you'd like to receive the newsletter on.</p>
+                        ) : (
+                          <p>captcha is required.</p>
+                        )}
+                      </section>
+                    </>
+                  )
+                }}
               </Field>
             </Form>
           )

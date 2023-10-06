@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { allFilters } from "src/const/allFilters"
 import { ISearchNFT, useFilterSearchStore } from "src/store/filterSearch"
 import { INftStore, useNftsStore } from "src/store/nfts"
-import shallow from "zustand/shallow"
+import { shallow } from "zustand/shallow"
 
 interface IFilterOption {
   selected: boolean
@@ -19,7 +19,7 @@ interface IFilterState extends IFilterSingleCollection {
 }
 
 const selector = ({ allCollections }: INftStore) => ({
-  allCollections
+  allCollections,
 })
 const getSearchInput = ({ searchInput }: ISearchNFT) => ({ searchInput })
 
@@ -30,14 +30,18 @@ const filterOptionsTrue = (arr, key, label, accum) => {
   if (optionTrue?.length > 0) accum.push({ label: key || label, options: optionTrue })
 }
 
-const filterNFTs = (arr, selectedFilter, filter) => arr.reduce((accum, nft) => {
-  if (nft.traits !== undefined && !!filter.length) {
-    const isMatches = selectedFilter?.every(({ label, options }) => label in nft.traits && options.includes(nft.traits[label]))
-    return [...accum, isMatches && nft]
-  } else return accum
-}, [])
+const filterNFTs = (arr, selectedFilter, filter) =>
+  arr.reduce((accum, nft) => {
+    if (nft.traits !== undefined && !!filter.length) {
+      const isMatches = selectedFilter?.every(
+        ({ label, options }) => label in nft.traits && options.includes(nft.traits[label])
+      )
+      return [...accum, isMatches && nft]
+    } else return accum
+  }, [])
 
-const searchFilter = (arr, searchInput) => arr.filter(({ title }) => title?.toLowerCase().includes(searchInput.toLowerCase()))
+const searchFilter = (arr, searchInput) =>
+  arr.filter(({ title }) => title?.toLowerCase().includes(searchInput.toLowerCase()))
 
 export function useCollectionFilter(selectedCollection) {
   const { allCollections } = useNftsStore(selector, shallow)
@@ -45,7 +49,7 @@ export function useCollectionFilter(selectedCollection) {
   const [filter, setFilter] = useState<IFilterState[]>(() => allFilters[selectedCollection])
   const [initialSet, setInitial] = useState(false)
   const [nfts, setNfts] = useState([])
-  
+
   useEffect(() => {
     if (allCollections?.[selectedCollection]?.length > 0 && !initialSet) {
       setNfts(allCollections[selectedCollection])
@@ -58,19 +62,22 @@ export function useCollectionFilter(selectedCollection) {
     setNfts(allCollections?.[selectedCollection])
   }, [allCollections, selectedCollection])
 
-  const selectedFilters = useMemo(() => (
-    filter?.reduce((accum, { options, label, key, type }) => {
-      if (Array.isArray(type)) {
-        type.forEach((typeItem) => {
-          if (Array.isArray(typeItem.subtype)) {
-            typeItem.subtype.forEach((subtypeItem) => filterOptionsTrue(subtypeItem.options, key, label, accum))
-          } else filterOptionsTrue(typeItem.options, key, label, accum)
-        })
-      } else filterOptionsTrue(options, key, label, accum)
-      return accum
-    }, [])
-  ), [filter])
-
+  const selectedFilters = useMemo(
+    () =>
+      filter?.reduce((accum, { options, label, key, type }) => {
+        if (Array.isArray(type)) {
+          type.forEach((typeItem) => {
+            if (Array.isArray(typeItem.subtype)) {
+              typeItem.subtype.forEach((subtypeItem) =>
+                filterOptionsTrue(subtypeItem.options, key, label, accum)
+              )
+            } else filterOptionsTrue(typeItem.options, key, label, accum)
+          })
+        } else filterOptionsTrue(options, key, label, accum)
+        return accum
+      }, []),
+    [filter]
+  )
 
   useEffect(() => {
     if (!!filter?.length) {

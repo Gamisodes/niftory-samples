@@ -1,5 +1,5 @@
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
-import { Hydrate, QueryClient } from "@tanstack/react-query"
+import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   PersistedClient,
   Persister,
@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query-persist-client"
 import { del, get, set } from "idb-keyval"
 import { PropsWithChildren, useState } from "react"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 export function createIDBPersister(idbValidKey: IDBValidKey = "reactQuery") {
   return {
@@ -51,8 +52,27 @@ export const ReactQueryProvider = ({ children, state }: PropsWithChildren<{ stat
   })
 
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-      <Hydrate state={state}>{children}</Hydrate>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => {
+            const queryIsReadyForPersistance = query.state.status === "success"
+            if (queryIsReadyForPersistance) {
+              const { queryKey } = query
+              const excludeFromPersisting = queryKey.includes("auth")
+              return !excludeFromPersisting
+            }
+            return queryIsReadyForPersistance
+          },
+        },
+      }}
+    >
+      <Hydrate state={state}>
+        {children}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </Hydrate>
     </PersistQueryClientProvider>
   )
 }

@@ -1,8 +1,7 @@
-import { signOut } from "next-auth/react"
-import { useRouter } from "next/router"
 import { useCallback, useMemo } from "react"
 import { useWalletContext } from "src/hooks/useWalletContext"
 import { Loading } from "src/icon/Loading"
+import { useAuthLogout } from "src/services/auth/hooks"
 
 type WalletSetupBoxProps = {
   text: string | JSX.Element
@@ -11,6 +10,7 @@ type WalletSetupBoxProps = {
   error?: Error
   onClick: () => void
 }
+
 export const WalletSetupBox = ({
   text,
   buttonText,
@@ -21,14 +21,15 @@ export const WalletSetupBox = ({
   useMemo(() => error && console.error(error), [error])
 
   const { signOut: signOutWallet } = useWalletContext()
-  const router = useRouter()
+  const { mutateAsync, isLoading: isAuthLoading } = useAuthLogout()
+  // const router = useRouter()
 
   const logout = useCallback(async function () {
-    await Promise.all([signOut({ redirect: false, callbackUrl: "/" }), signOutWallet()])
-    router.push("/")
+    await Promise.all([mutateAsync(), signOutWallet()])
+    // router.push("/")
   }, [])
 
-  if (isLoading) {
+  if (isLoading || isAuthLoading) {
     return <Loading />
   }
 

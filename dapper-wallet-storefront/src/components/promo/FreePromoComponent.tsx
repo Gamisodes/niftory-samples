@@ -1,11 +1,12 @@
 import { useToast } from "@chakra-ui/react"
 import classNames from "classnames"
 import { Field, Form, Formik } from "formik"
-import { signIn } from "next-auth/react"
 import { useRouter } from "next/router"
-import { memo, useCallback, useRef } from "react"
+import { memo, useCallback, useEffect, useRef } from "react"
 import ReCAPTCHA from "react-google-recaptcha"
 import { Loading } from "src/icon/Loading"
+import { createRedirectUrl } from "src/lib/createRedirectUrl"
+import { useMailAuthLink } from "src/services/auth/hooks"
 import Button from "src/ui/Button"
 import * as yup from "yup"
 
@@ -24,46 +25,41 @@ function FreePromoComponent() {
   const router = useRouter()
   const nftModelId = router.query["nftModelId"]?.toString()
   const recaptchaRef = useRef<ReCAPTCHA>(null)
+  const { mutate, isLoading, isError, isSuccess } = useMailAuthLink(nftModelId)
 
-  const onSubmit = useCallback(async ({ email, captcha }: IFormState) => {
-    try {
-      const { ok, error } = await signIn(
-        "email",
-        { redirect: false, email },
-        {
-          nftModelId,
-          captcha,
-        }
-      )
-      if (ok && !error) {
-        // toast({
-        //   title: "Please, check your email for your Free NFT!",
-        //   description: `You may get your Free NFT on the inbox`,
-        //   status: "success",
-        //   duration: 4000,
-        //   isClosable: true,
-        // })
-        router.push(`/promo/confirm/${nftModelId}`)
-      } else if (error) {
-        toast({
-          title: "Something went wrong!",
-          description: `Please, reload your tab and try again!`,
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        })
-        recaptchaRef.current.reset()
-      }
-    } catch (error) {
+  useEffect(() => {
+    if (isError) {
       toast({
         title: "Something went wrong!",
-        description: `Our developers know about this problem, and try to resolve it!`,
+        description: `Please, reload your tab and try again!`,
         status: "error",
         duration: 4000,
         isClosable: true,
       })
       recaptchaRef.current.reset()
     }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast({
+        title: "Please, check your email for your Free NFT!",
+        description: `You may get your Free NFT on the inbox`,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      })
+      recaptchaRef.current.reset()
+      router.push(`/promo/confirm/${nftModelId}`)
+    }
+  }, [isSuccess])
+
+  const onSubmit = useCallback(async ({ email, captcha }: IFormState) => {
+    mutate({
+      email,
+      redirectUrl: createRedirectUrl(`/account`),
+      captcha,
+    })
   }, [])
 
   return (
@@ -94,23 +90,23 @@ function FreePromoComponent() {
                       >
                         {!form.errors.email && form.touched.email ? (
                           <p>Enter the email you'd like to receive the newsletter on.</p>
-                          ) : (
-                            <p>Email is required.</p>
-                            )}
+                        ) : (
+                          <p>Email is required.</p>
+                        )}
                       </section>
                     </div>
-                    
+
                     <Button
                       type="submit"
-                      disabled={isSubmitting || !!Object.values(errors).length}
+                      disabled={isSubmitting || isLoading || !!Object.values(errors).length}
                       className={classNames(
-                        "flex items-center justify-center rounded-md bg-[#EFAC37] hover:bg-white hover:border-[#EFAC37] disabled:bg-[#e7a940] w-full md:w-full text-center border border-transparent mt-0 disabled:cursor-not-allowed mb-4"
+                        "flex items-center text-white hover:text-black justify-center rounded-md bg-[#EFAC37] hover:bg-white hover:border-[#EFAC37] disabled:bg-[#e7a940] w-full md:w-full text-center border border-transparent mt-0 disabled:cursor-not-allowed mb-4"
                       )}
                     >
-                      {isSubmitting ? (
+                      {isSubmitting || isLoading ? (
                         <>
-                          <Loading className="w-3 h-3" />
-                          TRANSFERRING NOW
+                          <Loading size="small" />
+                          TRANSFERRING NOW ...
                         </>
                       ) : (
                         <>CLAIM NOW</>

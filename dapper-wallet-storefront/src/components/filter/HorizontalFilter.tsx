@@ -3,7 +3,7 @@ import { Fragment, useCallback } from "react"
 import { Listbox, RadioGroup, Transition } from "@headlessui/react"
 import { ECollectionNames } from "src/const/enum"
 import { useCollectionStore } from "src/store/collection"
-import shallow from "zustand/shallow"
+import { shallow } from "zustand/shallow"
 import { ISearchNFT, useFilterSearchStore } from "src/store/filterSearch"
 import CollectionIcon from "src/icon/CollectionIcon.svg"
 
@@ -20,7 +20,6 @@ const setSearch = (state) => state.setSearchInput
 const getSearchInput = ({ searchInput }: ISearchNFT) => ({ searchInput })
 
 export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection }) => {
-
   const openFilter = useCallback(() => setShowFilter((prev) => !prev), [])
   const setCollection = useCollectionStore(setSelectedCollection, shallow)
   const setSearchInput = useFilterSearchStore(setSearch, shallow)
@@ -71,45 +70,48 @@ export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection
           </label>
         </div>
       </div>
-      {showFilter && (<div className="col-span-12 lg:hidden">
-        <Listbox value={selectedCollection} onChange={setCollection}>
-          <div className="w-full bg-white rounded-md text-header">
-            <Listbox.Button className="relative select-none font-semibold text-lg p-3 w-full text-left">
-              <span>Collections</span>
-              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-7">
-                <CollectionIcon />
-              </span>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Listbox.Options>
-                {collections.map(({ label, value }, index) => (
-                  <Listbox.Option
-                    className="uppercase select-none font-semibold text-lg  w-full text-left"
-                    key={index + label}
-                    value={value}
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span
-                          className={`p-3 rounded-md block truncate ${selected ? 'font-semibold bg-header text-white' : 'font-medium'
+      {showFilter && (
+        <div className="col-span-12 lg:hidden">
+          <Listbox value={selectedCollection} onChange={setCollection}>
+            <div className="w-full bg-white rounded-md text-header">
+              <Listbox.Button className="relative select-none font-semibold text-lg p-3 w-full text-left">
+                <span>Collections</span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-7">
+                  <CollectionIcon />
+                </span>
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Listbox.Options>
+                  {collections.map(({ label, value }, index) => (
+                    <Listbox.Option
+                      className="uppercase select-none font-semibold text-lg  w-full text-left"
+                      key={index + label}
+                      value={value}
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span
+                            className={`p-3 rounded-md block truncate ${
+                              selected ? "font-semibold bg-header text-white" : "font-medium"
                             }`}
-                        >
-                          {label}
-                        </span>
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
-      </div>)}
+                          >
+                            {label}
+                          </span>
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+        </div>
+      )}
       <div className="hidden lg:inline-flex lg:col-span-9">
         <RadioGroup
           value={selectedCollection}
@@ -124,8 +126,9 @@ export const HorizontalFilter = ({ setShowFilter, showFilter, selectedCollection
             >
               {({ checked }) => (
                 <span
-                  className={`${checked ? "bg-header text-white" : ""
-                    } w-full py-2 text-center duration-300`}
+                  className={`${
+                    checked ? "bg-header text-white" : ""
+                  } w-full py-2 text-center duration-300`}
                 >
                   {label}
                 </span>

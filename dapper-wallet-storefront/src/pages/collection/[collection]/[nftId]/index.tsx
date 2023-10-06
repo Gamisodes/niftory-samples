@@ -11,7 +11,7 @@ import WalletGuard from "src/guard/WalletGuard"
 import { INftStore, useNftsStore } from "src/store/nfts"
 import { INft, WalletType } from "src/typings/INfts"
 import { LoginSkeleton } from "src/ui/Skeleton"
-import shallow from "zustand/shallow"
+import { shallow } from "zustand/shallow"
 const getCollections = ({ allCollections, counter, isLoading }: INftStore) => ({
   allCollections,
   counter,

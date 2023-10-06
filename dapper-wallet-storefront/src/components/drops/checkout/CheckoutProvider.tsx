@@ -1,29 +1,29 @@
 import * as fcl from "@onflow/fcl"
+import { useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { convertNumber } from "consts/helpers"
+import { fetchData } from "fetcher"
 import {
-  CheckoutWithDapperWalletMutation,
+  CheckoutWithDapperWalletResponse,
   NftDocument,
   NftQuery,
   NftQueryVariables,
   TransferNftToWalletMutation,
   useNftModelQuery,
 } from "generated/graphql"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import React, { createContext, useCallback, useContext, useRef, useState } from "react"
 import usePreventLeave from "src/hooks/usePreventLeave"
 import { useWalletContext } from "src/hooks/useWalletContext"
-import { DEFAULT_NFT_PRICE } from "src/lib/const"
-import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
-import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
 import { Convertor } from "src/lib/Nfts/convertor"
-import { useQueryClient } from "@tanstack/react-query"
-import { fetchData } from "fetcher"
+import { DEFAULT_NFT_PRICE } from "src/lib/const"
+import gaAPI, { EBuyNFTLabel } from "src/services/ga_events"
 import { INftStore, useNftsStore } from "src/store/nfts"
-import shallow from "zustand/shallow"
+import { getCurrentUser, useAuth } from "src/store/users"
 import { WalletType } from "src/typings/INfts"
+import { EErrorIdentity } from "src/typings/NftModelDetail"
 import { createSuccessRedirectToBoughtenNFT } from "src/utils/createSuccessRedirectToBoughtenNFT"
+import { shallow } from "zustand/shallow"
 
 const setNewNftState = (state: INftStore) => state.setNewNft
 interface CheckoutProviderContextType {
@@ -66,7 +66,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
   const { currentUser } = useWalletContext()
   const setNewNfts = useNftsStore(setNewNftState, shallow)
   const router = useRouter()
-  const { data: user } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
 
   const checkoutStatusIndexRef = useRef(0)
   const [checkoutProgress, setCheckoutProgress] = useState(0)
@@ -83,7 +83,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
   }, [])
 
   const signTransaction = useCallback(async (transaction: string) => {
-    const response = await axios.post("/api/signTransaction", { transaction })
+    const response = await axios.post("/server/wallet/signTransaction", { transaction })
     return response.data.data
   }, [])
 
@@ -92,14 +92,14 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       updateCheckoutProgress(1)
       gaAPI.buy_nft({
         label: EBuyNFTLabel.STARTING_CHECKOUT,
-        email: user?.user.email ?? "",
+        email: user?.email ?? "",
         wallet: currentUser?.addr ?? "",
         dropsId: id ?? "",
       })
       const initiateCheckoutResponse = await axios.post<{
         data: TransferNftToWalletMutation
         success: boolean
-      }>(`/api/nftModel/${id}/initiateCheckout`)
+      }>(`/server/nft/${id}/initiateCheckout`)
       const nftId = initiateCheckoutResponse?.data?.data?.transfer?.id ?? ""
 
       updateCheckoutProgress(0)
@@ -121,14 +121,14 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       if (error === "Declined: Declined by user") {
         gaAPI.buy_nft({
           label: EBuyNFTLabel.DECLINE,
-          email: user?.user.email ?? "",
+          email: user?.email ?? "",
           wallet: currentUser?.addr ?? "",
           dropsId: id ?? "",
         })
       } else {
         gaAPI.buy_nft({
           label: EBuyNFTLabel.ERROR,
-          email: user?.user.email ?? "",
+          email: user?.email ?? "",
           wallet: currentUser?.addr ?? "",
           dropsId: id ?? "",
         })
@@ -141,14 +141,14 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
 
       gaAPI.buy_nft({
         label: EBuyNFTLabel.STARTING_CHECKOUT,
-        email: user?.user.email ?? "",
+        email: user?.email ?? "",
         wallet: currentUser?.addr ?? "",
         dropsId: id ?? "",
       })
       const initiateCheckoutResponse = await axios.post<{
         success: boolean
-        data: CheckoutWithDapperWalletMutation["checkoutWithDapperWallet"]
-      }>(`/api/nftModel/${id}/initiateCheckout`)
+        data: CheckoutWithDapperWalletResponse
+      }>(`/server/nft/${id}/initiateCheckout`)
       const {
         cadence,
         registryAddress,
@@ -203,7 +203,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
 
       updateCheckoutProgress(4)
 
-      const completeCheckoutResponse = await axios.post(`/api/nftModel/${id}/completeCheckout`, {
+      const completeCheckoutResponse = await axios.post(`/server/nft/${id}/completeCheckout`, {
         transactionId: tx,
         nftDatabaseId,
       })
@@ -211,12 +211,12 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
 
       gaAPI.buy_nft({
         label: EBuyNFTLabel.COMPLETING_CHECKOUT,
-        email: user?.user.email ?? "",
+        email: user?.email ?? "",
         wallet: currentUser?.addr ?? "",
         dropsId: id ?? "",
       })
 
-      const nft = completeCheckoutResponse.data.data
+      const nft = completeCheckoutResponse?.data?.data?.completeCheckoutWithDapperWallet
       const nftData = await getNftData(nft.id)
       setNewNfts(nftData)
       updateCheckoutProgress(0)
@@ -236,14 +236,14 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children, id
       if (error === "Declined: Declined by user") {
         gaAPI.buy_nft({
           label: EBuyNFTLabel.DECLINE,
-          email: user?.user.email ?? "",
+          email: user?.email ?? "",
           wallet: currentUser?.addr ?? "",
           dropsId: id ?? "",
         })
       } else {
         gaAPI.buy_nft({
           label: EBuyNFTLabel.ERROR,
-          email: user?.user.email ?? "",
+          email: user?.email ?? "",
           wallet: currentUser?.addr ?? "",
           dropsId: id ?? "",
         })

@@ -1,22 +1,24 @@
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
 import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
 import { useWalletContext } from "src/hooks/useWalletContext"
+import { getCurrentUser, useAuth } from "src/store/users"
 import { SectionHeader } from "src/ui/SectionHeader"
+import shallow from "zustand/shallow"
 
 type CustodialWalletGuardProps = PropsWithChildren & {
   isActive: boolean
 }
 
 function CustodialWalletGuard({ children, isActive = false }: CustodialWalletGuardProps) {
-  const { data } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
+
   const { currentUser } = useWalletContext()
   if (!isActive) {
     return <>{children}</>
   }
-  if (!data?.user?.custodialAddress && currentUser && !currentUser.loggedIn) {
+  if (!user?.custodialWallet && currentUser && !currentUser.loggedIn) {
     return (
       <>
         <MetaTags />
@@ -39,7 +41,7 @@ function CustodialWalletGuard({ children, isActive = false }: CustodialWalletGua
     )
   }
 
-  if (data.user.custodialAddress || (currentUser && currentUser.loggedIn)) {
+  if (user?.custodialWallet || (currentUser && currentUser.loggedIn)) {
     return <>{children}</>
   }
 

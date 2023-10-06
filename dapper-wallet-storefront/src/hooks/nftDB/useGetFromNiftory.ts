@@ -1,7 +1,8 @@
 import { useInfiniteNftsByWalletQuery } from "generated/graphql"
 import { useEffect } from "react"
+import { getCurrentUser, useAuth } from "src/store/users"
+import shallow from "zustand/shallow"
 import { useWalletContext } from "../useWalletContext"
-import { useSession } from "next-auth/react"
 
 export function useGetFromNiftory() {
   const { currentUser } = useWalletContext()
@@ -33,25 +34,26 @@ export function useGetFromNiftory() {
 }
 
 export function useGetFromCustodialWallet() {
-  const { data } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
+  const custodialWallet = user?.custodialWallet?.niftoryWalletId
   const query = useInfiniteNftsByWalletQuery(
     "cursor",
-    { walletId: data?.user?.custodialAddress },
+    { walletId: custodialWallet },
     {
-      enabled: !!data?.user?.custodialAddress,
+      enabled: !!custodialWallet,
       networkMode: "offlineFirst",
       refetchInterval: 1000 * 60 * 10, // every 10 minutes,
       getPreviousPageParam: (firstPage) => {
         return {
           cursor: firstPage.nftsByWallet.cursor ?? undefined,
-          walletId: data?.user?.custodialAddress,
+          walletId: custodialWallet,
         }
       },
       getNextPageParam(lastPage) {
         if (lastPage.nftsByWallet.cursor)
           return {
             cursor: lastPage.nftsByWallet.cursor ?? undefined,
-            walletId: data?.user?.custodialAddress,
+            walletId: custodialWallet,
           }
         return false
       },

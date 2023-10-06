@@ -1,12 +1,15 @@
-import { useSession } from "next-auth/react"
 import { memo } from "react"
+import { getCurrentUser, useAuth } from "src/store/users"
+import shallow from "zustand/shallow"
 
 function CustodialWallet() {
-  const { data: session } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
+
   return (
     <div className="px-4 pb-4 lg:[px-0 pb-0]">
       <p>
-        Your Gamisodes Digital Collectibles Wallet ID is: <i>{session.user.custodialAddress}</i>
+        Your Gamisodes Digital Collectibles Wallet ID is:{" "}
+        <i>{user?.custodialWallet?.niftoryWalletId}</i>
       </p>
     </div>
   )

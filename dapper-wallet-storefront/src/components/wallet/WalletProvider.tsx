@@ -1,10 +1,11 @@
 import { useToast } from "@chakra-ui/react"
 import * as fcl from "@onflow/fcl"
-import { useSession } from "next-auth/react"
 import { createContext, useCallback, useEffect, useState } from "react"
 import { useDidUpdate } from "rooks"
 import gaAPI from "src/services/ga_events"
 import { useCheckWalletOwnerQuery } from "src/services/wallet/hooks"
+import { getCurrentUser, useAuth } from "src/store/users"
+import { shallow } from "zustand/shallow"
 import { fclCookieStorage } from "../../lib/cookieUtils"
 
 type WalletComponentProps = {
@@ -22,7 +23,7 @@ type WalletContextType = {
 export const WalletContext = createContext<WalletContextType>(null)
 
 export function WalletProvider({ children, requireWallet }: WalletComponentProps) {
-  const { data: user } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
   const toast = useToast()
   const { mutate, data, isSuccess } = useCheckWalletOwnerQuery()
 
@@ -39,12 +40,13 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
     await fcl.unauthenticate()
     setIsLoading(false)
   }, [])
+  console.log("currentUser: ", currentUser)
 
   const leaveSignOutWithMessage = useCallback(() => {
     toast({
       title: "Wallet Sign-In Error",
       description: `This Google Account ${
-        user?.user?.email && `"${user.user.email}"`
+        user?.email && `"${user.email}"`
       } is already connected to another Dapper Wallet. Please use another wallet or create a new wallet. If you believe you received this error by mistake, please contact support@gamisodes.com.`,
       status: "error",
       duration: 4000,
@@ -54,8 +56,8 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
   }, [])
 
   useDidUpdate(() => {
-    if (user?.user?.email) gaAPI.connect_google_account({ email: user.user.email })
-  }, [user?.user?.email])
+    if (user?.email) gaAPI.connect_google_account({ email: user.email })
+  }, [user?.email])
 
   useEffect(() => {
     fcl
@@ -70,26 +72,24 @@ export function WalletProvider({ children, requireWallet }: WalletComponentProps
       .put("discovery.wallet.method", "POP/RPC")
       .put("0xMetadataViews", process.env.NEXT_PUBLIC_METADATA_VIEWS_ADDRESS)
     fcl.currentUser.subscribe((walletUser) => {
-      const walletFromUser = user?.user?.walletAddress
+      const walletFromUser = user?.wallet?.address
       const walletFromBlockchain = walletUser?.addr
-      // console.info("subscribe: ", { walletFromBlockchain, walletFromUser }, walletUser)
       if (walletFromUser && walletFromBlockchain && walletFromUser !== walletFromBlockchain) {
         leaveSignOutWithMessage()
         return
       }
-      //Till we receive from our backend information about current user - we skip setting user instance
-      if (typeof walletFromUser !== "undefined") {
+      // //Till we receive from our backend information about current user - we skip setting user instance
+      if (typeof user !== "undefined") {
         setCurrentUser(walletUser)
-        if (user?.user?.email && walletFromBlockchain)
-          mutate({ ourEmail: user?.user?.email, loggedWithAddress: walletFromBlockchain })
+        if (user?.email && walletFromBlockchain) mutate({ loggedWithAddress: walletFromBlockchain })
       }
     })
-  }, [user?.user?.email])
+  }, [user?.email])
 
   //protector. If backend says that our wallet connected to another user - drop session
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      console.info("Protector Data: ", data);
+      console.info("Protector Data: ", data)
     }
     if (isSuccess && data?.shouldLogout) leaveSignOutWithMessage()
   }, [isSuccess, data])
