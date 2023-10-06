@@ -1,10 +1,13 @@
-import create from "zustand"
+import { createWithEqualityFn } from "zustand/traditional"
 
 export interface ISearchNFT {
-    searchInput: string,
-    setSearchInput: (arg: string) => void
+  searchInput: string
+  setSearchInput: (arg: string) => void
 }
-export const useFilterSearchStore = create<ISearchNFT>((set) => ({
-    searchInput: '',
-    setSearchInput: (searchInput) => set(() => ({ searchInput }))
-}))
+export const useFilterSearchStore = createWithEqualityFn<ISearchNFT>(
+  (set) => ({
+    searchInput: "",
+    setSearchInput: (searchInput) => set(() => ({ searchInput })),
+  }),
+  Object.is
+)

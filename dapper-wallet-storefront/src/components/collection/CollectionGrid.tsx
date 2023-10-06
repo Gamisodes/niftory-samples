@@ -8,7 +8,7 @@ import { useCollectionStore } from "src/store/collection"
 import { useFilterSearchStore } from "src/store/filterSearch"
 import { INftStore, useNftsStore } from "src/store/nfts"
 import { INft } from "src/typings/INfts"
-import shallow from "zustand/shallow"
+import { shallow } from "zustand/shallow"
 import { CollectionFilter } from "../filter/CollectionFilter"
 import { HorizontalFilter } from "../filter/HorizontalFilter"
 import { NFTCard } from "./NFTCard"
@@ -28,8 +28,8 @@ export const CollectionGrid = () => {
   const setSearchInput = useFilterSearchStore(setSearch, shallow)
   const [showFilter, setShowFilter] = useState(true)
   const { nfts, filter, setFilter } = useCollectionFilter(selectedCollection)
-  console.log({allCollections, counter});
-  
+  console.log({ allCollections, counter })
+
   useEffect(() => {
     router.push(`/collection/${selectedCollection}/`)
     setSearchInput("")

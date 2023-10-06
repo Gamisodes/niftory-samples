@@ -144,7 +144,9 @@ module.exports = [
       // Above route is default for next-auth, you may need to change it if your OAuth workflow has a different callback route
       // Issue: https://github.com/shadowwalker/next-pwa/issues/131#issuecomment-821894809
       if (pathname.startsWith("/api/auth/")) return false
+      if (pathname.startsWith("/server/auth/")) return false
       if (pathname.startsWith("/api/")) return true
+      if (pathname.startsWith("/server/")) return true
       return false
     },
     handler: "NetworkFirst",
@@ -164,6 +166,7 @@ module.exports = [
       if (!isSameOrigin) return false
       const pathname = url.pathname
       if (pathname.startsWith("/api/")) return false
+      if (pathname.startsWith("/server/")) return true
       return true
     },
     handler: "NetworkFirst",

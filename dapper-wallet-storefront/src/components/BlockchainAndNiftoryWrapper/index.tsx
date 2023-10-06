@@ -1,16 +1,18 @@
-import { useSession } from "next-auth/react"
-import React, { PropsWithChildren, useEffect } from "react"
+import { PropsWithChildren, useEffect } from "react"
 import { useGetFromBlockchain } from "src/hooks/nftDB/useGetFromBlockchain"
 import { useGetFromCustodialWallet, useGetFromNiftory } from "src/hooks/nftDB/useGetFromNiftory"
 import { useCollectionMainInterface } from "src/hooks/useCollectionMainInterface"
 import { useWalletContext } from "src/hooks/useWalletContext"
 import { INftStore, useNftsStore } from "src/store/nfts"
+import { getCurrentUser, useAuth } from "src/store/users"
+import { shallow } from "zustand/shallow"
 
 const setNftState = (state: INftStore) => state.setLoading
 
 export const BlockchainAndNiftoryWrapper = ({ children }: PropsWithChildren) => {
   const { currentUser } = useWalletContext()
-  const { data } = useSession()
+  const [user] = useAuth(getCurrentUser, shallow)
+
   const { isFetchingNextPage, data: niftoryCollections, isLoading, isSuccess } = useGetFromNiftory()
   const {
     isFetchingNextPage: isFetchingNextPageCustodial,
@@ -38,22 +40,22 @@ export const BlockchainAndNiftoryWrapper = ({ children }: PropsWithChildren) => 
     console.log({ currentUser })
 
     let loadingStatus = true
-    if (currentUser?.addr && data?.user?.custodialAddress) {
+    if (currentUser?.addr && user?.custodialWallet?.niftoryWalletId) {
       loadingStatus =
         blockChainIsLoading ||
         isLoading ||
         isFetchingNextPage ||
         isFetchingNextPageCustodial ||
         isLoadingCustodial
-    } else if (currentUser?.addr && !data?.user?.custodialAddress) {
+    } else if (currentUser?.addr && !user?.custodialWallet?.niftoryWalletId) {
       loadingStatus = blockChainIsLoading || isLoading || isFetchingNextPage
-    } else if (!currentUser?.addr && data?.user?.custodialAddress) {
+    } else if (!currentUser?.addr && user?.custodialWallet?.niftoryWalletId) {
       loadingStatus = isFetchingNextPageCustodial || isLoadingCustodial
     }
 
     setLoading(loadingStatus)
   }, [
-    data?.user,
+    user?.email,
     currentUser,
     blockChainIsLoading,
     isLoading,

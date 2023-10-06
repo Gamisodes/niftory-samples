@@ -47,13 +47,13 @@ export type AdminUser = Identifiable & UserData & {
 
 export type AdminUserCreateInput = {
   /** The appIds of apps to create the user to */
-  appIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  appIds: Array<InputMaybe<Scalars['String']>>;
   /** The email of the user */
-  email?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   /** The name of the user */
-  name?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
   /** The role of the user */
-  role?: InputMaybe<Scalars['String']>;
+  role: Scalars['String'];
 };
 
 /** A list of admin Users. */
@@ -73,7 +73,7 @@ export type AdminUserUpdateInput = {
   /** The name of the user */
   name?: InputMaybe<Scalars['String']>;
   /** The role of the user */
-  role?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<Role>;
 };
 
 export type AdminUsersFilterInput = {
@@ -169,6 +169,17 @@ export type AppUser = HasTimes & Identifiable & UserData & {
   wallet?: Maybe<Wallet>;
   /** All wallets owned by this user. */
   wallets?: Maybe<Array<Maybe<Wallet>>>;
+};
+
+export type AppUserCreateInput = {
+  /** The appId of the App for which the User is created within */
+  appId: Scalars['String'];
+  /** The email of the User */
+  email: Scalars['String'];
+  /** The name of the User */
+  name: Scalars['String'];
+  /** The role of the User */
+  role: Scalars['String'];
 };
 
 /** Represents a list of [AppUser]({{Types.AppUser}})s of a particular Niftory [App]({{Types.App}}). Read more [here](https://docs.niftory.com/home/v/api/core-concepts/app-and-appuser). */
@@ -324,7 +335,8 @@ export enum ContractVersion {
   V1 = 'V1',
   V2 = 'V2',
   V2_1 = 'V2_1',
-  V2_1_1 = 'V2_1_1'
+  V2_1_1 = 'V2_1_1',
+  V2_2 = 'V2_2'
 }
 
 export type CreateFileOptionsInput = {
@@ -1517,6 +1529,15 @@ export type NftSetFilterInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+/** A list of NFTSets. */
+export type NftSetList = Pageable & {
+  __typename?: 'NFTSetList';
+  /** The cursor to use to fetch the next page of results, if any. */
+  cursor?: Maybe<Scalars['String']>;
+  /** The NFTSets in this list. */
+  items?: Maybe<Array<Maybe<NftSet>>>;
+};
+
 /** The input to update an [NFTSet]({{Types.NFTSet}}). */
 export type NftSetUpdateInput = {
   /** A mapping of attributes for this resource. These will be stored in the Niftory API but will not be added to the blockchain. */
@@ -1643,8 +1664,8 @@ export type Query = {
   nftModels?: Maybe<NftModelList>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   nftSet?: Maybe<NftSet>;
-  /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
-  nftSets?: Maybe<Array<Maybe<NftSet>>>;
+  /** Gets [NFTSet]()s for the current [App]() context. */
+  nftSets?: Maybe<NftSetList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current [AppUser]({{Types.AppUser}}) context, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
   nfts?: Maybe<NftList>;
   /** Gets [NFT]({{Types.NFT}})s associated with the current wallet, including those that are transferring or failed to transfer. Read more [here](https://docs.niftory.com/home/v/api/core-concepts/nfts/querying-nfts). */
@@ -1654,7 +1675,10 @@ export type Query = {
   saleStats?: Maybe<SaleStatsResponse>;
   /** Gets an [NFTSet]({{Types.NFTSet}}) by database ID. */
   set?: Maybe<NftSet>;
-  /** Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context. */
+  /**
+   * Gets [NFTSet]({{Types.NFTSet}})s for the current [App]({{Types.App}}) context.
+   * @deprecated This operation is deprecated. Please use 'nftSetList' instead.
+   */
   sets?: Maybe<Array<Maybe<NftSet>>>;
   /** Gets the user stats for the specified app. */
   userStats?: Maybe<UserStatsResponse>;
@@ -1801,7 +1825,9 @@ export type QueryNftSetArgs = {
 
 export type QueryNftSetsArgs = {
   appId?: InputMaybe<Scalars['ID']>;
+  cursor?: InputMaybe<Scalars['String']>;
   filter?: InputMaybe<NftSetFilterInput>;
+  maxResults?: InputMaybe<Scalars['PositiveInt']>;
 };
 
 
@@ -2247,31 +2273,6 @@ export type WalletsQueryVariables = Exact<{
 
 
 export type WalletsQuery = { __typename?: 'Query', wallets?: { __typename?: 'WalletList', cursor?: string | null, items?: Array<{ __typename?: 'Wallet', id: string, address?: string | null, state: WalletState } | null> | null } | null };
-
-export type CompleteCheckoutWithDapperWalletMutationVariables = Exact<{
-  transactionId: Scalars['String'];
-  nftDatabaseId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type CompleteCheckoutWithDapperWalletMutation = { __typename?: 'Mutation', completeCheckoutWithDapperWallet?: { __typename?: 'NFT', id: string, blockchainId?: string | null, serialNumber?: number | null, saleState?: SaleState | null, blockchainState: NftBlockchainState } | null };
-
-export type CheckoutWithDapperWalletMutationVariables = Exact<{
-  nftModelId: Scalars['ID'];
-  address: Scalars['String'];
-  price?: InputMaybe<Scalars['UnsignedFloat']>;
-  expiry?: InputMaybe<Scalars['UnsignedInt']>;
-}>;
-
-
-export type CheckoutWithDapperWalletMutation = { __typename?: 'Mutation', checkoutWithDapperWallet?: { __typename?: 'CheckoutWithDapperWalletResponse', cadence?: string | null, brand?: string | null, expiry?: string | null, nftId?: string | null, nftDatabaseId?: string | null, nftTypeRef?: string | null, price?: string | null, registryAddress?: string | null, setId?: string | null, templateId?: string | null, signerAddress?: string | null, signerKeyId?: number | null } | null };
-
-export type SignTransactionForDapperWalletMutationVariables = Exact<{
-  transaction?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type SignTransactionForDapperWalletMutation = { __typename?: 'Mutation', signTransactionForDapperWallet?: string | null };
 
 
 export const CreateNiftoryWalletDocument = `
@@ -2883,73 +2884,3 @@ export const useInfiniteWalletsQuery = <
       (metaData) => fetchData<WalletsQuery, WalletsQueryVariables>(WalletsDocument, {...variables, ...(metaData.pageParam ?? {})})(),
       options
     )};
-
-export const CompleteCheckoutWithDapperWalletDocument = `
-    mutation CompleteCheckoutWithDapperWallet($transactionId: String!, $nftDatabaseId: String) {
-  completeCheckoutWithDapperWallet(
-    transactionId: $transactionId
-    nftDatabaseId: $nftDatabaseId
-  ) {
-    id
-    blockchainId
-    serialNumber
-    saleState
-    blockchainState
-  }
-}
-    `;
-export const useCompleteCheckoutWithDapperWalletMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<CompleteCheckoutWithDapperWalletMutation, TError, CompleteCheckoutWithDapperWalletMutationVariables, TContext>) =>
-    useMutation<CompleteCheckoutWithDapperWalletMutation, TError, CompleteCheckoutWithDapperWalletMutationVariables, TContext>(
-      ['CompleteCheckoutWithDapperWallet'],
-      (variables?: CompleteCheckoutWithDapperWalletMutationVariables) => fetchData<CompleteCheckoutWithDapperWalletMutation, CompleteCheckoutWithDapperWalletMutationVariables>(CompleteCheckoutWithDapperWalletDocument, variables)(),
-      options
-    );
-export const CheckoutWithDapperWalletDocument = `
-    mutation CheckoutWithDapperWallet($nftModelId: ID!, $address: String!, $price: UnsignedFloat, $expiry: UnsignedInt) {
-  checkoutWithDapperWallet(
-    nftModelId: $nftModelId
-    address: $address
-    price: $price
-    expiry: $expiry
-  ) {
-    cadence
-    brand
-    expiry
-    nftId
-    nftDatabaseId
-    nftTypeRef
-    price
-    registryAddress
-    setId
-    templateId
-    signerAddress
-    signerKeyId
-  }
-}
-    `;
-export const useCheckoutWithDapperWalletMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<CheckoutWithDapperWalletMutation, TError, CheckoutWithDapperWalletMutationVariables, TContext>) =>
-    useMutation<CheckoutWithDapperWalletMutation, TError, CheckoutWithDapperWalletMutationVariables, TContext>(
-      ['CheckoutWithDapperWallet'],
-      (variables?: CheckoutWithDapperWalletMutationVariables) => fetchData<CheckoutWithDapperWalletMutation, CheckoutWithDapperWalletMutationVariables>(CheckoutWithDapperWalletDocument, variables)(),
-      options
-    );
-export const SignTransactionForDapperWalletDocument = `
-    mutation SignTransactionForDapperWallet($transaction: String) {
-  signTransactionForDapperWallet(transaction: $transaction)
-}
-    `;
-export const useSignTransactionForDapperWalletMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(options?: UseMutationOptions<SignTransactionForDapperWalletMutation, TError, SignTransactionForDapperWalletMutationVariables, TContext>) =>
-    useMutation<SignTransactionForDapperWalletMutation, TError, SignTransactionForDapperWalletMutationVariables, TContext>(
-      ['SignTransactionForDapperWallet'],
-      (variables?: SignTransactionForDapperWalletMutationVariables) => fetchData<SignTransactionForDapperWalletMutation, SignTransactionForDapperWalletMutationVariables>(SignTransactionForDapperWalletDocument, variables)(),
-      options
-    );

@@ -1,13 +1,12 @@
 # 1. Install dependencies only when needed
 FROM node:16-alpine3.16 AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat openssl
 
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-COPY /patches/ ./patches
+# COPY /patches/ ./patches
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -23,18 +22,13 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # This will do the trick, use the corresponding env file for each environment.
 COPY .env.production .env
-RUN apk add  --update --no-cache libc6-compat openssl
 
-RUN npx prisma db push
-RUN npx prisma generate
 RUN npm run generate
 RUN npm run build
 
 # 3. Production image, copy all the files and run next
 FROM node:16-alpine3.16 AS runner
 WORKDIR /app
-
-RUN apk add  --update --no-cache libc6-compat openssl
 
 ENV NODE_ENV=production
 

@@ -1,18 +1,17 @@
 import { Text } from "@chakra-ui/react"
 import { EModelTypes } from "consts/const"
 import { useMyWalletsQuery, WalletState } from "generated/graphql"
-import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
-import { memo, useMemo } from "react"
+import { memo, PropsWithChildren, useMemo } from "react"
 import { Loading } from "src/icon/Loading"
-import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
+import { EErrorIdentity } from "src/typings/NftModelDetail"
+import { EAuthStatus, getAuthStatus, useAuth } from "src/store/users"
+import { NFTModelDetail } from "src/typings/NftModelDetail"
 import Button from "src/ui/Button"
 import { useWalletContext } from "../../hooks/useWalletContext"
 import MetaTags from "../general/MetaTags"
 import useCheckout from "./checkout/CheckoutProvider"
-import { PropsWithChildren } from "react"
-import { NFTModelDetail } from "src/typings/NftModelDetail"
 
 const checkoutStatusMessages = [
   "",
@@ -51,13 +50,13 @@ export const BuyButton = memo(function BuyButton({ nftAvailableToBuy }: IBuyButt
     { address: currentUser?.addr },
     { enabled: !!currentUser?.addr, networkMode: "offlineFirst" }
   )
-  const { status } = useSession()
+  const status = useAuth(getAuthStatus)
   const { checkout, error, checkoutProgress } = useCheckout()
 
   const wallet = currentUser?.addr && walletData?.walletByAddress
 
   //If user authed via Google
-  if (status === "authenticated") {
+  if (status === EAuthStatus.AUTHENTICATE) {
     //If user authed via Google and Blockchain
     if (currentUser?.addr && wallet?.state === WalletState.Ready) {
       if (nftAvailableToBuy > 0) {
@@ -98,7 +97,7 @@ export const BuyButton = memo(function BuyButton({ nftAvailableToBuy }: IBuyButt
     }
   }
   //If user unauthed via Google
-  else if (status === "unauthenticated")
+  else if (status === EAuthStatus.UNAUTHENTICATED)
     return (
       <>
         <p className="font-dosis text-lg mb-3">

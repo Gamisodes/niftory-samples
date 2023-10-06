@@ -110,7 +110,6 @@ interface IErrorsResponseCheckWalletOwner {
   success: boolean
 }
 interface ICheckWalletOwnerData {
-  ourEmail: string
   loggedWithAddress: string
 }
 /**

@@ -11,31 +11,29 @@ interface IPostVerifyWallet {
 }
 
 interface IPostCheckWalletOwner {
-  ourEmail: string
   loggedWithAddress: string
 }
 export const WalletRequest = {
   async postReadyWallet() {
     return authApi
-      .post<{ data: ReadyWalletMutation; success: boolean }>("/api/readyWallet")
+      .post<{ data: ReadyWalletMutation; success: boolean }>("/server/wallet/ready")
       .then((val) => val.data)
   },
   async postRegisterWallet() {
     return authApi
-      .post<{ data: RegisterWalletMutation; success: boolean }>("/api/registerWallet")
+      .post<{ data: RegisterWalletMutation; success: boolean }>("/server/wallet/register")
       .then((val) => val.data)
   },
   async postVerifyWallet({ signature }: IPostVerifyWallet) {
     return authApi
-      .post<{ data: VerifyWalletMutation; success: boolean }>("/api/verifyWallet", {
+      .post<{ data: VerifyWalletMutation; success: boolean }>("/server/wallet/verify", {
         signedVerificationCode: signature,
       })
       .then((val) => val.data)
   },
-  async postCheckWalletOwner({ ourEmail, loggedWithAddress }: IPostCheckWalletOwner) {
+  async postCheckWalletOwner({ loggedWithAddress }: IPostCheckWalletOwner) {
     return authApi
-      .post("/api/checkWalletOwner", {
-        ourEmail,
+      .post("/server/wallet/checkOwner", {
         loggedWithAddress,
       })
       .then((val) => val.data)

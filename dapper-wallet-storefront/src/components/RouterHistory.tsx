@@ -1,18 +1,16 @@
 import { useRouter } from "next/router"
-import { PropsWithChildren, useEffect, useState } from "react"
-import create from "zustand"
-import createContext from "zustand/context"
-import shallow from "zustand/shallow"
-
-const { Provider, useStore } = createContext()
+import { PropsWithChildren, createContext, useContext, useEffect, useRef } from "react"
+import { StoreApi, createStore, useStore } from "zustand"
 
 type RouteType = { previous: string | null; current: string | null }
 interface RouterHistoryState {
   route: RouteType
   setRoute: (route: (preRoute: RouteType) => RouteType | RouteType) => void
 }
-const createStore = () =>
-  create<RouterHistoryState>((set, get) => ({
+const MyContext = createContext<StoreApi<RouterHistoryState>>({} as StoreApi<RouterHistoryState>)
+
+const createMyStore = () =>
+  createStore<RouterHistoryState>((set, get) => ({
     route: { previous: null, current: null },
     setRoute: (params) => {
       if (typeof params === "function") {
@@ -31,8 +29,9 @@ const getPreviousRoute = (state: RouterHistoryState) => state.route.previous
  */
 const useRouteUrlHistory = () => {
   const router = useRouter()
+  const store = useContext(MyContext)
 
-  const [_, setRoute] = useStore(getState, shallow)
+  const [_, setRoute] = useStore(store, getState)
 
   useEffect(() => {
     setRoute((oldHistory) => ({
@@ -48,14 +47,17 @@ function RouterHistoryChecker({ children }: PropsWithChildren) {
   return <>{children}</>
 }
 function RouterHistory({ children }: PropsWithChildren) {
+  const store = useRef(createMyStore()).current // or any better solution
+
   return (
-    <Provider createStore={createStore}>
+    <MyContext.Provider value={store}>
       <RouterHistoryChecker>{children}</RouterHistoryChecker>
-    </Provider>
+    </MyContext.Provider>
   )
 }
 
 export function useRouterHistory() {
-  return useStore(getPreviousRoute)
+  const store = useContext(MyContext)
+  return useStore(store, getPreviousRoute)
 }
 export default RouterHistory

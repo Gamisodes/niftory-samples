@@ -3,8 +3,7 @@ import Image from "next/image"
 import { memo, PropsWithChildren, useMemo } from "react"
 import LogoGamisodes from "src/icon/promo-logo-1.svg"
 import LogoInspectorGadget from "src/icon/promo-logo-2.svg"
-import { EErrorIdentity } from "src/pages/api/nftModel/[nftModelId]/initiateCheckout"
-import { NFTModelDetail } from "src/typings/NftModelDetail"
+import { NFTModelDetail, EErrorIdentity } from "src/typings/NftModelDetail"
 import useCheckout from "../drops/checkout/CheckoutProvider"
 import MetaTags from "../general/MetaTags"
 import { EmojyInfoBlock } from "./EmojyInfoBlock"
@@ -49,7 +48,7 @@ const PromoNFTModelDrop: React.FC<INftModelDetail> = function NFTModelDrop({ met
         }
     }
   }, [mainImage.contentType])
-  
+
   return (
     <>
       <MetaTags.Product metadata={metadata} availableCount={NFT_READY_TO_BUY}>

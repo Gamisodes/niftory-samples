@@ -1,5 +1,4 @@
 import { ChakraProvider } from "@chakra-ui/react"
-import { SessionProvider } from "next-auth/react"
 import { AppProps as NextAppProps } from "next/app"
 import { WalletProvider } from "../components/wallet/WalletProvider"
 import { ComponentWithWallet } from "../lib/types"
@@ -9,6 +8,7 @@ import { Session } from "next-auth"
 import { GoogleAnalytics } from "nextjs-google-analytics"
 import { BlockchainAndNiftoryWrapper } from "src/components/BlockchainAndNiftoryWrapper"
 import RouterHistory from "src/components/RouterHistory"
+import AuthSessionProvider from "src/components/auth/AuthSessionProvider"
 import AuthGuard from "src/guard/AuthGuard"
 import CustodialWalletGuard from "src/guard/CustodialWallet"
 import WalletGuard from "src/guard/WalletGuard"
@@ -28,9 +28,9 @@ const App = ({
   usePWA()
   return (
     <RouterHistory>
-      <SessionProvider session={session}>
-        <ChakraProvider theme={theme}>
-          <ReactQueryProvider state={dehydratedState}>
+      <ReactQueryProvider state={dehydratedState}>
+        <AuthSessionProvider>
+          <ChakraProvider theme={theme}>
             <WalletProvider requireWallet={Component.requireWallet}>
               <BlockchainAndNiftoryWrapper>
                 <AuthGuard isActive={Component.requireAuth}>
@@ -42,9 +42,9 @@ const App = ({
                 </AuthGuard>
               </BlockchainAndNiftoryWrapper>
             </WalletProvider>
-          </ReactQueryProvider>
-        </ChakraProvider>
-      </SessionProvider>
+          </ChakraProvider>
+        </AuthSessionProvider>
+      </ReactQueryProvider>
       <GoogleAnalytics trackPageViews />
     </RouterHistory>
   )

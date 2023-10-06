@@ -1,14 +1,15 @@
-import { useSession } from "next-auth/react"
 import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
 import CustodialWallet from "src/components/wallet/CustodialWallet"
 import { WalletSetup } from "src/components/wallet/WalletSetup"
+import { getCurrentUser, useAuth } from "src/store/users"
 import { SectionHeader } from "src/ui/SectionHeader"
+import { shallow } from "zustand/shallow"
 
 const AccountPage = () => {
-  const { data: session } = useSession()
-  const name = session?.user?.name ?? session?.user?.email
-  const custodialWallet = session?.user?.custodialAddress
+  const [user] = useAuth(getCurrentUser, shallow)
+  const name = user?.name ?? user?.email
+  const custodialWallet = user?.custodialWallet
   const title = `${name}'s account | Gamisodes`
   return (
     <>
@@ -18,15 +19,17 @@ const AccountPage = () => {
           <SectionHeader
             text={
               <section className="flex items-center space-x-5">
-                {session?.user?.image && (
+                {user?.image && (
                   <div>
                     <img
                       className="inline-block w-20 rounded-full ring-2 ring-white"
-                      src={session?.user?.image}
+                      src={user?.image}
                     />
                   </div>
                 )}
-                <p className="leading-[32px] text-[28px] lg:leading-[54px] lg:text-[48px]">{name}'s account</p>
+                <p className="leading-[32px] text-[28px] lg:leading-[54px] lg:text-[48px]">
+                  {name}'s account
+                </p>
               </section>
             }
           />

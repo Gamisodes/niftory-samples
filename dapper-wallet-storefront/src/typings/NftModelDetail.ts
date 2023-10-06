@@ -18,3 +18,7 @@ export type NFTModelDetail = {
     }[]
   }
 }
+export enum EErrorIdentity {
+  NO_PRICE = "NO_PRICE",
+  NFT_LIMIT_REACHED = "NFT_LIMIT_REACHED",
+}

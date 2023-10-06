@@ -2,13 +2,15 @@ import classNames from "classnames"
 
 interface ILoadingProps {
   className?: string
+  size?: "small" | "general"
 }
-export const Loading = (props: ILoadingProps) => (
+export const Loading = ({ className, size = "general" }: ILoadingProps) => (
   <svg
     aria-hidden="true"
     className={classNames(
-      "mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-header fill-white",
-      props.className
+      "mr-2 text-gray-200 animate-spin dark:text-header fill-white",
+      className,
+      { "w-8 h-8": size === "general", "w-4 h-4": size === "small" }
     )}
     viewBox="0 0 100 101"
     fill="none"

@@ -1,13 +1,16 @@
 import { ECollectionNames } from "src/const/enum"
-import create from "zustand"
+import { createWithEqualityFn } from "zustand/traditional"
 
 const defaultCollection = ECollectionNames.VIP
 
 interface ISelectedCollection {
-  selectedCollection: ECollectionNames,
+  selectedCollection: ECollectionNames
   setCollection: (arg: ECollectionNames) => void
 }
-export const useCollectionStore = create<ISelectedCollection>((set) => ({
-  selectedCollection: defaultCollection,
-  setCollection: (selectedCollection) => set(() => ({ selectedCollection }))
-}))
+export const useCollectionStore = createWithEqualityFn<ISelectedCollection>(
+  (set) => ({
+    selectedCollection: defaultCollection,
+    setCollection: (selectedCollection) => set(() => ({ selectedCollection })),
+  }),
+  Object.is
+)

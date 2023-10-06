@@ -1,8 +1,8 @@
-import { useSession, signIn } from "next-auth/react"
 import Link from "next/link"
 import { PropsWithChildren } from "react"
 import AppLayout from "src/components/AppLayout"
 import { MetaTags } from "src/components/general/MetaTags"
+import { EAuthStatus, getAuthStatus, useAuth } from "src/store/users"
 import { SectionHeader } from "src/ui/SectionHeader"
 
 type AuthGuardProps = PropsWithChildren & {
@@ -10,13 +10,13 @@ type AuthGuardProps = PropsWithChildren & {
 }
 
 function AuthGuard({ children, isActive = false }: AuthGuardProps) {
-  const { status } = useSession()
+  const status = useAuth(getAuthStatus)
 
-  if (!isActive || status === "authenticated") {
+  if (!isActive || status === EAuthStatus.AUTHENTICATE) {
     return <>{children}</>
   }
 
-  if (status === "unauthenticated") {
+  if (status === EAuthStatus.UNAUTHENTICATED) {
     return (
       <>
         <MetaTags />

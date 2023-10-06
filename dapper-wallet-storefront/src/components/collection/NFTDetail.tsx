@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import { useCallback, useMemo } from "react"
 import { INft } from "src/typings/INfts"
 import { useCollectionStore } from "src/store/collection"
-import shallow from "zustand/shallow"
+import { shallow } from "zustand/shallow"
 import { Gallery } from "src/ui/Content/Gallery/Gallery"
 import cn from "classnames"
 

@@ -30,6 +30,17 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    if (process.env.NODE_ENV === "development") {
+      return [
+        {
+          source: "/server/:path*",
+          destination: "https://staging.gamisodes.com/server/:path*",
+        },
+      ]
+    }
+    return []
+  },
   async redirects() {
     return [
       {
